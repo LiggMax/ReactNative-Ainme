@@ -103,17 +103,6 @@ export default function Schedules({showAlert}: SchedulesProps) {
     return currentWeekday?.items || [];
   }, [scheduleData, selectedWeekday]);
 
-  // 初始化图片加载状态
-  useEffect(() => {
-    if (currentWeekdayData.length > 0) {
-      const initialStates: {[key: string]: boolean} = {};
-      currentWeekdayData.forEach(item => {
-        initialStates[item.id] = true; // 初始状态为加载中
-      });
-      setImageLoadingStates(initialStates);
-    }
-  }, [currentWeekdayData]);
-
   // 动态样式 - 使用主题颜色
   const dynamicStyles = useMemo(() => StyleSheet.create({
     container: {
@@ -221,14 +210,22 @@ export default function Schedules({showAlert}: SchedulesProps) {
     },
     // Shimmer相关样式
     imageContainer: {
-      width: '100%',
-      height: CARD_WIDTH * 1.4,
-    },
-    shimmerPlaceholder: {
+      position: 'relative',
       width: '100%',
       height: CARD_WIDTH * 1.4,
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,
+      overflow: 'hidden',
+    },
+    shimmerPlaceholder: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+      zIndex: 2,
     },
   }), [theme]);
 
@@ -267,8 +264,17 @@ export default function Schedules({showAlert}: SchedulesProps) {
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
     <TouchableOpacity style={dynamicStyles.animeCard}>
       <View style={dynamicStyles.imageContainer}>
-        {/* 条件渲染：加载时显示Shimmer，否则显示图片 */}
-        {imageLoadingStates[item.id] ? (
+        {/* 实际图片 */}
+        <Image
+          source={{uri: item.images.large}}
+          style={styles.animeImage}
+          resizeMode="cover"
+          fadeDuration={300}
+          onLoadStart={() => handleImageLoadStart(item.id)}
+          onLoadEnd={() => handleImageLoadEnd(item.id)}
+        />
+        {/* 图片加载时显示Shimmer覆盖层 */}
+        {(imageLoadingStates[item.id] !== false) && (
           <ShimmerPlaceholder
             style={dynamicStyles.shimmerPlaceholder}
             shimmerColors={[
@@ -276,15 +282,6 @@ export default function Schedules({showAlert}: SchedulesProps) {
               theme.colors.surface,
               theme.colors.surfaceVariant,
             ]}
-          />
-        ) : (
-          <Image
-            source={{uri: item.images.large}}
-            style={styles.animeImage}
-            resizeMode="cover"
-            fadeDuration={300}
-            onLoadStart={() => handleImageLoadStart(item.id)}
-            onLoadEnd={() => handleImageLoadEnd(item.id)}
           />
         )}
       </View>
