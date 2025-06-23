@@ -12,7 +12,12 @@ import {
   View,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
+import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
+
+// 创建Shimmer组件
+const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
 /**
  * 新番时间表页面
@@ -30,6 +35,9 @@ export default function Schedules({showAlert}: SchedulesProps) {
   const [loading, setLoading] = useState(false);
   const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 默认选择星期一
   const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
+
+  // 图片加载状态管理
+  const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
 
   // 获取新番时间表数据 - 使用useCallback避免重复创建
   const fetchScheduleData = useCallback(async () => {
@@ -58,6 +66,29 @@ export default function Schedules({showAlert}: SchedulesProps) {
     fetchScheduleData();
   }, [fetchScheduleData]);
 
+  // 当数据更新时清理图片加载状态
+  useEffect(() => {
+    if (scheduleData.length > 0) {
+      setImageLoadingStates({});
+    }
+  }, [scheduleData]);
+
+  // 处理图片加载开始
+  const handleImageLoadStart = useCallback((itemId: number) => {
+    setImageLoadingStates(prev => ({
+      ...prev,
+      [itemId]: true
+    }));
+  }, []);
+
+  // 处理图片加载完成
+  const handleImageLoadEnd = useCallback((itemId: number) => {
+    setImageLoadingStates(prev => ({
+      ...prev,
+      [itemId]: false
+    }));
+  }, []);
+
   // 格式化收藏数 - 使用useCallback缓存函数
   const formatCollectionCount = useCallback((count: number): string => {
     if (count >= 10000) {
@@ -71,6 +102,17 @@ export default function Schedules({showAlert}: SchedulesProps) {
     const currentWeekday = scheduleData.find(item => item.weekday.id === selectedWeekday);
     return currentWeekday?.items || [];
   }, [scheduleData, selectedWeekday]);
+
+  // 初始化图片加载状态
+  useEffect(() => {
+    if (currentWeekdayData.length > 0) {
+      const initialStates: {[key: string]: boolean} = {};
+      currentWeekdayData.forEach(item => {
+        initialStates[item.id] = true; // 初始状态为加载中
+      });
+      setImageLoadingStates(initialStates);
+    }
+  }, [currentWeekdayData]);
 
   // 动态样式 - 使用主题颜色
   const dynamicStyles = useMemo(() => StyleSheet.create({
@@ -177,6 +219,17 @@ export default function Schedules({showAlert}: SchedulesProps) {
       textAlign: 'center',
       opacity: 0.7,
     },
+    // Shimmer相关样式
+    imageContainer: {
+      width: '100%',
+      height: CARD_WIDTH * 1.4,
+    },
+    shimmerPlaceholder: {
+      width: '100%',
+      height: CARD_WIDTH * 1.4,
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+    },
   }), [theme]);
 
   // 渲染星期选择器 - 使用useMemo缓存组件
@@ -213,13 +266,28 @@ export default function Schedules({showAlert}: SchedulesProps) {
   // 渲染动漫卡片 - 使用useCallback避免重复渲染
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
     <TouchableOpacity style={dynamicStyles.animeCard}>
-      <Image
-        source={{uri: item.images.large}}
-        style={styles.animeImage}
-        resizeMode="cover"
-        // 添加图片优化
-        fadeDuration={300}
-      />
+      <View style={dynamicStyles.imageContainer}>
+        {/* 条件渲染：加载时显示Shimmer，否则显示图片 */}
+        {imageLoadingStates[item.id] ? (
+          <ShimmerPlaceholder
+            style={dynamicStyles.shimmerPlaceholder}
+            shimmerColors={[
+              theme.colors.surfaceVariant,
+              theme.colors.surface,
+              theme.colors.surfaceVariant,
+            ]}
+          />
+        ) : (
+          <Image
+            source={{uri: item.images.large}}
+            style={styles.animeImage}
+            resizeMode="cover"
+            fadeDuration={300}
+            onLoadStart={() => handleImageLoadStart(item.id)}
+            onLoadEnd={() => handleImageLoadEnd(item.id)}
+          />
+        )}
+      </View>
       <View style={styles.animeInfo}>
         <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
           {item.name_cn || item.name}
@@ -241,7 +309,14 @@ export default function Schedules({showAlert}: SchedulesProps) {
         </View>
       </View>
     </TouchableOpacity>
-  ), [formatCollectionCount, dynamicStyles]);
+  ), [
+    formatCollectionCount,
+    dynamicStyles,
+    imageLoadingStates,
+    handleImageLoadStart,
+    handleImageLoadEnd,
+    theme.colors
+  ]);
 
   // 渲染内容
   const renderContent = () => {
@@ -278,11 +353,6 @@ export default function Schedules({showAlert}: SchedulesProps) {
           updateCellsBatchingPeriod={50}
           initialNumToRender={8}
           windowSize={10}
-          // getItemLayout={(data, index) => ({
-          //   length: CARD_WIDTH * 1.4 + 16 + 80, // 图片高度 + 间距 + 信息区域高度
-          //   offset: (CARD_WIDTH * 1.4 + 16 + 80) * Math.floor(index / 2),
-          //   index,
-          // })}
           ListEmptyComponent={
             <View style={dynamicStyles.emptyContainer}>
               <Text style={dynamicStyles.emptyText}>今日暂无新番</Text>
