@@ -20,10 +20,8 @@ export default function Schedules({ showAlert }: SchedulesProps) {
       setLoading(true);
       const data = await animeService.getSchedule();
       setScheduleData(data);
-      showAlert('成功', '新番时间表数据加载成功');
     } catch (error) {
       console.error('获取新番时间表失败:', error);
-      showAlert('错误', '获取新番时间表失败');
     } finally {
       setLoading(false);
     }
