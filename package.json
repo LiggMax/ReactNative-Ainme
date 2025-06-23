@@ -16,6 +16,7 @@
     "@react-navigation/native": "^7.0.20",
     "react": "19.0.0",
     "react-native": "0.79.4",
+    "react-native-paper": "^5.14.5",
     "react-native-safe-area-context": "^5.2.0",
     "react-native-screens": "^4.5.0",
     "react-native-vector-icons": "^10.2.0"
