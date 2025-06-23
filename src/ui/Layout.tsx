@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {BottomNavigation} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Home from './home/Home';
+import Home from './home/HomeLayout.tsx';
 
 // 定义屏幕组件
 function HomeScreen() {
   return (
-    <View style={styles.screenContainer}>
+    <View style={styles.homeScreenContainer}>
       <Home/>
     </View>
   );
@@ -33,7 +33,7 @@ function ProfileScreen() {
 
 export default function BottomTabLayout() {
   const [index, setIndex] = useState(0);
-  
+
   const routes = [
     {
       key: 'home',
@@ -82,6 +82,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  homeScreenContainer: {
+    flex: 1,
     backgroundColor: '#f5f5f5',
   },
   screenTitle: {
