@@ -68,15 +68,15 @@ export default function BottomTabLayout() {
   };
 
   return (
-    <BottomNavigation
-      navigationState={{index, routes}}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-      renderIcon={renderIcon}
-      barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
-      activeColor={theme.colors.primary}
-      inactiveColor={theme.colors.onSurfaceVariant}
-    />
+      <BottomNavigation
+        navigationState={{index, routes}}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+        renderIcon={renderIcon}
+        barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
+        activeColor={theme.colors.primary}
+        inactiveColor={theme.colors.onSurfaceVariant}
+      />
   );
 }
 
