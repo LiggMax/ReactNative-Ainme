@@ -60,18 +60,11 @@ class Request {
 
     // 响应拦截器
     this.instance.interceptors.response.use(
-      (response: AxiosResponse<ApiResponse>) => {
+      (response: AxiosResponse) => {
         console.log('✅ 响应成功:', response.data);
 
-        const { code, data, message } = response.data;
-
-        // 根据业务状态码处理
-        if (code === 200 || code === 0) {
-          return data;
-        } else {
-          console.warn('⚠️ 业务错误:', message);
-          return Promise.reject(new Error(message || '请求失败'));
-        }
+        // 直接返回响应数据，不进行业务状态码判断
+        return response.data;
       },
       (error) => {
         console.error('❌ 响应错误:', error);

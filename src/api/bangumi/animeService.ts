@@ -4,16 +4,48 @@
 import request from '../../util/request.ts';
 import {ANIME_API} from '../../util/api.ts';
 
-// 动漫数据类型定义
+// 动漫数据类型定义 - 更新为BGM格式
 export interface AnimeItem {
-  id: string;
-  title: string;
-  cover: string;
-  description: string;
-  rating: number;
-  year: number;
-  status: string;
-  genres: string[];
+  id: number;
+  url: string;
+  type: number;
+  name: string;
+  name_cn: string;
+  summary: string;
+  air_date: string;
+  air_weekday: number;
+  rating?: {
+    total: number;
+    count: {
+      [key: string]: number;
+    };
+    score: number;
+  };
+  rank?: number;
+  images: {
+    large: string;
+    common: string;
+    medium: string;
+    small: string;
+    grid: string;
+  };
+  collection?: {
+    doing: number;
+  };
+}
+
+// 星期信息类型
+export interface WeekdayInfo {
+  en: string;
+  cn: string;
+  ja: string;
+  id: number;
+}
+
+// 新番时间表项目类型
+export interface ScheduleItem {
+  weekday: WeekdayInfo;
+  items: AnimeItem[];
 }
 
 export interface AnimeListParams {
@@ -83,11 +115,9 @@ class AnimeService {
   }
 
   /**
-   * 获取新番时间表
+   * 获取新番时间表 - 更新返回类型
    */
-  async getSchedule(): Promise<{
-    [key: string]: AnimeItem[];
-  }> {
+  async getSchedule(): Promise<ScheduleItem[]> {
     return request.get(ANIME_API.GET_SCHEDULE);
   }
 
