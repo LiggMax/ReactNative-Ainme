@@ -274,7 +274,7 @@ export default function Schedules({showAlert}: SchedulesProps) {
           onLoadEnd={() => handleImageLoadEnd(item.id)}
         />
         {/* 图片加载时显示Shimmer覆盖层 */}
-        {(imageLoadingStates[item.id] !== false) && (
+        {(imageLoadingStates[item.id]) && (
           <ShimmerPlaceholder
             style={dynamicStyles.shimmerPlaceholder}
             shimmerColors={[
