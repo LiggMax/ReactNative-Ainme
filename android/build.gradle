@@ -8,6 +8,12 @@ buildscript {
         kotlinVersion = "2.0.21"
     }
     repositories {
+        // 使用阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        // 备用原始仓库
         google()
         mavenCentral()
     }
@@ -19,3 +25,16 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        // 使用阿里云镜像
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        // 备用原始仓库
+        google()
+        mavenCentral()
+    }
+}

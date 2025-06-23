@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
-import animeService, { AnimeItem } from '../../../api/bangumi/animeService';
+import animeService, {AnimeItem} from '../../../api/bangumi/animeService';
+
 /**
  * 新番时间表页面
  */
@@ -10,7 +11,7 @@ interface SchedulesProps {
 }
 
 
-export default function Schedules({ showAlert }: SchedulesProps) {
+export default function Schedules({showAlert}: SchedulesProps) {
   const [scheduleData, setScheduleData] = useState<{[key: string]: AnimeItem[]}>();
   const [loading, setLoading] = useState(false);
 
@@ -35,44 +36,6 @@ export default function Schedules({ showAlert }: SchedulesProps) {
   return (
     <View style={styles.tabContent}>
       <Text style={[styles.interval, styles.title]}>新番时间表</Text>
-
-      <View style={[styles.interval]}>
-        <Button
-          mode="outlined"
-          onPress={fetchScheduleData}
-          loading={loading}
-          disabled={loading}
-        >
-          {loading ? '加载中...' : '刷新时间表'}
-        </Button>
-      </View>
-
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('时间表', '今日新番更新列表')}>
-          今日更新11
-        </Button>
-      </View>
-
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('时间表', '本周新番时间安排')}>
-          本周时间表
-        </Button>
-      </View>
-
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('时间表', '订阅提醒设置')}>
-          订阅提醒
-        </Button>
-      </View>
-
-      {/* 显示数据统计 */}
-      {scheduleData && (
-        <View style={[styles.interval]}>
-          <Text style={styles.dataInfo}>
-            已加载 {Object.keys(scheduleData).length} 天的时间表数据
-          </Text>
-        </View>
-      )}
     </View>
   );
 }

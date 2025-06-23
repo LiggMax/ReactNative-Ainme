@@ -18,7 +18,8 @@
     "react-native-paper": "^5.14.5",
     "react-native-safe-area-context": "^5.2.0",
     "react-native-screens": "^4.5.0",
-    "react-native-tab-view": "^4.1.2"
+    "react-native-tab-view": "^4.1.2",
+    "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
