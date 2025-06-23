@@ -4,6 +4,9 @@ import {Dialog, Portal, TextInput, Button} from 'react-native-paper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Recommend from './tab/Recommend';
+import Schedules from './tab/Schedules';
+import Ranking from './tab/Ranking';
 
 export default function index() {
   const [visible, setVisible] = useState(false);
@@ -14,9 +17,9 @@ export default function index() {
   const [index, setIndex] = useState(0);
 
   const [routes] = useState([
-    { key: 'storage', title: '存储管理' },
-    { key: 'settings', title: '设置' },
-    { key: 'about', title: '关于' },
+    {key: 'recommend', title: '推荐'},
+    {key: 'Schedules', title: '新番时间表'},
+    {key: 'ranking', title: '排行榜'},
   ]);
 
   const showAlert = (title: string, message: string) => {
@@ -55,7 +58,7 @@ export default function index() {
       console.error('保存数据失败:', error);
       showAlert('错误', '保存数据失败');
     }
-  }
+  };
 
   //获取数据
   const getData = async () => {
@@ -68,67 +71,25 @@ export default function index() {
     }
   };
 
-  // 存储管理页面
-  const StorageRoute = () => (
-    <View style={styles.tabContent}>
-      <Text style={[styles.interval]}>存储管理</Text>
-      <View style={[styles.interval]}>
-        <Button mode="contained" onPress={showInputAlert}>
-          存储本地数据
-        </Button>
-      </View>
-      <View style={[styles.interval]}>
-        <Button mode="contained" onPress={getData}>
-          获取本地数据
-        </Button>
-      </View>
-    </View>
+  // 推荐页面
+  const RecommendRoute = () => (
+    <Recommend showInputAlert={showInputAlert} getData={getData} />
   );
 
-  // 设置页面
-  const SettingsRoute = () => (
-    <View style={styles.tabContent}>
-      <Text style={[styles.interval, styles.title]}>应用设置</Text>
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('设置', '主题设置功能')}>
-          主题设置
-        </Button>
-      </View>
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('设置', '语言设置功能')}>
-          语言设置
-        </Button>
-      </View>
-      <View style={[styles.interval]}>
-        <Button mode="outlined" onPress={() => showAlert('设置', '通知设置功能')}>
-          通知设置
-        </Button>
-      </View>
-    </View>
+  // 新番时间表页面
+  const SchedulesRoute = () => (
+    <Schedules showAlert={showAlert} />
   );
 
-  // 关于页面
-  const AboutRoute = () => (
-    <View style={styles.tabContent}>
-      <Text style={[styles.interval, styles.title]}>关于应用</Text>
-      <Text style={[styles.interval, styles.description]}>
-        这是一个使用 React Native 和 Paper 组件库构建的示例应用。
-      </Text>
-      <Text style={[styles.interval, styles.description]}>
-        版本：1.0.0
-      </Text>
-      <View style={[styles.interval]}>
-        <Button mode="text" onPress={() => showAlert('关于', '感谢使用本应用！')}>
-          更多信息
-        </Button>
-      </View>
-    </View>
+  // 排行榜页面
+  const RankingRoute = () => (
+    <Ranking showAlert={showAlert} />
   );
 
   const renderScene = SceneMap({
-    storage: StorageRoute,
-    settings: SettingsRoute,
-    about: AboutRoute,
+    recommend: RecommendRoute,
+    Schedules: SchedulesRoute,
+    ranking: RankingRoute,
   });
 
   const renderTabBar = (props: any) => (
@@ -153,11 +114,11 @@ export default function index() {
   return (
     <SafeAreaView style={styles.container}>
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{index, routes}}
         renderScene={renderScene}
         onIndexChange={setIndex}
         renderTabBar={renderTabBar}
-        initialLayout={{ width: layout.width }}
+        initialLayout={{width: layout.width}}
         style={styles.tabView}
         tabBarPosition="top"
         swipeEnabled={true}
