@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, Button, Alert} from 'react-native';
-import {Dialog, Portal, TextInput} from 'react-native-paper';
+import {Text, StyleSheet, View, Alert} from 'react-native';
+import {Dialog, Portal, Button, TextInput} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function index() {
@@ -33,7 +33,7 @@ export default function index() {
       console.error('保存数据失败:', error);
       Alert.alert('错误', '保存数据失败');
     }
-  }
+  };
 
   //获取数据
   const getData = async () => {
@@ -53,10 +53,10 @@ export default function index() {
     <View style={styles.container}>
       <Text style={[styles.interval]}>Hello World</Text>
       <View style={[styles.interval]}>
-        <Button title={'存储本地数据'} onPress={showInputAlert} />
+        <Button onPress={showInputAlert}>存储本地数据</Button>
       </View>
       <View style={[styles.interval]}>
-        <Button title={'获取本地数据'} onPress={getData} />
+        <Button onPress={getData}>获取本地数据</Button>
       </View>
 
       <Portal>
