@@ -98,7 +98,7 @@ export default function Schedules({showAlert}: SchedulesProps) {
   const renderAnimeCard = ({item}: {item: AnimeItem}) => (
     <TouchableOpacity style={styles.animeCard}>
       <Image
-        source={{uri: item.images.medium}}
+        source={{uri: item.images.large}}
         style={styles.animeImage}
         resizeMode="cover"
       />
@@ -168,9 +168,7 @@ export default function Schedules({showAlert}: SchedulesProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>新番时间表</Text>
-      </View>
+
       {renderContent()}
     </SafeAreaView>
   );
