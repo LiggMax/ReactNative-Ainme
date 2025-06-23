@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {
   Text,
   StyleSheet,
@@ -27,44 +27,51 @@ export default function Schedules({showAlert}: SchedulesProps) {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 默认选择星期一
+  const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
 
-  // 获取新番时间表数据
-  const fetchScheduleData = async () => {
+  // 获取新番时间表数据 - 使用useCallback避免重复创建
+  const fetchScheduleData = useCallback(async () => {
+    // 如果数据已加载且不为空，则不重复请求
+    if (dataLoaded && scheduleData.length > 0) {
+      return;
+    }
+
     try {
       setLoading(true);
 
       // 调用真实API获取数据
       const data = await animeService.getSchedule();
       setScheduleData(data);
+      setDataLoaded(true);
     } catch (error) {
       console.error('获取新番时间表失败:', error);
       showAlert('错误', '获取新番时间表失败，请稍后重试');
     } finally {
       setLoading(false);
     }
-  };
+  }, [dataLoaded, scheduleData.length, showAlert]);
 
   // 组件加载时获取数据
   useEffect(() => {
     fetchScheduleData();
-  }, []);
+  }, [fetchScheduleData]);
 
-  // 格式化收藏数
-  const formatCollectionCount = (count: number): string => {
+  // 格式化收藏数 - 使用useCallback缓存函数
+  const formatCollectionCount = useCallback((count: number): string => {
     if (count >= 10000) {
       return `${(count / 10000).toFixed(1)}万`;
     }
     return count.toString();
-  };
+  }, []);
 
-  // 获取当前选中星期的数据
-  const getCurrentWeekdayData = (): AnimeItem[] => {
+  // 获取当前选中星期的数据 - 使用useMemo缓存计算结果
+  const currentWeekdayData = useMemo((): AnimeItem[] => {
     const currentWeekday = scheduleData.find(item => item.weekday.id === selectedWeekday);
     return currentWeekday?.items || [];
-  };
+  }, [scheduleData, selectedWeekday]);
 
-  // 渲染星期选择器
-  const renderWeekdaySelector = () => (
+  // 渲染星期选择器 - 使用useMemo缓存组件
+  const renderWeekdaySelector = useMemo(() => (
     <View style={styles.weekdayContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {scheduleData.map((item) => (
@@ -92,15 +99,17 @@ export default function Schedules({showAlert}: SchedulesProps) {
         ))}
       </ScrollView>
     </View>
-  );
+  ), [scheduleData, selectedWeekday]);
 
-  // 渲染动漫卡片
-  const renderAnimeCard = ({item}: {item: AnimeItem}) => (
+  // 渲染动漫卡片 - 使用useCallback避免重复渲染
+  const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
     <TouchableOpacity style={styles.animeCard}>
       <Image
         source={{uri: item.images.large}}
         style={styles.animeImage}
         resizeMode="cover"
+        // 添加图片优化
+        fadeDuration={300}
       />
       <View style={styles.animeInfo}>
         <Text style={styles.animeTitle} numberOfLines={2}>
@@ -123,7 +132,7 @@ export default function Schedules({showAlert}: SchedulesProps) {
         </View>
       </View>
     </TouchableOpacity>
-  );
+  ), [formatCollectionCount]);
 
   // 渲染内容
   const renderContent = () => {
@@ -144,11 +153,11 @@ export default function Schedules({showAlert}: SchedulesProps) {
       );
     }
 
-    const currentData = getCurrentWeekdayData();
+    const currentData = currentWeekdayData;
 
     return (
       <View style={styles.contentContainer}>
-        {renderWeekdaySelector()}
+        {renderWeekdaySelector}
         <FlatList
           data={currentData}
           renderItem={renderAnimeCard}
@@ -156,6 +165,17 @@ export default function Schedules({showAlert}: SchedulesProps) {
           numColumns={2}
           contentContainerStyle={styles.animeList}
           showsVerticalScrollIndicator={false}
+          // 性能优化配置
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          initialNumToRender={8}
+          windowSize={10}
+          // getItemLayout={(data, index) => ({
+          //   length: CARD_WIDTH * 1.4 + 16 + 80, // 图片高度 + 间距 + 信息区域高度
+          //   offset: (CARD_WIDTH * 1.4 + 16 + 80) * Math.floor(index / 2),
+          //   index,
+          // })}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>今日暂无新番</Text>
