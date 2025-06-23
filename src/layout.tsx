@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {BottomNavigation} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Home from './home/Home';
 
@@ -32,67 +31,49 @@ function ProfileScreen() {
   );
 }
 
-const Tab = createBottomTabNavigator();
-
 export default function BottomTabLayout() {
+  const [index, setIndex] = useState(0);
+  
+  const routes = [
+    {
+      key: 'home',
+      title: '首页',
+      focusedIcon: 'home',
+      unfocusedIcon: 'home-outline',
+    },
+    {
+      key: 'collection',
+      title: '收藏',
+      focusedIcon: 'heart',
+      unfocusedIcon: 'heart-outline',
+    },
+    {
+      key: 'profile',
+      title: '我的',
+      focusedIcon: 'person',
+      unfocusedIcon: 'person-outline',
+    },
+  ];
+
+  const renderScene = BottomNavigation.SceneMap({
+    home: HomeScreen,
+    collection: CollectionScreen,
+    profile: ProfileScreen,
+  });
+
+  const renderIcon = ({route, focused, color}: {route: any, focused: boolean, color: string}) => {
+    const iconName = focused ? route.focusedIcon : route.unfocusedIcon;
+    return <Icon name={iconName} size={24} color={color} />;
+  };
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarInactiveTintColor: 'black',//未激活状态时的颜色
-          tabBarActiveTintColor: 'rgba(46,46,46,0.85)',//激活状态时的颜色
-          tabBarStyle: {
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: '首页',
-            // eslint-disable-next-line react/no-unstable-nested-components
-            tabBarIcon: ({color, size, focused}) => (
-              <Icon
-                name={focused ? 'home' : 'home-outline'}
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Explore"
-          component={CollectionScreen}
-          options={{
-            tabBarLabel: '收藏',
-            // eslint-disable-next-line react/no-unstable-nested-components
-            tabBarIcon: ({color, size, focused}) => (
-              <Icon
-                name={focused ? 'heart' : 'heart-outline'}
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            tabBarLabel: '我的',
-            // eslint-disable-next-line react/no-unstable-nested-components
-            tabBarIcon: ({color, size, focused}) => (
-              <Icon
-                name={focused ? 'person' : 'person-outline'}
-                color={color}
-                size={size}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <BottomNavigation
+      navigationState={{index, routes}}
+      onIndexChange={setIndex}
+      renderScene={renderScene}
+      renderIcon={renderIcon}
+      barStyle={styles.bottomNavigation}
+    />
   );
 }
 
@@ -113,5 +94,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  bottomNavigation: {
+    backgroundColor: '#ffffff',
   },
 });
