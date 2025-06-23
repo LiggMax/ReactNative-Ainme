@@ -1,17 +1,18 @@
-import React, {useState, useEffect, useCallback, useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-  Text,
-  StyleSheet,
-  View,
-  ScrollView,
-  TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
   Image,
   SafeAreaView,
-  ActivityIndicator,
-  FlatList,
-  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import animeService, {ScheduleItem, AnimeItem} from '../../../api/bangumi/animeService';
+import {useTheme} from 'react-native-paper';
+import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
 
 /**
  * 新番时间表页面
@@ -24,6 +25,7 @@ const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 每行2个卡片，考虑边距
 
 export default function Schedules({showAlert}: SchedulesProps) {
+  const theme = useTheme();
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 默认选择星期一
@@ -70,28 +72,135 @@ export default function Schedules({showAlert}: SchedulesProps) {
     return currentWeekday?.items || [];
   }, [scheduleData, selectedWeekday]);
 
+  // 动态样式 - 使用主题颜色
+  const dynamicStyles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    contentContainer: {
+      flex: 1,
+    },
+    weekdayContainer: {
+      backgroundColor: theme.colors.surface,
+      paddingVertical: 12,
+      marginBottom: 8,
+      elevation: 2,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    weekdayButton: {
+      marginHorizontal: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      backgroundColor: theme.colors.surfaceVariant,
+      alignItems: 'center',
+      minWidth: 70,
+    },
+    weekdayButtonSelected: {
+      backgroundColor: theme.colors.primary,
+    },
+    weekdayText: {
+      fontSize: 14,
+      fontWeight: 'bold',
+      color: theme.colors.onSurfaceVariant,
+    },
+    weekdayTextSelected: {
+      color: theme.colors.onPrimary,
+    },
+    weekdayCountText: {
+      fontSize: 12,
+      color: theme.colors.onSurfaceVariant,
+      marginTop: 2,
+      opacity: 0.7,
+    },
+    weekdayCountTextSelected: {
+      color: theme.colors.onPrimary,
+      opacity: 1,
+    },
+    animeCard: {
+      width: CARD_WIDTH,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
+      marginBottom: 16,
+      marginHorizontal: 4,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    animeTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: 6,
+      lineHeight: 18,
+    },
+    animeDate: {
+      fontSize: 12,
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: 8,
+    },
+    animeRating: {
+      fontSize: 12,
+      color: theme.colors.tertiary,
+      fontWeight: '500',
+    },
+    animeCollection: {
+      fontSize: 12,
+      color: theme.colors.primary,
+      fontWeight: '500',
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      marginTop: 8,
+      fontSize: 14,
+      color: theme.colors.onSurfaceVariant,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 100,
+    },
+    emptyText: {
+      fontSize: 16,
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+      opacity: 0.7,
+    },
+  }), [theme]);
+
   // 渲染星期选择器 - 使用useMemo缓存组件
   const renderWeekdaySelector = useMemo(() => (
-    <View style={styles.weekdayContainer}>
+    <View style={dynamicStyles.weekdayContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {scheduleData.map((item) => (
           <TouchableOpacity
             key={item.weekday.id}
             style={[
-              styles.weekdayButton,
-              selectedWeekday === item.weekday.id && styles.weekdayButtonSelected
+              dynamicStyles.weekdayButton,
+              selectedWeekday === item.weekday.id && dynamicStyles.weekdayButtonSelected
             ]}
             onPress={() => setSelectedWeekday(item.weekday.id)}
           >
             <Text style={[
-              styles.weekdayText,
-              selectedWeekday === item.weekday.id && styles.weekdayTextSelected
+              dynamicStyles.weekdayText,
+              selectedWeekday === item.weekday.id && dynamicStyles.weekdayTextSelected
             ]}>
               {item.weekday.cn}
             </Text>
             <Text style={[
-              styles.weekdayCountText,
-              selectedWeekday === item.weekday.id && styles.weekdayCountTextSelected
+              dynamicStyles.weekdayCountText,
+              selectedWeekday === item.weekday.id && dynamicStyles.weekdayCountTextSelected
             ]}>
               {item.items.length}部
             </Text>
@@ -99,11 +208,11 @@ export default function Schedules({showAlert}: SchedulesProps) {
         ))}
       </ScrollView>
     </View>
-  ), [scheduleData, selectedWeekday]);
+  ), [scheduleData, selectedWeekday, dynamicStyles]);
 
   // 渲染动漫卡片 - 使用useCallback避免重复渲染
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
-    <TouchableOpacity style={styles.animeCard}>
+    <TouchableOpacity style={dynamicStyles.animeCard}>
       <Image
         source={{uri: item.images.large}}
         style={styles.animeImage}
@@ -112,54 +221,52 @@ export default function Schedules({showAlert}: SchedulesProps) {
         fadeDuration={300}
       />
       <View style={styles.animeInfo}>
-        <Text style={styles.animeTitle} numberOfLines={2}>
+        <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
           {item.name_cn || item.name}
         </Text>
-        <Text style={styles.animeDate}>
+        <Text style={dynamicStyles.animeDate}>
           播出：{item.air_date}
         </Text>
         <View style={styles.animeStats}>
           {item.rating && (
-            <Text style={styles.animeRating}>
+            <Text style={dynamicStyles.animeRating}>
               ⭐ {item.rating.score.toFixed(1)}
             </Text>
           )}
           {item.collection && (
-            <Text style={styles.animeCollection}>
+            <Text style={dynamicStyles.animeCollection}>
               👥 {formatCollectionCount(item.collection.doing)}
             </Text>
           )}
         </View>
       </View>
     </TouchableOpacity>
-  ), [formatCollectionCount]);
+  ), [formatCollectionCount, dynamicStyles]);
 
   // 渲染内容
   const renderContent = () => {
     if (loading) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>加载中...</Text>
+        <View style={dynamicStyles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={dynamicStyles.loadingText}>加载中...</Text>
         </View>
       );
     }
 
     if (scheduleData.length === 0) {
       return (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>暂无新番时间表数据</Text>
+        <View style={dynamicStyles.emptyContainer}>
+          <Text style={dynamicStyles.emptyText}>暂无新番时间表数据</Text>
         </View>
       );
     }
 
-    const currentData = currentWeekdayData;
-
     return (
-      <View style={styles.contentContainer}>
+      <View style={dynamicStyles.contentContainer}>
         {renderWeekdaySelector}
         <FlatList
-          data={currentData}
+          data={currentWeekdayData}
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
@@ -177,8 +284,8 @@ export default function Schedules({showAlert}: SchedulesProps) {
           //   index,
           // })}
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>今日暂无新番</Text>
+            <View style={dynamicStyles.emptyContainer}>
+              <Text style={dynamicStyles.emptyText}>今日暂无新番</Text>
             </View>
           }
         />
@@ -187,84 +294,15 @@ export default function Schedules({showAlert}: SchedulesProps) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-
+    <SafeAreaView style={dynamicStyles.container}>
       {renderContent()}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  weekdayContainer: {
-    backgroundColor: '#fff',
-    paddingVertical: 12,
-    marginBottom: 8,
-  },
-  weekdayButton: {
-    marginHorizontal: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    minWidth: 70,
-  },
-  weekdayButtonSelected: {
-    backgroundColor: '#007AFF',
-  },
-  weekdayText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#666',
-  },
-  weekdayTextSelected: {
-    color: '#fff',
-  },
-  weekdayCountText: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 2,
-  },
-  weekdayCountTextSelected: {
-    color: '#fff',
-  },
   animeList: {
     padding: 16,
-  },
-  animeCard: {
-    width: CARD_WIDTH,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 16,
-    marginHorizontal: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   animeImage: {
     width: '100%',
@@ -275,52 +313,9 @@ const styles = StyleSheet.create({
   animeInfo: {
     padding: 12,
   },
-  animeTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6,
-    lineHeight: 18,
-  },
-  animeDate: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 8,
-  },
   animeStats: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  animeRating: {
-    fontSize: 12,
-    color: '#FF6B35',
-    fontWeight: '500',
-  },
-  animeCollection: {
-    fontSize: 12,
-    color: '#007AFF',
-    fontWeight: '500',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#666',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 100,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
   },
 });
