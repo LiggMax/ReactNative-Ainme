@@ -3,18 +3,18 @@ import {Text, StyleSheet, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Home from './home/Home';
 
 // 定义屏幕组件
 function HomeScreen() {
   return (
     <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>首页</Text>
-      <Text style={styles.screenContent}>欢迎来到动漫应用</Text>
+      <Home/>
     </View>
   );
 }
 
-function collectionScreen() {
+function CollectionScreen() {
   return (
     <View style={styles.screenContainer}>
       <Text style={styles.screenTitle}>探索</Text>
@@ -39,13 +39,11 @@ export default function BottomTabLayout() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
-          tabBarInactiveTintColor: 'gray',
+          headerShown: false,
+          tabBarInactiveTintColor: 'black',//未激活状态时的颜色
+          tabBarActiveTintColor: 'rgba(46,46,46,0.85)',//激活状态时的颜色
           tabBarStyle: {
-            // backgroundColor: 'white',
-            // paddingBottom: 5,
-            // height: 60,
           },
-          // headerTintColor: 'white',
         }}
       >
         <Tab.Screen
@@ -65,7 +63,7 @@ export default function BottomTabLayout() {
         />
         <Tab.Screen
           name="Explore"
-          component={collectionScreen}
+          component={CollectionScreen}
           options={{
             tabBarLabel: '收藏',
             // eslint-disable-next-line react/no-unstable-nested-components
