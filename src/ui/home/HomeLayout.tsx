@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, useWindowDimensions} from 'react-native';
-import {Dialog, Portal, TextInput, Button} from 'react-native-paper';
+import {Text, StyleSheet, useWindowDimensions} from 'react-native';
+import {Dialog, Portal, TextInput, Button, useTheme} from 'react-native-paper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,7 @@ import Schedules from './tab/Schedules';
 import Ranking from './tab/Ranking';
 
 export default function index() {
+  const theme = useTheme();
   const [visible, setVisible] = useState(false);
   const [inputText, setInputText] = useState('');
   const [alertVisible, setAlertVisible] = useState(false);
@@ -95,11 +96,11 @@ export default function index() {
   const renderTabBar = (props: any) => (
     <TabBar
       {...props}
-      indicatorStyle={styles.tabIndicator}
-      style={styles.tabBar}
+      indicatorStyle={[styles.tabIndicator, { backgroundColor: theme.colors.primary }]}
+      style={[styles.tabBar, { backgroundColor: theme.colors.surface }]}
       labelStyle={styles.tabLabel}
-      activeColor="#6200ee"
-      inactiveColor="#666"
+      activeColor={theme.colors.primary}
+      inactiveColor={theme.colors.onSurfaceVariant}
       scrollEnabled={false}
       tabStyle={styles.tabStyle}
       contentContainerStyle={styles.tabBarContent}
@@ -108,11 +109,26 @@ export default function index() {
 
   const layout = useWindowDimensions();
 
+  // 动态样式
+  const dynamicStyles = StyleSheet.create({
+    tabBar: {
+      backgroundColor: theme.colors.surface,
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.outline,
+    },
+    tabIndicator: {
+      backgroundColor: theme.colors.primary,
+      height: 3,
+    },
+  });
+
   // React 的 useEffect 钩子
   useEffect(() => {}, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -165,6 +181,7 @@ export default function index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 0,
   },
   tabView: {
     flex: 1,
@@ -176,14 +193,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   tabBar: {
-    backgroundColor: '#ffffff',
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   tabIndicator: {
-    backgroundColor: '#6200ee',
     height: 3,
   },
   tabLabel: {
@@ -204,7 +218,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#666',
     lineHeight: 24,
   },
   dialogMessage: {

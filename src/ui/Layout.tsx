@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
-import {BottomNavigation} from 'react-native-paper';
+import {BottomNavigation, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Home from './home/HomeLayout.tsx';
+import Home from './home/HomeLayout';
 
 // 定义屏幕组件
 function HomeScreen() {
@@ -32,6 +32,7 @@ function ProfileScreen() {
 }
 
 export default function BottomTabLayout() {
+  const theme = useTheme();
   const [index, setIndex] = useState(0);
 
   const routes = [
@@ -72,7 +73,9 @@ export default function BottomTabLayout() {
       onIndexChange={setIndex}
       renderScene={renderScene}
       renderIcon={renderIcon}
-      barStyle={styles.bottomNavigation}
+      barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
+      activeColor={theme.colors.primary}
+      inactiveColor={theme.colors.onSurfaceVariant}
     />
   );
 }
@@ -100,6 +103,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   bottomNavigation: {
-    backgroundColor: '#ffffff',
+    elevation: 8,
+    shadowOpacity: 0.1,
   },
 });
