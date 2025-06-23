@@ -115,8 +115,6 @@ export default function index() {
       backgroundColor: theme.colors.surface,
       elevation: 0,
       shadowOpacity: 0,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.outline,
     },
     tabIndicator: {
       backgroundColor: theme.colors.primary,
@@ -195,7 +193,6 @@ const styles = StyleSheet.create({
   tabBar: {
     elevation: 0,
     shadowOpacity: 0,
-    borderBottomWidth: 1,
   },
   tabIndicator: {
     height: 3,
