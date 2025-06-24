@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image'
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
+import AnimeDetail from '../../animedetail/AnimeDetail';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -36,6 +37,10 @@ export default function Schedules() {
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
   const [error, setError] = useState<string | null>(null); // 错误状态
+  
+  // 添加页面状态管理
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedAnimeId, setSelectedAnimeId] = useState<number | null>(null);
 
   //获取当前星期
   const getCurrentWeekday = () => {
@@ -192,7 +197,8 @@ export default function Schedules() {
       width: CARD_WIDTH,
       backgroundColor: theme.colors.surface,
       borderRadius: 12,
-      marginBottom: 16,
+      marginBottom: 12,
+      marginHorizontal: CARD_MARGIN / 2,
       shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -301,6 +307,28 @@ export default function Schedules() {
       borderTopRightRadius: 12,
       zIndex: 2,
     },
+    // FlatList 样式
+    animeList: {
+      padding: 16,
+      paddingHorizontal: 16,
+    },
+    row: {
+      justifyContent: 'space-between',
+    },
+    animeImage: {
+      width: '100%',
+      height: CARD_WIDTH * 1.4,
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+    },
+    animeInfo: {
+      padding: 12,
+    },
+    animeStats: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
   }), [theme]);
 
   // 渲染星期选择器 - 使用useMemo缓存组件
@@ -334,9 +362,26 @@ export default function Schedules() {
     </View>
   ), [scheduleData, selectedWeekday, dynamicStyles]);
 
+  // 处理卡片点击
+  const handleAnimeCardPress = useCallback((animeId: number) => {
+    console.log('🎯 点击动漫卡片，ID:', animeId);
+    setSelectedAnimeId(animeId);
+    setShowDetail(true);
+  }, []);
+
+  // 返回列表
+  const handleBackToList = useCallback(() => {
+    console.log('🔙 返回动漫列表');
+    setShowDetail(false);
+    setSelectedAnimeId(null);
+  }, []);
+
   // 渲染动漫卡片 - 使用useCallback避免重复渲染
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
-    <TouchableOpacity style={dynamicStyles.animeCard}>
+    <TouchableOpacity 
+      style={dynamicStyles.animeCard}
+      onPress={() => handleAnimeCardPress(item.id)}
+    >
       <View style={dynamicStyles.imageContainer}>
         {/* 图片加载时显示Shimmer覆盖层 */}
         {imageLoadingStates[item.id] && (
@@ -352,21 +397,21 @@ export default function Schedules() {
         {/* 实际图片 */}
         <FastImage
           source={{uri: item.images.large}}
-          style={styles.animeImage}
+          style={dynamicStyles.animeImage}
           resizeMode="cover"
           onLoadStart={() => handleImageLoadStart(item.id)}
           onLoadEnd={() => handleImageLoadEnd(item.id)}
           onError={() => handleImageLoadError(item.id)}
         />
       </View>
-      <View style={styles.animeInfo}>
+      <View style={dynamicStyles.animeInfo}>
         <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
           {item.name_cn || item.name}
         </Text>
         <Text style={dynamicStyles.animeDate}>
           播出：{item.air_date}
         </Text>
-        <View style={styles.animeStats}>
+        <View style={dynamicStyles.animeStats}>
           {item.rating && (
             <Text style={dynamicStyles.animeRating}>
               ⭐ {item.rating.score.toFixed(1)}
@@ -387,6 +432,7 @@ export default function Schedules() {
     handleImageLoadStart,
     handleImageLoadEnd,
     handleImageLoadError,
+    handleAnimeCardPress,
     theme.colors
   ]);
 
@@ -435,8 +481,8 @@ export default function Schedules() {
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
           numColumns={NUM_COLUMNS}
-          contentContainerStyle={styles.animeList}
-          columnWrapperStyle={NUM_COLUMNS > 1 ? styles.row : undefined}
+          contentContainerStyle={dynamicStyles.animeList}
+          columnWrapperStyle={NUM_COLUMNS > 1 ? dynamicStyles.row : undefined}
           showsVerticalScrollIndicator={false}
           // 性能优化配置
           removeClippedSubviews={true}
@@ -456,30 +502,15 @@ export default function Schedules() {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      {renderContent()}
+      {showDetail && selectedAnimeId ? (
+        <AnimeDetail 
+          id={selectedAnimeId}
+          onBack={handleBackToList}
+          showBackButton={true}
+        />
+      ) : (
+        renderContent()
+      )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  animeList: {
-    padding: 16,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
-  animeImage: {
-    width: '100%',
-    height: CARD_WIDTH * 1.4,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  animeInfo: {
-    padding: 12,
-  },
-  animeStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});

@@ -66,21 +66,11 @@ export interface SearchParams {
  * 动漫服务类
  */
 class AnimeService {
-  /**
-   * 获取动漫列表
-   */
-  async getAnimeList(params: AnimeListParams = {}): Promise<{
-    list: AnimeItem[];
-    total: number;
-    page: number;
-  }> {
-    return request.get(ANIME_API.GET_LIST, {params});
-  }
 
   /**
    * 获取动漫详情
    */
-  async getAnimeDetail(id: string): Promise<AnimeItem> {
+  async getAnimeDetail(id: number): Promise<AnimeItem> {
     return request.get(ANIME_API.GET_DETAIL(id));
   }
 
