@@ -14,6 +14,7 @@ import {
 import {useTheme} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import FastImage from 'react-native-fast-image'
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
 
 // 创建Shimmer组件
@@ -265,11 +266,10 @@ export default function Schedules({showAlert}: SchedulesProps) {
     <TouchableOpacity style={dynamicStyles.animeCard}>
       <View style={dynamicStyles.imageContainer}>
         {/* 实际图片 */}
-        <Image
+        <FastImage
           source={{uri: item.images.large}}
           style={styles.animeImage}
           resizeMode="cover"
-          fadeDuration={300}
           onLoadStart={() => handleImageLoadStart(item.id)}
           onLoadEnd={() => handleImageLoadEnd(item.id)}
         />
