@@ -42,7 +42,7 @@ export default function Schedules() {
 
     try {
       setLoading(true);
-      setError(null); // 清除之前的错误
+      setError(null);
 
       // 调用真实API获取数据
       const data = await animeService.getSchedule();
@@ -79,7 +79,6 @@ export default function Schedules() {
   // 当数据更新时清理图片加载状态
   useEffect(() => {
     if (scheduleData.length > 0) {
-      // 清空之前的图片加载状态，让图片自然触发加载事件
       setImageLoadingStates({});
     }
   }, [scheduleData]);

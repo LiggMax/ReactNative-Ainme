@@ -198,46 +198,52 @@ class Request {
           return Promise.reject(error);
         }
 
-        console.error(`❌ 响应错误: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
-        console.error(`⏱️  请求耗时: ${duration}ms`);
+        // 处理网络错误
+        if (error.response) {
+          // 服务器响应错误
+          const status = error.response.status;
+          const data = error.response.data;
+          
+          console.error(`❌ HTTP ${status}: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+          console.error(`📊 响应数据:`, data);
+          console.error(`⏱️  请求耗时: ${duration}ms`);
 
-        // 处理HTTP状态码错误
-        const { response } = error;
-        let errorMessage = '网络异常，请稍后重试';
-
-        if (response) {
-          switch (response.status) {
+          // 根据状态码返回相应错误信息
+          switch (status) {
             case 401:
-              errorMessage = '登录已过期，请重新登录';
-              this.handleTokenExpired();
-              break;
+              return Promise.reject(new Error('未授权访问，请检查认证信息'));
             case 403:
-              errorMessage = '没有权限访问';
-              break;
+              return Promise.reject(new Error('访问被禁止，权限不足'));
             case 404:
-              errorMessage = '请求的资源不存在';
-              break;
-            case 408:
-              errorMessage = '请求超时，请重试';
-              break;
+              return Promise.reject(new Error('请求的资源不存在'));
             case 500:
-              errorMessage = '服务器内部错误';
-              break;
+              return Promise.reject(new Error('服务器内部错误'));
             case 502:
-              errorMessage = '网关错误';
-              break;
+              return Promise.reject(new Error('网关错误'));
             case 503:
-              errorMessage = '服务暂不可用';
-              break;
-            case 504:
-              errorMessage = '网关超时';
-              break;
+              return Promise.reject(new Error('服务不可用'));
             default:
-              errorMessage = response.data?.message || '请求失败';
+              return Promise.reject(new Error(`请求失败: HTTP ${status}`));
           }
+        } else if (error.request) {
+          // 网络连接错误
+          console.error(`🌐 网络连接错误: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+          console.error(`📱 请求详情:`, {
+            url: error.config?.url,
+            method: error.config?.method,
+            baseURL: error.config?.baseURL,
+            timeout: error.config?.timeout,
+            headers: error.config?.headers,
+          });
+          console.error(`⏱️  请求耗时: ${duration}ms`);
+          console.error(`🔍 错误详情:`, error.message);
+          
+          return Promise.reject(new Error('网络连接失败，请检查网络设置或稍后重试'));
+        } else {
+          // 其他错误
+          console.error(`💥 请求配置错误:`, error.message);
+          return Promise.reject(new Error(`请求配置错误: ${error.message}`));
         }
-
-        return Promise.reject(new Error(errorMessage));
       }
     );
   }
