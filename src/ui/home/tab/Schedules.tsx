@@ -1,9 +1,8 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState, useRef} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -19,26 +18,20 @@ import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeS
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
-
-/**
- * 新番时间表页面
- */
-interface SchedulesProps {
-  showAlert: (title: string, message: string) => void;
-}
-
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 每行2个卡片，考虑边距
 
-export default function Schedules({showAlert}: SchedulesProps) {
+export default function Schedules() {
   const theme = useTheme();
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 默认选择星期一
   const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
+  const [error, setError] = useState<string | null>(null); // 错误状态
 
   // 图片加载状态管理
   const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
+  const imageLoadingTimeouts = useRef<{[key: string]: NodeJS.Timeout}>({});
 
   // 获取新番时间表数据 - 使用useCallback避免重复创建
   const fetchScheduleData = useCallback(async () => {
@@ -49,6 +42,7 @@ export default function Schedules({showAlert}: SchedulesProps) {
 
     try {
       setLoading(true);
+      setError(null); // 清除之前的错误
 
       // 调用真实API获取数据
       const data = await animeService.getSchedule();
@@ -56,34 +50,97 @@ export default function Schedules({showAlert}: SchedulesProps) {
       setDataLoaded(true);
     } catch (error) {
       console.error('获取新番时间表失败:', error);
-      showAlert('错误', '获取新番时间表失败，请稍后重试');
+      setError('获取新番时间表失败，请检查网络连接');
     } finally {
       setLoading(false);
     }
-  }, [dataLoaded, scheduleData.length, showAlert]);
+  }, [dataLoaded, scheduleData.length]);
+
+  // 重试函数
+  const handleRetry = useCallback(() => {
+    setDataLoaded(false);
+    setError(null);
+    fetchScheduleData();
+  }, [fetchScheduleData]);
 
   // 组件加载时获取数据
   useEffect(() => {
     fetchScheduleData();
   }, [fetchScheduleData]);
 
+  // 组件卸载时清理超时器
+  useEffect(() => {
+    return () => {
+      // 清理所有图片加载超时器
+      Object.values(imageLoadingTimeouts.current).forEach(timeout => {
+        clearTimeout(timeout);
+      });
+      imageLoadingTimeouts.current = {};
+    };
+  }, []);
+
   // 当数据更新时清理图片加载状态
   useEffect(() => {
     if (scheduleData.length > 0) {
+      // 清空之前的图片加载状态，让图片自然触发加载事件
       setImageLoadingStates({});
+      // 清理所有超时器
+      Object.values(imageLoadingTimeouts.current).forEach(timeout => {
+        clearTimeout(timeout);
+      });
+      imageLoadingTimeouts.current = {};
     }
   }, [scheduleData]);
 
   // 处理图片加载开始
   const handleImageLoadStart = useCallback((itemId: number) => {
+    console.log(`图片开始加载: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: true
     }));
+
+    // 设置超时器，如果5秒后还没有收到加载完成事件，强制设置为完成
+    if (imageLoadingTimeouts.current[itemId]) {
+      clearTimeout(imageLoadingTimeouts.current[itemId]);
+    }
+
+    imageLoadingTimeouts.current[itemId] = setTimeout(() => {
+      console.warn(`图片加载超时，强制设置为完成: ${itemId}`);
+      setImageLoadingStates(prev => ({
+        ...prev,
+        [itemId]: false
+      }));
+      delete imageLoadingTimeouts.current[itemId];
+    }, 5000);
   }, []);
 
   // 处理图片加载完成
   const handleImageLoadEnd = useCallback((itemId: number) => {
+    console.log(`图片加载完成: ${itemId}`);
+
+    // 清理超时器
+    if (imageLoadingTimeouts.current[itemId]) {
+      clearTimeout(imageLoadingTimeouts.current[itemId]);
+      delete imageLoadingTimeouts.current[itemId];
+    }
+
+    setImageLoadingStates(prev => ({
+      ...prev,
+      [itemId]: false
+    }));
+  }, []);
+
+  // 处理图片加载错误
+  const handleImageLoadError = useCallback((itemId: number) => {
+    console.warn(`图片加载失败: ${itemId}`);
+
+    // 清理超时器
+    if (imageLoadingTimeouts.current[itemId]) {
+      clearTimeout(imageLoadingTimeouts.current[itemId]);
+      delete imageLoadingTimeouts.current[itemId];
+    }
+
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
@@ -209,6 +266,45 @@ export default function Schedules({showAlert}: SchedulesProps) {
       textAlign: 'center',
       opacity: 0.7,
     },
+    // 错误状态样式
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 32,
+    },
+    errorIcon: {
+      fontSize: 48,
+      marginBottom: 16,
+    },
+    errorTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+      marginBottom: 8,
+      textAlign: 'center',
+    },
+    errorMessage: {
+      fontSize: 14,
+      color: theme.colors.onSurfaceVariant,
+      textAlign: 'center',
+      lineHeight: 20,
+      marginBottom: 24,
+    },
+    retryButton: {
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 24,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    retryButtonText: {
+      color: theme.colors.onPrimary,
+      fontSize: 16,
+      fontWeight: '600',
+      marginLeft: 8,
+    },
     // Shimmer相关样式
     imageContainer: {
       position: 'relative',
@@ -265,16 +361,8 @@ export default function Schedules({showAlert}: SchedulesProps) {
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
     <TouchableOpacity style={dynamicStyles.animeCard}>
       <View style={dynamicStyles.imageContainer}>
-        {/* 实际图片 */}
-        <FastImage
-          source={{uri: item.images.large}}
-          style={styles.animeImage}
-          resizeMode="cover"
-          onLoadStart={() => handleImageLoadStart(item.id)}
-          onLoadEnd={() => handleImageLoadEnd(item.id)}
-        />
         {/* 图片加载时显示Shimmer覆盖层 */}
-        {(imageLoadingStates[item.id]) && (
+        {imageLoadingStates[item.id] && (
           <ShimmerPlaceholder
             style={dynamicStyles.shimmerPlaceholder}
             shimmerColors={[
@@ -284,6 +372,15 @@ export default function Schedules({showAlert}: SchedulesProps) {
             ]}
           />
         )}
+        {/* 实际图片 */}
+        <FastImage
+          source={{uri: item.images.large}}
+          style={styles.animeImage}
+          resizeMode="cover"
+          onLoadStart={() => handleImageLoadStart(item.id)}
+          onLoadEnd={() => handleImageLoadEnd(item.id)}
+          onError={() => handleImageLoadError(item.id)}
+        />
       </View>
       <View style={styles.animeInfo}>
         <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
@@ -312,8 +409,23 @@ export default function Schedules({showAlert}: SchedulesProps) {
     imageLoadingStates,
     handleImageLoadStart,
     handleImageLoadEnd,
+    handleImageLoadError,
     theme.colors
   ]);
+
+  // 渲染错误状态
+  const renderErrorState = () => (
+    <View style={dynamicStyles.errorContainer}>
+      <Text style={dynamicStyles.errorIcon}>📡</Text>
+      <Text style={dynamicStyles.errorTitle}>加载失败</Text>
+      <Text style={dynamicStyles.errorMessage}>
+        {error || '获取新番时间表失败，请检查网络连接后重试'}
+      </Text>
+      <TouchableOpacity style={dynamicStyles.retryButton} onPress={handleRetry}>
+        <Text style={dynamicStyles.retryButtonText}>🔄 重试</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   // 渲染内容
   const renderContent = () => {
@@ -324,6 +436,10 @@ export default function Schedules({showAlert}: SchedulesProps) {
           <Text style={dynamicStyles.loadingText}>加载中...</Text>
         </View>
       );
+    }
+
+    if (error) {
+      return renderErrorState();
     }
 
     if (scheduleData.length === 0) {
