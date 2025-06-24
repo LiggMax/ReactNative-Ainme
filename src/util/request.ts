@@ -84,7 +84,7 @@ class Request {
    */
   private createCancelToken(requestId?: string): CancelTokenSource {
     const source = axios.CancelToken.source();
-    
+
     if (requestId) {
       // 如果存在相同的请求ID，先取消之前的请求
       if (this.cancelTokens.has(requestId)) {
@@ -135,7 +135,7 @@ class Request {
       }
 
       console.log(`🔄 请求失败，${retryDelay}ms后进行第${retryCount + 1}次重试...`);
-      
+
       // 延迟后重试
       await this.delay(retryDelay);
       return this.retryRequest(requestFn, retryCount + 1, maxRetries, retryDelay);
@@ -153,7 +153,6 @@ class Request {
         config.metadata = { startTime };
 
         console.log(`🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`);
-        console.log(`⏰ 超时时间: ${config.timeout}ms`);
 
         // 在这里可以添加token
         const token = this.getToken();
@@ -172,13 +171,7 @@ class Request {
     // 响应拦截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
-        const endTime = Date.now();
-        const duration = endTime - (response.config.metadata?.startTime || endTime);
-        
-        console.log(`✅ 响应成功: ${response.config.method?.toUpperCase()} ${response.config.url}`);
-        console.log(`⏱️  请求耗时: ${duration}ms`);
 
-        // 直接返回响应数据，不进行业务状态码判断
         return response.data;
       },
       (error) => {
@@ -203,7 +196,7 @@ class Request {
           // 服务器响应错误
           const status = error.response.status;
           const data = error.response.data;
-          
+
           console.error(`❌ HTTP ${status}: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
           console.error(`📊 响应数据:`, data);
           console.error(`⏱️  请求耗时: ${duration}ms`);
@@ -237,7 +230,7 @@ class Request {
           });
           console.error(`⏱️  请求耗时: ${duration}ms`);
           console.error(`🔍 错误详情:`, error.message);
-          
+
           return Promise.reject(new Error('网络连接失败，请检查网络设置或稍后重试'));
         } else {
           // 其他错误
@@ -284,7 +277,7 @@ class Request {
 
     // 设置超时时间
     const requestTimeout = this.getTimeoutByType(method, timeout);
-    
+
     // 创建取消令牌
     const cancelSource = this.createCancelToken(requestId);
 
@@ -297,7 +290,7 @@ class Request {
     const requestFn = async (): Promise<T> => {
       try {
         let response: any;
-        
+
         switch (method) {
           case RequestType.GET:
             response = await this.instance.get(url, requestConfig);

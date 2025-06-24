@@ -80,7 +80,7 @@ class AnimeService {
   /**
    * 获取动漫详情
    */
-  async getAnimeDetail(id: string): Promise<AnimeItem> {
+  async getAnimeDetail(id: number): Promise<AnimeItem> {
     return request.get(ANIME_API.GET_DETAIL(id));
   }
 

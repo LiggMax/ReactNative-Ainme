@@ -11,10 +11,13 @@ import {
   View,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image'
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
+import {RootStackParamList} from '../../../types/navigation';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -30,8 +33,11 @@ const NUM_COLUMNS = Math.floor((width - CONTAINER_PADDING) / (MIN_CARD_WIDTH + C
 // 计算实际卡片宽度
 const CARD_WIDTH = (width - CONTAINER_PADDING - (NUM_COLUMNS - 1) * CARD_MARGIN) / NUM_COLUMNS;
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 export default function Schedules() {
   const theme = useTheme();
+  const navigation = useNavigation<NavigationProp>();
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
@@ -48,6 +54,19 @@ export default function Schedules() {
 
   // 图片加载状态管理
   const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
+
+  // 处理卡片点击事件
+  const handleCardPress = useCallback((item: AnimeItem) => {
+    console.log('🎯 点击卡片，跳转到详情页:', {
+      id: item.id,
+      title: item.name_cn || item.name
+    });
+    
+    navigation.navigate('AnimeDetail', {
+      id: item.id,
+      title: item.name_cn || item.name,
+    });
+  }, [navigation]);
 
   // 获取新番时间表数据 - 使用useCallback避免重复创建
   const fetchScheduleData = useCallback(async (force: boolean = false) => {
@@ -336,7 +355,11 @@ export default function Schedules() {
 
   // 渲染动漫卡片 - 使用useCallback避免重复渲染
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => (
-    <TouchableOpacity style={dynamicStyles.animeCard}>
+    <TouchableOpacity 
+      style={dynamicStyles.animeCard}
+      onPress={() => handleCardPress(item)}
+      activeOpacity={0.8}
+    >
       <View style={dynamicStyles.imageContainer}>
         {/* 图片加载时显示Shimmer覆盖层 */}
         {imageLoadingStates[item.id] && (
@@ -387,6 +410,7 @@ export default function Schedules() {
     handleImageLoadStart,
     handleImageLoadEnd,
     handleImageLoadError,
+    handleCardPress,
     theme.colors
   ]);
 

@@ -26,16 +26,8 @@ export const BASE_URL = BASE_URLS[CURRENT_ENV];
 export const API_PREFIX = {
   // 通用API前缀
   COMMON: '',
-  // 用户相关API
-  USER: '/api/v1/user',
-  // 认证相关API
-  AUTH: '/api/v1/auth',
   // 动漫相关API
-  ANIME: '/v1/anime',
-  // 文件上传API
-  UPLOAD: '/api/v1/upload',
-  // 评论相关API
-  COMMENT: '/api/v1/comment',
+  ANIME: '/v0',
 } as const;
 
 // 请求超时配置
