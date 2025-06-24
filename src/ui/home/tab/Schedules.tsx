@@ -19,15 +19,32 @@ import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeS
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = (width - 48) / 2; // 每行2个卡片，考虑边距
+
+// 动态计算卡片布局参数
+const MIN_CARD_WIDTH = 150; // 最小卡片宽度
+const CARD_MARGIN = 16; // 卡片间距
+const CONTAINER_PADDING = 32; // 容器左右内边距总和
+
+// 计算每行卡片数量
+const NUM_COLUMNS = Math.floor((width - CONTAINER_PADDING) / (MIN_CARD_WIDTH + CARD_MARGIN));
+// 计算实际卡片宽度
+const CARD_WIDTH = (width - CONTAINER_PADDING - (NUM_COLUMNS - 1) * CARD_MARGIN) / NUM_COLUMNS;
 
 export default function Schedules() {
   const theme = useTheme();
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedWeekday, setSelectedWeekday] = useState<number>(1); // 默认选择星期一
   const [dataLoaded, setDataLoaded] = useState(false); // 数据是否已加载
   const [error, setError] = useState<string | null>(null); // 错误状态
+
+  //获取当前星期
+  const getCurrentWeekday = () => {
+    const today = new Date();
+    const day = today.getDay(); // 0-6分别表示星期天到星期六
+    return day === 0 ? 7 : day; // 星期天为7
+  };
+  //默认选择当前星期
+  const [selectedWeekday, setSelectedWeekday] = useState<number>(getCurrentWeekday());
 
   // 图片加载状态管理
   const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
@@ -44,7 +61,7 @@ export default function Schedules() {
       setLoading(true);
       setError(null);
 
-      // 调用真实API获取数据
+      // 调用API获取数据
       const data = await animeService.getSchedule();
       setScheduleData(data);
       setDataLoaded(true);
@@ -176,7 +193,6 @@ export default function Schedules() {
       backgroundColor: theme.colors.surface,
       borderRadius: 12,
       marginBottom: 16,
-      marginHorizontal: 4,
       shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -418,8 +434,9 @@ export default function Schedules() {
           data={currentWeekdayData}
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
+          numColumns={NUM_COLUMNS}
           contentContainerStyle={styles.animeList}
+          columnWrapperStyle={NUM_COLUMNS > 1 ? styles.row : undefined}
           showsVerticalScrollIndicator={false}
           // 性能优化配置
           removeClippedSubviews={true}
@@ -447,6 +464,9 @@ export default function Schedules() {
 const styles = StyleSheet.create({
   animeList: {
     padding: 16,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
   animeImage: {
     width: '100%',
