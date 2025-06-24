@@ -1,39 +1,42 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {BottomNavigation, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Home from './home/HomeLayout';
 
-// 定义屏幕组件
-function HomeScreen() {
-  return (
-    <View style={styles.homeScreenContainer}>
-      <Home/>
-    </View>
-  );
-}
-
-function CollectionScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>探索</Text>
-      <Text style={styles.screenContent}>发现更多精彩动漫</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>个人资料</Text>
-      <Text style={styles.screenContent}>我的动漫收藏</Text>
-    </View>
-  );
-}
-
 export default function BottomTabLayout() {
   const theme = useTheme();
   const [index, setIndex] = useState(0);
+
+  // 缓存Home组件实例，避免重新创建
+  const homeInstance = useMemo(() => <Home />, []);
+
+  // 定义屏幕组件 - 使用useMemo缓存
+  function HomeScreen() {
+    return (
+      <View style={styles.homeScreenContainer}>
+        {homeInstance}
+      </View>
+    );
+  }
+
+  function CollectionScreen() {
+    return (
+      <View style={styles.screenContainer}>
+        <Text style={styles.screenTitle}>探索</Text>
+        <Text style={styles.screenContent}>发现更多精彩动漫</Text>
+      </View>
+    );
+  }
+
+  function ProfileScreen() {
+    return (
+      <View style={styles.screenContainer}>
+        <Text style={styles.screenTitle}>个人资料</Text>
+        <Text style={styles.screenContent}>我的动漫收藏</Text>
+      </View>
+    );
+  }
 
   const routes = [
     {

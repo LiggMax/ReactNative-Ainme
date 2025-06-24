@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {Text, StyleSheet, useWindowDimensions} from 'react-native';
 import {Dialog, Portal, TextInput, Button, useTheme} from 'react-native-paper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
@@ -23,35 +23,35 @@ export default function index() {
     {key: 'ranking', title: '排行榜'},
   ]);
 
-  const showAlert = (title: string, message: string) => {
+  const showAlert = useCallback((title: string, message: string) => {
     setAlertTitle(title);
     setAlertMessage(message);
     setAlertVisible(true);
-  };
+  }, []);
 
-  const hideAlert = () => {
+  const hideAlert = useCallback(() => {
     setAlertVisible(false);
-  };
+  }, []);
 
-  const showInputAlert = () => {
+  const showInputAlert = useCallback(() => {
     setInputText('');
     setVisible(true);
-  };
+  }, []);
 
-  const hideDialog = () => {
+  const hideDialog = useCallback(() => {
     setVisible(false);
     setInputText('');
-  };
+  }, []);
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (inputText.trim()) {
       saveData(inputText.trim());
     }
     hideDialog();
-  };
+  }, [inputText]);
 
   // 保存数据
-  const saveData = async (test: string) => {
+  const saveData = useCallback(async (test: string) => {
     try {
       await AsyncStorage.setItem('name', test);
       showAlert('成功', '数据保存成功！');
@@ -59,10 +59,10 @@ export default function index() {
       console.error('保存数据失败:', error);
       showAlert('错误', '保存数据失败');
     }
-  };
+  }, [showAlert]);
 
   //获取数据
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const value = await AsyncStorage.getItem('name');
       showAlert('获取数据成功', value || '暂无数据');
@@ -70,30 +70,28 @@ export default function index() {
       console.error('获取数据失败:', error);
       showAlert('错误', '获取数据失败');
     }
-  };
+  }, [showAlert]);
 
-  // 推荐页面
-  const RecommendRoute = () => (
+  // 使用useMemo缓存组件，避免重新创建
+  const RecommendRoute = useMemo(() => () => (
     <Recommend showInputAlert={showInputAlert} getData={getData} />
-  );
+  ), [showInputAlert, getData]);
 
-  // 新番时间表页面
-  const SchedulesRoute = () => (
-    <Schedules showAlert={showAlert} />
-  );
+  const SchedulesRoute = useMemo(() => () => (
+    <Schedules />
+  ), []);
 
-  // 排行榜页面
-  const RankingRoute = () => (
+  const RankingRoute = useMemo(() => () => (
     <Ranking showAlert={showAlert} />
-  );
+  ), [showAlert]);
 
-  const renderScene = SceneMap({
+  const renderScene = useMemo(() => SceneMap({
     recommend: RecommendRoute,
     Schedules: SchedulesRoute,
     ranking: RankingRoute,
-  });
+  }), [RecommendRoute, SchedulesRoute, RankingRoute]);
 
-  const renderTabBar = (props: any) => (
+  const renderTabBar = useCallback((props: any) => (
     <TabBar
       {...props}
       indicatorStyle={[styles.tabIndicator, { backgroundColor: theme.colors.primary }]}
@@ -105,22 +103,9 @@ export default function index() {
       tabStyle={styles.tabStyle}
       contentContainerStyle={styles.tabBarContent}
     />
-  );
+  ), [theme.colors.primary, theme.colors.surface, theme.colors.onSurfaceVariant]);
 
   const layout = useWindowDimensions();
-
-  // 动态样式
-  const dynamicStyles = StyleSheet.create({
-    tabBar: {
-      backgroundColor: theme.colors.surface,
-      elevation: 0,
-      shadowOpacity: 0,
-    },
-    tabIndicator: {
-      backgroundColor: theme.colors.primary,
-      height: 3,
-    },
-  });
 
   // React 的 useEffect 钩子
   useEffect(() => {}, []);
@@ -136,6 +121,8 @@ export default function index() {
         style={styles.tabView}
         tabBarPosition="top"
         swipeEnabled={true}
+        lazy={true}
+        lazyPreloadDistance={0}
       />
 
       {/* 输入弹窗 */}

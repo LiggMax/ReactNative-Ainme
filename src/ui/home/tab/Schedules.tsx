@@ -34,9 +34,10 @@ export default function Schedules() {
   const imageLoadingTimeouts = useRef<{[key: string]: NodeJS.Timeout}>({});
 
   // 获取新番时间表数据 - 使用useCallback避免重复创建
-  const fetchScheduleData = useCallback(async () => {
-    // 如果数据已加载且不为空，则不重复请求
-    if (dataLoaded && scheduleData.length > 0) {
+  const fetchScheduleData = useCallback(async (force: boolean = false) => {
+    // 如果数据已加载且不为空，且不是强制刷新，则不重复请求
+    if (!force && dataLoaded && scheduleData.length > 0) {
+      console.log('数据已存在，跳过请求');
       return;
     }
 
@@ -44,10 +45,12 @@ export default function Schedules() {
       setLoading(true);
       setError(null); // 清除之前的错误
 
+      console.log('开始获取新番时间表数据...');
       // 调用真实API获取数据
       const data = await animeService.getSchedule();
       setScheduleData(data);
       setDataLoaded(true);
+      console.log('新番时间表数据获取成功');
     } catch (error) {
       console.error('获取新番时间表失败:', error);
       setError('获取新番时间表失败，请检查网络连接');
@@ -60,13 +63,21 @@ export default function Schedules() {
   const handleRetry = useCallback(() => {
     setDataLoaded(false);
     setError(null);
-    fetchScheduleData();
+    fetchScheduleData(true); // 强制刷新
   }, [fetchScheduleData]);
 
-  // 组件加载时获取数据
+  // 组件加载时获取数据 - 只在首次加载时执行
   useEffect(() => {
-    fetchScheduleData();
-  }, [fetchScheduleData]);
+    // 添加延迟，确保组件完全挂载后再请求数据
+    const timer = setTimeout(() => {
+      if (!dataLoaded) {
+        console.log('Schedules组件首次加载，开始获取数据');
+        fetchScheduleData();
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []); // 空依赖数组，确保只在首次挂载时执行
 
   // 组件卸载时清理超时器
   useEffect(() => {
