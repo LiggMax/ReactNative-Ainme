@@ -1,16 +1,31 @@
-import React from 'react';
+import React, {useState, useCallback} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
-import {Button} from 'react-native-paper';
+import {Button, Dialog, Portal, useTheme} from 'react-native-paper';
 
-interface RankingProps {
-  showAlert: (title: string, message: string) => void;
-}
+export default function Ranking() {
+  const theme = useTheme();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
-export default function Ranking({showAlert}: RankingProps) {
+  // 显示弹窗的方法
+  const showAlert = useCallback((title: string, message: string) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertVisible(true);
+  }, []);
+
+  // 隐藏弹窗的方法
+  const hideAlert = useCallback(() => {
+    setAlertVisible(false);
+    setAlertTitle('');
+    setAlertMessage('');
+  }, []);
+
   return (
-    <View style={styles.tabContent}>
-      <Text style={[styles.interval, styles.title]}>排行榜</Text>
-      <Text style={[styles.interval, styles.description]}>
+    <View style={[styles.tabContent, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.interval, styles.title, { color: theme.colors.onBackground }]}>排行榜</Text>
+      <Text style={[styles.interval, styles.description, { color: theme.colors.onSurfaceVariant }]}>
         查看最受欢迎的动漫作品排行榜
       </Text>
       <View style={[styles.interval]}>
@@ -34,6 +49,18 @@ export default function Ranking({showAlert}: RankingProps) {
           更多排行
         </Button>
       </View>
+
+      <Portal>
+        <Dialog visible={alertVisible} onDismiss={hideAlert}>
+          <Dialog.Title>{alertTitle}</Dialog.Title>
+          <Dialog.Content>
+            <Text style={styles.dialogMessage}>{alertMessage}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideAlert}>确定</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }
@@ -56,7 +83,9 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#666',
     lineHeight: 24,
+  },
+  dialogMessage: {
+    fontSize: 16,
   },
 });

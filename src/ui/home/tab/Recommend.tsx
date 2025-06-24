@@ -2,22 +2,18 @@ import React from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
 
-interface RecommendProps {
-  showInputAlert: () => void;
-  getData: () => void;
-}
 
-export default function Recommend({ showInputAlert, getData }: RecommendProps) {
+export default function Recommend() {
   return (
     <View style={styles.tabContent}>
       <Text style={[styles.interval]}>推荐内容</Text>
       <View style={[styles.interval]}>
-        <Button mode="contained" onPress={showInputAlert}>
+        <Button mode="contained">
           存储本地数据
         </Button>
       </View>
       <View style={[styles.interval]}>
-        <Button mode="contained" onPress={getData}>
+        <Button mode="contained" >
           获取本地数据
         </Button>
       </View>

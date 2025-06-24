@@ -44,12 +44,10 @@ export default function Schedules() {
       setLoading(true);
       setError(null); // 清除之前的错误
 
-      console.log('开始获取新番时间表数据...');
       // 调用真实API获取数据
       const data = await animeService.getSchedule();
       setScheduleData(data);
       setDataLoaded(true);
-      console.log('新番时间表数据获取成功');
     } catch (error) {
       console.error('获取新番时间表失败:', error);
       setError('获取新番时间表失败，请检查网络连接');
@@ -88,7 +86,6 @@ export default function Schedules() {
 
   // 处理图片加载开始
   const handleImageLoadStart = useCallback((itemId: number) => {
-    console.log(`图片开始加载: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: true
@@ -97,7 +94,6 @@ export default function Schedules() {
 
   // 处理图片加载完成
   const handleImageLoadEnd = useCallback((itemId: number) => {
-    console.log(`图片加载完成: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
