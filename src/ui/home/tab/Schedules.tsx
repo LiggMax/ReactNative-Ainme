@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -31,7 +31,6 @@ export default function Schedules() {
 
   // 图片加载状态管理
   const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
-  const imageLoadingTimeouts = useRef<{[key: string]: NodeJS.Timeout}>({});
 
   // 获取新番时间表数据 - 使用useCallback避免重复创建
   const fetchScheduleData = useCallback(async (force: boolean = false) => {
@@ -79,27 +78,11 @@ export default function Schedules() {
     return () => clearTimeout(timer);
   }, []); // 空依赖数组，确保只在首次挂载时执行
 
-  // 组件卸载时清理超时器
-  useEffect(() => {
-    return () => {
-      // 清理所有图片加载超时器
-      Object.values(imageLoadingTimeouts.current).forEach(timeout => {
-        clearTimeout(timeout);
-      });
-      imageLoadingTimeouts.current = {};
-    };
-  }, []);
-
   // 当数据更新时清理图片加载状态
   useEffect(() => {
     if (scheduleData.length > 0) {
       // 清空之前的图片加载状态，让图片自然触发加载事件
       setImageLoadingStates({});
-      // 清理所有超时器
-      Object.values(imageLoadingTimeouts.current).forEach(timeout => {
-        clearTimeout(timeout);
-      });
-      imageLoadingTimeouts.current = {};
     }
   }, [scheduleData]);
 
@@ -110,32 +93,11 @@ export default function Schedules() {
       ...prev,
       [itemId]: true
     }));
-
-    // 设置超时器，如果5秒后还没有收到加载完成事件，强制设置为完成
-    if (imageLoadingTimeouts.current[itemId]) {
-      clearTimeout(imageLoadingTimeouts.current[itemId]);
-    }
-
-    imageLoadingTimeouts.current[itemId] = setTimeout(() => {
-      console.warn(`图片加载超时，强制设置为完成: ${itemId}`);
-      setImageLoadingStates(prev => ({
-        ...prev,
-        [itemId]: false
-      }));
-      delete imageLoadingTimeouts.current[itemId];
-    }, 5000);
   }, []);
 
   // 处理图片加载完成
   const handleImageLoadEnd = useCallback((itemId: number) => {
     console.log(`图片加载完成: ${itemId}`);
-
-    // 清理超时器
-    if (imageLoadingTimeouts.current[itemId]) {
-      clearTimeout(imageLoadingTimeouts.current[itemId]);
-      delete imageLoadingTimeouts.current[itemId];
-    }
-
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
@@ -145,13 +107,6 @@ export default function Schedules() {
   // 处理图片加载错误
   const handleImageLoadError = useCallback((itemId: number) => {
     console.warn(`图片加载失败: ${itemId}`);
-
-    // 清理超时器
-    if (imageLoadingTimeouts.current[itemId]) {
-      clearTimeout(imageLoadingTimeouts.current[itemId]);
-      delete imageLoadingTimeouts.current[itemId];
-    }
-
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
