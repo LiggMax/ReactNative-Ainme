@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Text,
   StyleSheet,
@@ -8,21 +8,57 @@ import {
   Alert,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
+import {useAppNavigation} from '../../navigation';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {StatusBarManager, StatusBarConfigs} from '../../components/StatusBarManager';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
+  const navigation = useAppNavigation();
   const {id, title} = route.params;
 
   const [animeDetail, setAnimeDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
+
+  // 监听屏幕尺寸变化
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({window}) => {
+      setScreenData(window);
+    });
+
+    return () => subscription?.remove();
+  }, []);
+
+  // 获取屏幕尺寸并计算响应式布局参数
+  const screenDimensions = useMemo(() => {
+    const {width, height} = screenData;
+    const isTablet = width >= 768; // 平板判断
+    const isLargePhone = width >= 414; // 大屏手机判断
+    const isSmallPhone = width < 360; // 小屏手机判断
+
+    return {
+      width,
+      height,
+      isTablet,
+      isLargePhone,
+      isSmallPhone,
+      // 根据屏幕宽度计算布局参数
+      coverImageWidth: isTablet ? 160 : isLargePhone ? 140 : isSmallPhone ? 100 : 120,
+      coverImageHeight: isTablet ? 213 : isLargePhone ? 187 : isSmallPhone ? 133 : 160,
+      headerPadding: isTablet ? 24 : isSmallPhone ? 12 : 16,
+      titleFontSize: isTablet ? 24 : isLargePhone ? 22 : isSmallPhone ? 18 : 20,
+      infoFontSize: isTablet ? 16 : isSmallPhone ? 13 : 14,
+      headerMinHeight: isTablet ? 300 : isSmallPhone ? 200 : 240,
+    };
+  }, [screenData]);
 
   // 获取详情数据
   const getAnimeDetail = async () => {
@@ -75,7 +111,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   };
 
   // 动态样式
-  const dynamicStyles = StyleSheet.create({
+  const dynamicStyles = useMemo(() => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
@@ -108,7 +144,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     },
     headerBackground: {
       width: '100%',
-      minHeight: 240,
+      minHeight: screenDimensions.headerMinHeight,
       backgroundColor: theme.colors.background,
     },
     headerBlurOverlay: {
@@ -127,15 +163,33 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       bottom: 0,
     },
     headerContainer: {
-      flexDirection: 'row',
-      padding: 16,
-      paddingTop: 40, // 恢复状态栏间距
-      minHeight: 240,
+      flexDirection: screenDimensions.isSmallPhone ? 'column' : 'row',
+      padding: screenDimensions.headerPadding,
+      paddingTop: 40,
+      minHeight: screenDimensions.headerMinHeight,
       position: 'relative',
+      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
+    },
+    backButton: {
+      position: 'absolute',
+      top: screenDimensions.isTablet ? 60 : 50,
+      left: screenDimensions.headerPadding,
+      width: screenDimensions.isTablet ? 48 : 40,
+      height: screenDimensions.isTablet ? 48 : 40,
+      borderRadius: screenDimensions.isTablet ? 24 : 20,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 10,
+    },
+    backButtonText: {
+      color: '#FFFFFF',
+      fontSize: screenDimensions.isTablet ? 24 : 18,
+      fontWeight: 'bold',
     },
     coverImage: {
-      width: 120,
-      height: 160,
+      width: screenDimensions.coverImageWidth,
+      height: screenDimensions.coverImageHeight,
       borderRadius: 8,
       backgroundColor: theme.colors.surfaceVariant,
       shadowColor: '#000',
@@ -146,56 +200,64 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       shadowOpacity: 0.3,
       shadowRadius: 6,
       elevation: 8,
+      marginBottom: screenDimensions.isSmallPhone ? 16 : 0,
     },
     infoContainer: {
       flex: 1,
-      marginLeft: 16,
+      marginLeft: screenDimensions.isSmallPhone ? 0 : 16,
       justifyContent: 'space-between',
+      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
     },
     titleContainer: {
       flex: 1,
+      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
     },
     title: {
-      fontSize: 20,
+      fontSize: screenDimensions.titleFontSize,
       fontWeight: 'bold',
       color: '#FFFFFF',
       marginBottom: 6,
-      lineHeight: 26,
+      lineHeight: screenDimensions.titleFontSize * 1.3,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 3,
+      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
     },
     originalTitle: {
-      fontSize: 14,
+      fontSize: screenDimensions.infoFontSize,
       color: 'rgba(255, 255, 255, 0.9)',
       marginBottom: 12,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
+      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
     },
     dateText: {
-      fontSize: 14,
+      fontSize: screenDimensions.infoFontSize,
       color: 'rgba(255, 255, 255, 0.8)',
       marginBottom: 4,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
+      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
     },
     episodeText: {
-      fontSize: 14,
+      fontSize: screenDimensions.infoFontSize,
       color: 'rgba(255, 255, 255, 0.8)',
       marginBottom: 12,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
+      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
     },
     ratingContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 8,
+      justifyContent: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
     },
     ratingScore: {
-      fontSize: 18,
+      fontSize: screenDimensions.isTablet ? 20 : screenDimensions.isSmallPhone ? 16 : 18,
       fontWeight: 'bold',
       color: '#FFD700',
       marginRight: 8,
@@ -204,7 +266,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       textShadowRadius: 3,
     },
     ratingStars: {
-      fontSize: 16,
+      fontSize: screenDimensions.isTablet ? 18 : screenDimensions.isSmallPhone ? 14 : 16,
       color: '#FFD700',
       marginRight: 4,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
@@ -212,21 +274,24 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       textShadowRadius: 2,
     },
     ratingCount: {
-      fontSize: 12,
+      fontSize: screenDimensions.isTablet ? 14 : screenDimensions.isSmallPhone ? 11 : 12,
       color: 'rgba(255, 255, 255, 0.8)',
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
     },
     collectionContainer: {
-      flexDirection: 'row',
+      flexDirection: screenDimensions.isSmallPhone ? 'column' : 'row',
       alignItems: 'center',
+      justifyContent: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
     },
     collectionItem: {
-      marginRight: 16,
+      marginRight: screenDimensions.isSmallPhone ? 0 : 16,
+      marginBottom: screenDimensions.isSmallPhone ? 8 : 0,
+      alignItems: 'center',
     },
     collectionNumber: {
-      fontSize: 16,
+      fontSize: screenDimensions.isTablet ? 18 : screenDimensions.isSmallPhone ? 14 : 16,
       fontWeight: 'bold',
       color: '#FFFFFF',
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
@@ -234,7 +299,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       textShadowRadius: 3,
     },
     collectionLabel: {
-      fontSize: 12,
+      fontSize: screenDimensions.isTablet ? 14 : screenDimensions.isSmallPhone ? 11 : 12,
       color: 'rgba(255, 255, 255, 0.8)',
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
@@ -242,14 +307,14 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     },
     actionContainer: {
       flexDirection: 'row',
-      padding: 16,
+      padding: screenDimensions.headerPadding,
       backgroundColor: theme.colors.surface,
       borderTopWidth: 1,
       borderTopColor: theme.colors.outline,
     },
     actionButton: {
       flex: 1,
-      paddingVertical: 12,
+      paddingVertical: screenDimensions.isTablet ? 16 : 12,
       marginHorizontal: 4,
       borderRadius: 8,
       alignItems: 'center',
@@ -262,7 +327,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       backgroundColor: theme.colors.surfaceVariant,
     },
     actionButtonText: {
-      fontSize: 14,
+      fontSize: screenDimensions.isTablet ? 16 : 14,
       fontWeight: '600',
     },
     watchButtonText: {
@@ -272,35 +337,38 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       color: theme.colors.onSurfaceVariant,
     },
     contentContainer: {
-      padding: 16,
+      padding: screenDimensions.headerPadding,
+      maxWidth: screenDimensions.isTablet ? 800 : '100%',
+      alignSelf: screenDimensions.isTablet ? 'center' : 'stretch',
     },
     sectionTitle: {
-      fontSize: 16,
+      fontSize: screenDimensions.isTablet ? 20 : 16,
       fontWeight: '600',
       color: theme.colors.onSurface,
       marginBottom: 12,
     },
     summaryText: {
-      fontSize: 14,
+      fontSize: screenDimensions.isTablet ? 16 : 14,
       color: theme.colors.onSurfaceVariant,
-      lineHeight: 20,
+      lineHeight: screenDimensions.isTablet ? 24 : 20,
       marginBottom: 24,
     },
     tagsContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       marginBottom: 24,
+      justifyContent: screenDimensions.isTablet ? 'flex-start' : 'flex-start',
     },
     tag: {
       backgroundColor: theme.colors.surfaceVariant,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
+      paddingHorizontal: screenDimensions.isTablet ? 16 : 12,
+      paddingVertical: screenDimensions.isTablet ? 8 : 6,
       borderRadius: 16,
       marginRight: 8,
       marginBottom: 8,
     },
     tagText: {
-      fontSize: 12,
+      fontSize: screenDimensions.isTablet ? 14 : 12,
       color: theme.colors.onSurfaceVariant,
     },
     infoGrid: {
@@ -323,7 +391,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       color: theme.colors.onSurface,
       flex: 1,
     },
-  });
+  }), [theme, screenDimensions]);
 
   if (loading) {
     return (

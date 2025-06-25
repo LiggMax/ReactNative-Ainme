@@ -16,7 +16,7 @@ const ROUTE_CONFIG: Record<keyof RootStackParamList, NativeStackNavigationOption
     headerShown: false,
   },
   AnimeDetail: {
-    headerShown: false,
+    headerShown: true,
     animation: 'slide_from_right',
   },
 };
