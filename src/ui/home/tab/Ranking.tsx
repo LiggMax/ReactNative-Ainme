@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {
   Text,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import {Button, Dialog, Portal, useTheme, Chip} from 'react-native-paper';
+import {Button, Dialog, Portal, useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -29,6 +29,86 @@ export default function Ranking() {
   const [alertMessage, setAlertMessage] = useState('');
   const [rankingData, setRankingData] = useState<AnimeItem[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // 动态样式
+  const dynamicStyles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    listContainer: {
+      padding: 16,
+    },
+    rankingItem: {
+      flexDirection: 'row',
+      padding: 20,
+      marginBottom: 20,
+      borderRadius: 16,
+      backgroundColor: theme.colors.surface,
+      elevation: 3,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      width: ITEM_WIDTH,
+      alignItems: 'center',
+    },
+    animeImage: {
+      width: 120,
+      height: 160,
+      borderRadius: 12,
+      marginRight: 20,
+      backgroundColor: theme.colors.surfaceVariant,
+    },
+    animeInfo: {
+      flex: 1,
+      justifyContent: 'center',
+      paddingVertical: 10,
+    },
+    animeName: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      lineHeight: 26,
+      color: theme.colors.onSurface,
+    },
+    animeOriginalName: {
+      fontSize: 16,
+      marginBottom: 12,
+      fontStyle: 'italic',
+      lineHeight: 22,
+      color: theme.colors.onSurfaceVariant,
+    },
+    airDate: {
+      fontSize: 14,
+      fontWeight: '500',
+      color: theme.colors.onSurfaceVariant,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background,
+    },
+    loadingText: {
+      fontSize: 16,
+      marginTop: 12,
+      color: theme.colors.onBackground,
+    },
+    emptyContainer: {
+      paddingVertical: 40,
+      alignItems: 'center',
+    },
+    emptyText: {
+      fontSize: 16,
+      textAlign: 'center',
+      color: theme.colors.onSurfaceVariant,
+    },
+    dialogMessage: {
+      fontSize: 16,
+      color: theme.colors.onSurface,
+    },
+  }), [theme]);
 
   const hideAlert = useCallback(() => {
     setAlertVisible(false);
@@ -70,26 +150,26 @@ export default function Ranking() {
   }, [navigation]);
 
   // 渲染排行榜项目
-  const renderRankingItem = useCallback(({item}: {item: AnimeItem; index: number}) => {
+  const renderRankingItem = useCallback(({item, index}: {item: AnimeItem; index: number}) => {
     const displayName = item.name_cn || item.name;
 
     return (
       <TouchableOpacity
-        style={[styles.rankingItem, {backgroundColor: theme.colors.surface}]}
+        style={dynamicStyles.rankingItem}
         onPress={() => navigateToDetail(item.id)}
         activeOpacity={0.7}
       >
         {/* 动漫封面 */}
         <FastImage
-          source={{uri: item.images.common}}
-          style={styles.animeImage}
+          source={{uri: item.images.large}}
+          style={dynamicStyles.animeImage}
           resizeMode="cover"
         />
 
         {/* 动漫信息 */}
-        <View style={styles.animeInfo}>
+        <View style={dynamicStyles.animeInfo}>
           <Text
-            style={[styles.animeName, {color: theme.colors.onSurface}]}
+            style={dynamicStyles.animeName}
             numberOfLines={2}
           >
             {displayName}
@@ -97,39 +177,30 @@ export default function Ranking() {
 
           {item.name_cn && item.name_cn !== item.name && (
             <Text
-              style={[styles.animeOriginalName, {color: theme.colors.onSurfaceVariant}]}
-              numberOfLines={1}
+              style={dynamicStyles.animeOriginalName}
+              numberOfLines={2}
             >
               {item.name}
             </Text>
           )}
 
-          <View style={styles.animeMetadata}>
-            <Chip
-              compact
-              style={styles.typeChip}
-              textStyle={styles.chipText}
-            >
-              动画
-            </Chip>
-            {item.air_date && (
-              <Text style={[styles.airDate, {color: theme.colors.onSurfaceVariant}]}>
-                {item.air_date}
-              </Text>
-            )}
-          </View>
+          {item.air_date && (
+            <Text style={dynamicStyles.airDate}>
+              {item.air_date}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     );
-  }, [theme, navigateToDetail]);
+  }, [dynamicStyles, navigateToDetail]);
 
   const renderListEmpty = useCallback(() => (
-    <View style={styles.emptyContainer}>
-      <Text style={[styles.emptyText, {color: theme.colors.onSurfaceVariant}]}>
+    <View style={dynamicStyles.emptyContainer}>
+      <Text style={dynamicStyles.emptyText}>
         {loading ? '正在加载排行榜数据...' : '暂无排行榜数据'}
       </Text>
     </View>
-  ), [theme, loading]);
+  ), [dynamicStyles, loading]);
 
   // 初始化数据
   useEffect(() => {
@@ -137,11 +208,11 @@ export default function Ranking() {
   }, []);
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
+    <View style={dynamicStyles.container}>
       {loading && rankingData.length === 0 ? (
-        <View style={styles.loadingContainer}>
+        <View style={dynamicStyles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, {color: theme.colors.onBackground}]}>
+          <Text style={dynamicStyles.loadingText}>
             正在加载排行榜...
           </Text>
         </View>
@@ -151,7 +222,7 @@ export default function Ranking() {
           renderItem={renderRankingItem}
           keyExtractor={(item) => item.id.toString()}
           ListEmptyComponent={renderListEmpty}
-          contentContainerStyle={styles.listContainer}
+          contentContainerStyle={dynamicStyles.listContainer}
           showsVerticalScrollIndicator={false}
           refreshing={loading}
         />
@@ -161,7 +232,7 @@ export default function Ranking() {
         <Dialog visible={alertVisible} onDismiss={hideAlert}>
           <Dialog.Title>{alertTitle}</Dialog.Title>
           <Dialog.Content>
-            <Text style={styles.dialogMessage}>{alertMessage}</Text>
+            <Text style={dynamicStyles.dialogMessage}>{alertMessage}</Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={hideAlert}>确定</Button>
@@ -171,117 +242,3 @@ export default function Ranking() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContainer: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 16,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 20,
-  },
-  typeSelector: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-    marginBottom: 16,
-  },
-  typeButton: {
-    minWidth: 80,
-  },
-  rankingItem: {
-    flexDirection: 'row',
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    width: ITEM_WIDTH,
-  },
-  rankBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    alignSelf: 'center',
-  },
-  rankText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  animeImage: {
-    width: 60,
-    height: 80,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  animeInfo: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  animeName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-    lineHeight: 22,
-  },
-  animeOriginalName: {
-    fontSize: 14,
-    marginBottom: 8,
-    fontStyle: 'italic',
-  },
-  animeMetadata: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  typeChip: {
-    height: 24,
-  },
-  chipText: {
-    fontSize: 12,
-  },
-  airDate: {
-    fontSize: 12,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    marginTop: 12,
-  },
-  emptyContainer: {
-    paddingVertical: 40,
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  dialogMessage: {
-    fontSize: 16,
-  },
-});
