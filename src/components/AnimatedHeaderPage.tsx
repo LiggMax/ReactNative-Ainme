@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager, StatusBarConfigs} from './StatusBarManager';
@@ -56,7 +57,7 @@ export default function AnimatedHeaderPage({
         paddingTop: insets.top,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 16,
+        paddingHorizontal: 5,
         zIndex: 1000,
       },
       backButtonContainer: {
@@ -105,13 +106,6 @@ export default function AnimatedHeaderPage({
       extrapolate: 'clamp',
     });
 
-    // 根据滚动位置计算返回按钮背景色
-    const backButtonBackgroundColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.08)'],
-      extrapolate: 'clamp',
-    });
-
     // 根据滚动位置计算返回按钮图标颜色
     const backButtonIconColor = scrollY.interpolate({
       inputRange: [0, scrollThreshold],
@@ -141,7 +135,6 @@ export default function AnimatedHeaderPage({
     return {
       headerBackgroundColor,
       titleColor,
-      backButtonBackgroundColor,
       backButtonIconColor,
       shadowOpacity,
       shadowRadius,
@@ -162,10 +155,7 @@ export default function AnimatedHeaderPage({
       }
     ]}>
       {showBackButton && (
-        <Animated.View style={[
-          baseStyles.backButtonContainer,
-          { backgroundColor: animatedStyles.backButtonBackgroundColor }
-        ]}>
+        <Animated.View style={baseStyles.backButtonContainer}>
           <TouchableOpacity
             style={baseStyles.backButton}
             onPress={onBackPress}
@@ -175,7 +165,7 @@ export default function AnimatedHeaderPage({
               { fontSize: 24 },
               { color: animatedStyles.backButtonIconColor }
             ]}>
-              ←
+              <Icon name="chevron-back" size={24} />
             </Animated.Text>
           </TouchableOpacity>
         </Animated.View>
@@ -225,39 +215,3 @@ export default function AnimatedHeaderPage({
     </View>
   );
 }
-
-// 导出动画值的Hook，供外部组件使用
-export const useAnimatedHeaderValues = (scrollY: Animated.Value, scrollThreshold = 100) => {
-  return useMemo(() => {
-    const headerBackgroundColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(255,255,255,0)', 'rgba(255,255,255,0.95)'],
-      extrapolate: 'clamp',
-    });
-
-    const titleColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(255,255,255,1)', 'rgba(0,0,0,0.87)'],
-      extrapolate: 'clamp',
-    });
-
-    const backButtonBackgroundColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.08)'],
-      extrapolate: 'clamp',
-    });
-
-    const backButtonIconColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(255,255,255,1)', 'rgba(0,0,0,0.87)'],
-      extrapolate: 'clamp',
-    });
-
-    return {
-      headerBackgroundColor,
-      titleColor,
-      backButtonBackgroundColor,
-      backButtonIconColor,
-    };
-  }, [scrollY, scrollThreshold]);
-};
