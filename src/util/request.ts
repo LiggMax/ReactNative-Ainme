@@ -1,8 +1,14 @@
 /**
  * 请求工具类
  */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelTokenSource, InternalAxiosRequestConfig } from 'axios';
-import { BASE_URL, TIMEOUT, HEADERS } from './config';
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  CancelTokenSource,
+  InternalAxiosRequestConfig,
+} from 'axios';
+import {BASE_URL, TIMEOUT, HEADERS} from './config';
 
 // 扩展axios配置类型，添加metadata和requestId
 declare module 'axios' {
@@ -119,7 +125,7 @@ class Request {
     requestFn: () => Promise<T>,
     retryCount: number = 0,
     maxRetries: number = 3,
-    retryDelay: number = 1000
+    retryDelay: number = 1000,
   ): Promise<T> {
     try {
       return await requestFn();
@@ -134,11 +140,18 @@ class Request {
         throw error;
       }
 
-      console.log(`🔄 请求失败，${retryDelay}ms后进行第${retryCount + 1}次重试...`);
+      console.log(
+        `🔄 请求失败，${retryDelay}ms后进行第${retryCount + 1}次重试...`,
+      );
 
       // 延迟后重试
       await this.delay(retryDelay);
-      return this.retryRequest(requestFn, retryCount + 1, maxRetries, retryDelay);
+      return this.retryRequest(
+        requestFn,
+        retryCount + 1,
+        maxRetries,
+        retryDelay,
+      );
     }
   }
 
@@ -150,9 +163,11 @@ class Request {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         const startTime = Date.now();
-        config.metadata = { startTime };
+        config.metadata = {startTime};
 
-        console.log(`🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`);
+        console.log(
+          `🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`,
+        );
 
         // 在这里可以添加token
         const token = this.getToken();
@@ -162,25 +177,32 @@ class Request {
 
         return config;
       },
-      (error) => {
+      error => {
         console.error('❌ 请求错误:', error);
         return Promise.reject(error);
-      }
+      },
     );
 
     // 响应拦截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
-
         return response.data;
       },
-      (error) => {
+      error => {
         const endTime = Date.now();
-        const duration = endTime - (error.config?.metadata?.startTime || endTime);
+        const duration =
+          endTime - (error.config?.metadata?.startTime || endTime);
 
         // 处理超时错误
-        if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-          console.error(`⏰ 请求超时: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+        if (
+          error.code === 'ECONNABORTED' &&
+          error.message.includes('timeout')
+        ) {
+          console.error(
+            `⏰ 请求超时: ${error.config?.method?.toUpperCase()} ${
+              error.config?.url
+            }`,
+          );
           console.error(`⏱️  超时时间: ${error.config?.timeout}ms`);
           return Promise.reject(new Error(`请求超时，请检查网络连接`));
         }
@@ -197,30 +219,28 @@ class Request {
           const status = error.response.status;
           const data = error.response.data;
 
-          console.error(`❌ HTTP ${status}: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+          console.error(
+            `❌ HTTP ${status}: ${error.config?.method?.toUpperCase()} ${
+              error.config?.url
+            }`,
+          );
           console.error(`📊 响应数据:`, data);
           console.error(`⏱️  请求耗时: ${duration}ms`);
 
           // 根据状态码返回相应错误信息
           switch (status) {
-            case 401:
-              return Promise.reject(new Error('未授权访问，请检查认证信息'));
-            case 403:
-              return Promise.reject(new Error('访问被禁止，权限不足'));
             case 404:
               return Promise.reject(new Error('请求的资源不存在'));
-            case 500:
-              return Promise.reject(new Error('服务器内部错误'));
-            case 502:
-              return Promise.reject(new Error('网关错误'));
-            case 503:
-              return Promise.reject(new Error('服务不可用'));
             default:
               return Promise.reject(new Error(`请求失败: HTTP ${status}`));
           }
         } else if (error.request) {
           // 网络连接错误
-          console.error(`🌐 网络连接错误: ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+          console.error(
+            `🌐 网络连接错误: ${error.config?.method?.toUpperCase()} ${
+              error.config?.url
+            }`,
+          );
           console.error(`📱 请求详情:`, {
             url: error.config?.url,
             method: error.config?.method,
@@ -231,13 +251,15 @@ class Request {
           console.error(`⏱️  请求耗时: ${duration}ms`);
           console.error(`🔍 错误详情:`, error.message);
 
-          return Promise.reject(new Error('网络连接失败，请检查网络设置或稍后重试'));
+          return Promise.reject(
+            new Error('网络连接失败，请检查网络设置或稍后重试'),
+          );
         } else {
           // 其他错误
           console.error(`💥 请求配置错误:`, error.message);
           return Promise.reject(new Error(`请求配置错误: ${error.message}`));
         }
-      }
+      },
     );
   }
 
@@ -265,7 +287,7 @@ class Request {
     method: RequestType,
     url: string,
     data?: any,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<T> {
     const {
       timeout,
@@ -364,7 +386,11 @@ class Request {
   /**
    * 上传文件
    */
-  upload<T = any>(url: string, formData: FormData, config?: RequestConfig): Promise<T> {
+  upload<T = any>(
+    url: string,
+    formData: FormData,
+    config?: RequestConfig,
+  ): Promise<T> {
     const uploadConfig: RequestConfig = {
       ...config,
       timeout: this.getTimeoutByType(RequestType.UPLOAD, config?.timeout),
@@ -436,4 +462,4 @@ const request = new Request();
 
 // 导出请求实例和类型
 export default request;
-export type { ApiResponse, RequestConfig };
+export type {ApiResponse, RequestConfig};
