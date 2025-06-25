@@ -282,13 +282,15 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   );
 
   return (
-    <AnimatedHeaderPage
-      title="AnimeDetail"
-      showBackButton={canGoBack()}
-      onBackPress={goBack}
-      scrollThreshold={80}
-    >
-      {renderContent()}
-    </AnimatedHeaderPage>
+    <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+      <AnimatedHeaderPage
+        title={title}
+        showBackButton={canGoBack()}
+        onBackPress={goBack}
+        scrollThreshold={80}
+      >
+        {renderContent()}
+      </AnimatedHeaderPage>
+    </View>
   );
 }

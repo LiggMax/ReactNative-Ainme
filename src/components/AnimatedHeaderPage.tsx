@@ -101,7 +101,7 @@ export default function AnimatedHeaderPage({
     // 根据滚动位置计算文字颜色
     const titleColor = scrollY.interpolate({
       inputRange: [0, scrollThreshold],
-      outputRange: ['rgba(255,255,255,1)', 'rgba(0,0,0,0.87)'],
+      outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.87)'],
       extrapolate: 'clamp',
     });
 
