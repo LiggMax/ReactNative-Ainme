@@ -8,19 +8,18 @@ import {
   Alert,
   TouchableOpacity,
   ImageBackground,
-  Dimensions,
+  Dimensions, SafeAreaView,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import {useAppNavigation} from '../../navigation';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {StatusBarManager, StatusBarConfigs} from '../../components/StatusBarManager';
+import {createAnimeDetailStyles} from './style';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
-  const navigation = useAppNavigation();
   const {id, title} = route.params;
 
   const [animeDetail, setAnimeDetail] = useState<any>(null);
@@ -111,287 +110,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   };
 
   // 动态样式
-  const dynamicStyles = useMemo(() => StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    loadingContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    loadingText: {
-      marginTop: 16,
-      fontSize: 16,
-      color: theme.colors.onSurfaceVariant,
-    },
-    errorContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: 32,
-    },
-    errorText: {
-      fontSize: 16,
-      color: theme.colors.error,
-      textAlign: 'center',
-      marginBottom: 16,
-    },
-    scrollContainer: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    headerBackground: {
-      width: '100%',
-      minHeight: screenDimensions.headerMinHeight,
-      backgroundColor: theme.colors.background,
-    },
-    headerBlurOverlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    },
-    headerGradient: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-    },
-    headerContainer: {
-      flexDirection: screenDimensions.isSmallPhone ? 'column' : 'row',
-      padding: screenDimensions.headerPadding,
-      paddingTop: 40,
-      minHeight: screenDimensions.headerMinHeight,
-      position: 'relative',
-      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
-    },
-    backButton: {
-      position: 'absolute',
-      top: screenDimensions.isTablet ? 60 : 50,
-      left: screenDimensions.headerPadding,
-      width: screenDimensions.isTablet ? 48 : 40,
-      height: screenDimensions.isTablet ? 48 : 40,
-      borderRadius: screenDimensions.isTablet ? 24 : 20,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 10,
-    },
-    backButtonText: {
-      color: '#FFFFFF',
-      fontSize: screenDimensions.isTablet ? 24 : 18,
-      fontWeight: 'bold',
-    },
-    coverImage: {
-      width: screenDimensions.coverImageWidth,
-      height: screenDimensions.coverImageHeight,
-      borderRadius: 8,
-      backgroundColor: theme.colors.surfaceVariant,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.3,
-      shadowRadius: 6,
-      elevation: 8,
-      marginBottom: screenDimensions.isSmallPhone ? 16 : 0,
-    },
-    infoContainer: {
-      flex: 1,
-      marginLeft: screenDimensions.isSmallPhone ? 0 : 16,
-      justifyContent: 'space-between',
-      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
-    },
-    titleContainer: {
-      flex: 1,
-      alignItems: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
-    },
-    title: {
-      fontSize: screenDimensions.titleFontSize,
-      fontWeight: 'bold',
-      color: '#FFFFFF',
-      marginBottom: 6,
-      lineHeight: screenDimensions.titleFontSize * 1.3,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 3,
-      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
-    },
-    originalTitle: {
-      fontSize: screenDimensions.infoFontSize,
-      color: 'rgba(255, 255, 255, 0.9)',
-      marginBottom: 12,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
-    },
-    dateText: {
-      fontSize: screenDimensions.infoFontSize,
-      color: 'rgba(255, 255, 255, 0.8)',
-      marginBottom: 4,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
-    },
-    episodeText: {
-      fontSize: screenDimensions.infoFontSize,
-      color: 'rgba(255, 255, 255, 0.8)',
-      marginBottom: 12,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-      textAlign: screenDimensions.isSmallPhone ? 'center' : 'left',
-    },
-    ratingContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 8,
-      justifyContent: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
-    },
-    ratingScore: {
-      fontSize: screenDimensions.isTablet ? 20 : screenDimensions.isSmallPhone ? 16 : 18,
-      fontWeight: 'bold',
-      color: '#FFD700',
-      marginRight: 8,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 3,
-    },
-    ratingStars: {
-      fontSize: screenDimensions.isTablet ? 18 : screenDimensions.isSmallPhone ? 14 : 16,
-      color: '#FFD700',
-      marginRight: 4,
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-    },
-    ratingCount: {
-      fontSize: screenDimensions.isTablet ? 14 : screenDimensions.isSmallPhone ? 11 : 12,
-      color: 'rgba(255, 255, 255, 0.8)',
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-    },
-    collectionContainer: {
-      flexDirection: screenDimensions.isSmallPhone ? 'column' : 'row',
-      alignItems: 'center',
-      justifyContent: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
-    },
-    collectionItem: {
-      marginRight: screenDimensions.isSmallPhone ? 0 : 16,
-      marginBottom: screenDimensions.isSmallPhone ? 8 : 0,
-      alignItems: 'center',
-    },
-    collectionNumber: {
-      fontSize: screenDimensions.isTablet ? 18 : screenDimensions.isSmallPhone ? 14 : 16,
-      fontWeight: 'bold',
-      color: '#FFFFFF',
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 3,
-    },
-    collectionLabel: {
-      fontSize: screenDimensions.isTablet ? 14 : screenDimensions.isSmallPhone ? 11 : 12,
-      color: 'rgba(255, 255, 255, 0.8)',
-      textShadowColor: 'rgba(0, 0, 0, 0.8)',
-      textShadowOffset: {width: 1, height: 1},
-      textShadowRadius: 2,
-    },
-    actionContainer: {
-      flexDirection: 'row',
-      padding: screenDimensions.headerPadding,
-      backgroundColor: theme.colors.surface,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.outline,
-    },
-    actionButton: {
-      flex: 1,
-      paddingVertical: screenDimensions.isTablet ? 16 : 12,
-      marginHorizontal: 4,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    watchButton: {
-      backgroundColor: theme.colors.primary,
-    },
-    favoriteButton: {
-      backgroundColor: theme.colors.surfaceVariant,
-    },
-    actionButtonText: {
-      fontSize: screenDimensions.isTablet ? 16 : 14,
-      fontWeight: '600',
-    },
-    watchButtonText: {
-      color: theme.colors.onPrimary,
-    },
-    favoriteButtonText: {
-      color: theme.colors.onSurfaceVariant,
-    },
-    contentContainer: {
-      padding: screenDimensions.headerPadding,
-      maxWidth: screenDimensions.isTablet ? 800 : '100%',
-      alignSelf: screenDimensions.isTablet ? 'center' : 'stretch',
-    },
-    sectionTitle: {
-      fontSize: screenDimensions.isTablet ? 20 : 16,
-      fontWeight: '600',
-      color: theme.colors.onSurface,
-      marginBottom: 12,
-    },
-    summaryText: {
-      fontSize: screenDimensions.isTablet ? 16 : 14,
-      color: theme.colors.onSurfaceVariant,
-      lineHeight: screenDimensions.isTablet ? 24 : 20,
-      marginBottom: 24,
-    },
-    tagsContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginBottom: 24,
-      justifyContent: screenDimensions.isTablet ? 'flex-start' : 'flex-start',
-    },
-    tag: {
-      backgroundColor: theme.colors.surfaceVariant,
-      paddingHorizontal: screenDimensions.isTablet ? 16 : 12,
-      paddingVertical: screenDimensions.isTablet ? 8 : 6,
-      borderRadius: 16,
-      marginRight: 8,
-      marginBottom: 8,
-    },
-    tagText: {
-      fontSize: screenDimensions.isTablet ? 14 : 12,
-      color: theme.colors.onSurfaceVariant,
-    },
-    infoGrid: {
-      marginBottom: 24,
-    },
-    infoRow: {
-      flexDirection: 'row',
-      paddingVertical: 8,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.outline,
-    },
-    infoLabel: {
-      fontSize: 14,
-      color: theme.colors.onSurfaceVariant,
-      width: 80,
-      fontWeight: '500',
-    },
-    infoValue: {
-      fontSize: 14,
-      color: theme.colors.onSurface,
-      flex: 1,
-    },
-  }), [theme, screenDimensions]);
+  const dynamicStyles = useMemo(() => createAnimeDetailStyles(theme, screenDimensions), [theme, screenDimensions]);
 
   if (loading) {
     return (
@@ -404,16 +123,16 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   if (error || !animeDetail) {
     return (
-      <View style={dynamicStyles.errorContainer}>
+      <SafeAreaView style={dynamicStyles.errorContainer}>
         <Text style={dynamicStyles.errorText}>
           {error || '获取动漫详情失败'}
         </Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={dynamicStyles.container}>
+    <SafeAreaView style={dynamicStyles.container}>
       <StatusBarManager {...StatusBarConfigs.detail} />
       <ScrollView
         style={dynamicStyles.scrollContainer}
@@ -456,9 +175,17 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
             {/* 基本信息 */}
             <View style={dynamicStyles.infoContainer}>
               <View style={dynamicStyles.titleContainer}>
+                <View style={dynamicStyles.titleWrapper}>
                 <Text style={dynamicStyles.title} numberOfLines={3}>
-                  {animeDetail.name_cn || animeDetail.name || title}
+                  {title}
                 </Text>
+                  <Text style={dynamicStyles.ratingScore}>
+                    {animeDetail.rating.score.toFixed(1)}
+                  </Text>
+                  <Text style={dynamicStyles.ratingStars}>
+                    {getStarRating(animeDetail.rating.score)}
+                  </Text>
+                </View>
                 {animeDetail.name && animeDetail.name_cn && (
                   <Text style={dynamicStyles.originalTitle} numberOfLines={2}>
                     {animeDetail.name}
@@ -475,12 +202,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
               {/* 评分信息 */}
               {animeDetail.rating && (
                 <View style={dynamicStyles.ratingContainer}>
-                  <Text style={dynamicStyles.ratingScore}>
-                    {animeDetail.rating.score.toFixed(1)}
-                  </Text>
-                  <Text style={dynamicStyles.ratingStars}>
-                    {getStarRating(animeDetail.rating.score)}
-                  </Text>
                   <Text style={dynamicStyles.ratingCount}>
                     {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
                   </Text>
@@ -570,7 +291,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           )}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
-StyleSheet.create({});

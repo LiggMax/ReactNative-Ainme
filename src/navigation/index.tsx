@@ -32,9 +32,6 @@ export const useAppNavigation = () => {
     navigateToAnimeDetail: (id: number, title?: string) => {
       navigation.navigate('AnimeDetail', {id, title});
     },
-    navigateToMain: () => {
-      navigation.navigate('Main');
-    },
     goBack: () => {
       navigation.goBack();
     },

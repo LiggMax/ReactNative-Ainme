@@ -59,10 +59,6 @@ export default function HomeLayout() {
 
   const layout = useWindowDimensions();
 
-  // React 的 useEffect 钩子
-  useEffect(() => {
-  }, []);
-
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]} edges={['top', 'bottom']}>
       <TabView
