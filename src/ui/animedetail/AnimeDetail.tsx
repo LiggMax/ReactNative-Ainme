@@ -38,11 +38,11 @@ export default function AnimeDetail({route, id, onBack, showBackButton = false}:
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('🔄 开始获取动漫详情，ID:', animeId);
-      const animeDetail = await animeService.getAnimeDetail(animeId);
+      const animeDetail = await animeService.getAnimeDetailService(animeId);
       console.log('✅ 动漫详情获取成功:', animeDetail);
-      
+
     } catch (error) {
       console.error('❌ 获取动漫详情失败:', error);
       setError('获取动漫详情失败');
@@ -115,14 +115,14 @@ export default function AnimeDetail({route, id, onBack, showBackButton = false}:
   return (
     <View style={styles.container}>
       {showBackButton && onBack && (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={onBack}
         >
           <Text style={styles.backButtonText}>← 返回列表</Text>
         </TouchableOpacity>
       )}
-      
+
       <View style={styles.contentContainer}>
         <Text style={styles.title}>
           动漫详情页

@@ -14,7 +14,7 @@ export const ANIME_API = {
   // 获取推荐动漫
   GET_RECOMMEND: `${API_PREFIX.ANIME}/recommend`,
   // 获取排行榜
-  GET_RANKING: `${API_PREFIX.ANIME}/ranking`,
+  GET_RANKING: `${API_PREFIX.COMMON}/search/subject/anime`,
   // 获取新番时间表
   GET_SCHEDULE: `${API_PREFIX.COMMON}/calendar`,
   // 获取分类

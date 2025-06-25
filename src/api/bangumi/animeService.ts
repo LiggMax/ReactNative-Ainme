@@ -48,6 +48,12 @@ export interface ScheduleItem {
   items: AnimeItem[];
 }
 
+// 排行榜响应类型
+export interface RankingResponse {
+  results: number;
+  list: AnimeItem[];
+}
+
 export interface AnimeListParams {
   page?: number;
   size?: number;
@@ -70,14 +76,14 @@ class AnimeService {
   /**
    * 获取动漫详情
    */
-  async getAnimeDetail(id: number): Promise<AnimeItem> {
+  async getAnimeDetailService(id: number): Promise<AnimeItem> {
     return request.get(ANIME_API.GET_DETAIL(id));
   }
 
   /**
    * 搜索动漫
    */
-  async searchAnime(params: SearchParams): Promise<{
+  async searchAnimeService(params: SearchParams): Promise<{
     list: AnimeItem[];
     total: number;
   }> {
@@ -96,12 +102,8 @@ class AnimeService {
   /**
    * 获取排行榜
    */
-  async getRanking(
-    type: 'hot' | 'rating' | 'new' = 'hot',
-  ): Promise<AnimeItem[]> {
-    return request.get(ANIME_API.GET_RANKING, {
-      params: {type},
-    });
+  async getRankingService(): Promise<RankingResponse> {
+    return request.get(ANIME_API.GET_RANKING);
   }
 
   /**

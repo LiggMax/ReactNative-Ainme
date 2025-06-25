@@ -31,7 +31,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       setError(null);
 
       console.log('🔍 开始获取动漫详情，ID:', id);
-      const detail = await animeService.getAnimeDetail(id);
+      const detail = await animeService.getAnimeDetailService(id);
       console.log('✅ 动漫详情获取成功:', detail);
 
       setAnimeDetail(detail);
