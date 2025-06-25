@@ -5,44 +5,22 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
-import {StatusBar, useColorScheme, Platform} from 'react-native';
-import {Provider as PaperProvider, useTheme} from 'react-native-paper';
+import React from 'react';
+import {Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import AppNavigator from '../navigation';
-
-function AppContent(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  const theme = useTheme();
-
-  // 统一状态栏配置
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      StatusBar.setTranslucent(true);
-      StatusBar.setBackgroundColor('transparent', true);
-    }
-  }, []);
-
-  return (
-    <>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        translucent={true}
-        backgroundColor="transparent"
-        hidden={false}
-      />
-      <AppNavigator />
-    </>
-  );
-}
-
+import {
+  StatusBarManager,
+  StatusBarConfigs,
+} from '../components/StatusBarManager';
 function App(): React.JSX.Element {
   return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <AppContent />
-      </PaperProvider>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <PaperProvider>
+          <StatusBarManager {...StatusBarConfigs.smart} />
+          <AppNavigator />
+        </PaperProvider>
+      </SafeAreaProvider>
   );
 }
 

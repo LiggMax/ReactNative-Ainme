@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo, useRef} from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Dimensions, SafeAreaView,
+  Animated,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
@@ -26,6 +27,9 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
+
+  // 滚动动画值 - 用于动态状态栏
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -133,8 +137,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <StatusBarManager {...StatusBarConfigs.detail} />
-      <ScrollView
+      <StatusBarManager 
+        {...StatusBarConfigs.detail} 
+        scrollY={scrollY}
+      />
+      <Animated.ScrollView
         style={dynamicStyles.scrollContainer}
         contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}
@@ -143,6 +150,10 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         scrollEventThrottle={16}
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: false}
+        )}
       >
         {/* 头部信息区域 - 带高斯模糊背景 */}
         <View style={dynamicStyles.headerBackground}>
@@ -287,7 +298,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
             </>
           )}
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
