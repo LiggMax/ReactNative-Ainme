@@ -16,7 +16,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
-import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/animeService';
+import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/anime/animeService.ts';
 import {RootStackParamList} from '../../../types/navigation';
 
 // 创建Shimmer组件
@@ -38,7 +38,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function Schedules() {
   const theme = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  
+
   // 状态管理
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,10 +60,10 @@ export default function Schedules() {
       setLoading(true);
       setError(null);
       console.log('🔍 开始获取新番时间表数据...');
-      
+
       const data = await animeService.getSchedule();
       console.log('✅ 新番时间表数据获取成功:', data);
-      
+
       setScheduleData(data);
     } catch (err) {
       console.error('❌ 获取新番时间表失败:', err);

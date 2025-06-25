@@ -12,7 +12,7 @@ import {Button, Dialog, Portal, useTheme, Chip} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import AnimeService, {AnimeItem, RankingResponse} from '../../../api/bangumi/animeService.ts';
+import AnimeService, {AnimeItem, RankingResponse} from '../../../api/bangumi/anime/animeService.ts';
 import {RootStackParamList} from '../../../types/navigation';
 
 const {width} = Dimensions.get('window');

@@ -11,9 +11,9 @@ import {Provider as PaperProvider, useTheme} from 'react-native-paper';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import BottomTabLayout from './src/ui/Layout';
-import AnimeDetail from './src/ui/animedatail/AnimeDatail';
-import {RootStackParamList} from './src/types/navigation';
+import BottomTabLayout from './Layout.tsx';
+import AnimeDetail from './animedatail/AnimeDatail.tsx';
+import {RootStackParamList} from '../types/navigation.ts';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -41,15 +41,15 @@ function AppContent(): React.JSX.Element {
             },
           }}
         >
-          <Stack.Screen 
-            name="Main" 
+          <Stack.Screen
+            name="Main"
             component={BottomTabLayout}
             options={{
               headerShown: false,
             }}
           />
-          <Stack.Screen 
-            name="AnimeDetail" 
+          <Stack.Screen
+            name="AnimeDetail"
             component={AnimeDetail}
             options={({route}) => ({
               title: route.params?.title || '动漫详情',

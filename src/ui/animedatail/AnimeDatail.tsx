@@ -13,7 +13,7 @@ import {
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import animeService from '../../api/bangumi/animeService';
+import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {

@@ -1,8 +1,8 @@
 /**
  * 动漫相关API服务
  */
-import request from '../../util/request.ts';
-import {ANIME_API} from '../../util/api.ts';
+import request from '../../../util/request.ts';
+import {ANIME_API} from '../../../util/api.ts';
 
 // 动漫数据类型定义 - 更新为BGM格式
 export interface AnimeItem {
