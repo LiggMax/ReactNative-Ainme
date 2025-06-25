@@ -53,13 +53,13 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       isTablet,
       isLargePhone,
       isSmallPhone,
-      // 根据屏幕宽度计算布局参数
-      coverImageWidth: isTablet ? 160 : isLargePhone ? 140 : isSmallPhone ? 100 : 120,
-      coverImageHeight: isTablet ? 213 : isLargePhone ? 187 : isSmallPhone ? 133 : 160,
+      // 根据屏幕宽度计算布局参数 - 增大封面图片尺寸
+      coverImageWidth: isTablet ? 200 : isLargePhone ? 170 : isSmallPhone ? 130 : 150,
+      coverImageHeight: isTablet ? 267 : isLargePhone ? 227 : isSmallPhone ? 173 : 200,
       headerPadding: isTablet ? 24 : isSmallPhone ? 12 : 16,
       titleFontSize: isTablet ? 24 : isLargePhone ? 22 : isSmallPhone ? 18 : 20,
       infoFontSize: isTablet ? 16 : isSmallPhone ? 13 : 14,
-      headerMinHeight: isTablet ? 300 : isSmallPhone ? 200 : 240,
+      headerMinHeight: isTablet ? 320 : isSmallPhone ? 220 : 260,
     };
   }, [screenData]);
 
