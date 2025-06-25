@@ -3,24 +3,28 @@ import {
   Text,
   StyleSheet,
   View,
-  ScrollView,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
   ImageBackground,
-  Dimensions, SafeAreaView,
+  Dimensions,
   Animated,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {StatusBarManager, StatusBarConfigs} from '../../components/StatusBarManager';
+import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const {goBack, canGoBack} = useAppNavigation();
   const {id, title} = route.params;
 
   const [animeDetail, setAnimeDetail] = useState<any>(null);
@@ -116,18 +120,50 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   // 动态样式
   const dynamicStyles = useMemo(() => createAnimeDetailStyles(theme, screenDimensions), [theme, screenDimensions]);
 
+  // 自定义顶部导航栏样式
+  const topBarStyles = useMemo(() => StyleSheet.create({
+    topBar: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 56 + insets.top,
+      paddingTop: insets.top,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      zIndex: 1000,
+      backgroundColor: 'transparent',
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    title: {
+      flex: 1,
+      marginHorizontal: 16,
+      color: '#FFFFFF',
+      fontSize: 18,
+      fontWeight: '600',
+    },
+  }), [insets.top]);
+
   if (loading) {
     return (
-      <View style={dynamicStyles.loadingContainer}>
+      <SafeAreaView style={[dynamicStyles.loadingContainer, {paddingTop: insets.top}]} edges={[]}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={dynamicStyles.loadingText}>加载中...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !animeDetail) {
     return (
-      <SafeAreaView style={dynamicStyles.errorContainer}>
+      <SafeAreaView style={[dynamicStyles.errorContainer, {paddingTop: insets.top}]} edges={[]}>
         <Text style={dynamicStyles.errorText}>
           {error || '获取动漫详情失败'}
         </Text>
@@ -136,11 +172,27 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   }
 
   return (
-    <SafeAreaView style={dynamicStyles.container}>
+    <View style={dynamicStyles.container}>
       <StatusBarManager 
         {...StatusBarConfigs.detail} 
         scrollY={scrollY}
       />
+      
+      {/* 自定义顶部导航栏 */}
+      <Animated.View style={topBarStyles.topBar}>
+        {canGoBack() && (
+          <TouchableOpacity 
+            style={topBarStyles.backButton}
+            onPress={goBack}
+          >
+            <Icon name="arrow-back" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
+        <Text style={topBarStyles.title} numberOfLines={1}>
+          AnimeDetail
+        </Text>
+      </Animated.View>
+
       <Animated.ScrollView
         style={dynamicStyles.scrollContainer}
         contentContainerStyle={{flexGrow: 1}}
@@ -175,7 +227,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </ImageBackground>
 
           {/* 内容区域 */}
-          <View style={dynamicStyles.headerContainer}>
+          <View style={[dynamicStyles.headerContainer, {paddingTop: 56 + insets.top}]}>
             {/* 封面图片 */}
             <FastImage
               source={{uri: animeDetail.images?.large}}
@@ -298,7 +350,10 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
             </>
           )}
         </View>
+        
+        {/* 底部安全距离 */}
+        <View style={{height: insets.bottom}} />
       </Animated.ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

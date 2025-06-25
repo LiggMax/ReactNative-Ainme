@@ -14,7 +14,7 @@ import AnimeService, {AnimeItem, RankingResponse} from '../../../api/bangumi/ani
 import {useAppNavigation} from '../../../navigation';
 
 const {width} = Dimensions.get('window');
-const ITEM_WIDTH = width - 32; // 减去padding
+const ITEM_WIDTH = width - 32;
 
 export default function Ranking() {
   const theme = useTheme();

@@ -4,6 +4,7 @@ import {createNativeStackNavigator, NativeStackNavigationOptions} from '@react-n
 import {useTheme} from 'react-native-paper';
 import {useNavigation as useRNNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import BottomTabLayout from '../ui/Layout';
 import AnimeDetail from '../ui/animedatail/AnimeDatail';
 import {RootStackParamList} from '../types/navigation';
@@ -44,6 +45,7 @@ export const useAppNavigation = () => {
 // 主导航器组件
 export default function AppNavigator() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const screenOptions: NativeStackNavigationOptions = {
     headerTitleStyle: {
@@ -53,6 +55,9 @@ export default function AppNavigator() {
       backgroundColor: theme.colors.surface,
     },
     headerTintColor: theme.colors.onSurface,
+    contentStyle: {
+      paddingTop: 0,
+    },
   };
 
   return (
