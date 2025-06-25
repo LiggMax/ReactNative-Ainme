@@ -7,13 +7,14 @@ import {
   ActivityIndicator,
   Alert,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
+import {StatusBarManager, StatusBarConfigs} from '../../components/StatusBarManager';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
@@ -103,10 +104,12 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     },
     scrollContainer: {
       flex: 1,
+      backgroundColor: theme.colors.background,
     },
     headerBackground: {
       width: '100%',
       minHeight: 240,
+      backgroundColor: theme.colors.background,
     },
     headerBlurOverlay: {
       position: 'absolute',
@@ -126,7 +129,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     headerContainer: {
       flexDirection: 'row',
       padding: 16,
-      paddingTop: 40, // 增加顶部间距避免状态栏遮挡
+      paddingTop: 40, // 恢复状态栏间距
       minHeight: 240,
       position: 'relative',
     },
@@ -343,7 +346,17 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   return (
     <View style={dynamicStyles.container}>
-      <ScrollView style={dynamicStyles.scrollContainer}>
+      <StatusBarManager {...StatusBarConfigs.detail} />
+      <ScrollView
+        style={dynamicStyles.scrollContainer}
+        contentContainerStyle={{flexGrow: 1}}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+        scrollEventThrottle={16}
+        automaticallyAdjustContentInsets={false}
+        contentInsetAdjustmentBehavior="never"
+      >
         {/* 头部信息区域 - 带高斯模糊背景 */}
         <View style={dynamicStyles.headerBackground}>
           {/* 背景图片 */}
@@ -492,5 +505,4 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
+StyleSheet.create({});

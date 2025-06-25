@@ -10,19 +10,15 @@ import {
 } from 'react-native';
 import {Button, Dialog, Portal, useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AnimeService, {AnimeItem, RankingResponse} from '../../../api/bangumi/anime/animeService.ts';
-import {RootStackParamList} from '../../../types/navigation';
+import {useAppNavigation} from '../../../navigation';
 
 const {width} = Dimensions.get('window');
 const ITEM_WIDTH = width - 32; // 减去padding
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function Ranking() {
   const theme = useTheme();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useAppNavigation();
 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
@@ -146,7 +142,7 @@ export default function Ranking() {
 
   // 导航到动漫详情页
   const navigateToDetail = useCallback((animeId: number) => {
-    navigation.navigate('AnimeDetail', {id: animeId});
+    navigation.navigateToAnimeDetail(animeId);
   }, [navigation]);
 
   // 渲染排行榜项目

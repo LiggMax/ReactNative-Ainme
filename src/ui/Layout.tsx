@@ -88,11 +88,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
   },
   homeScreenContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   screenTitle: {
     fontSize: 24,

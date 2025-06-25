@@ -11,13 +11,11 @@ import {
   View,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/anime/animeService.ts';
-import {RootStackParamList} from '../../../types/navigation';
+import {useAppNavigation} from '../../../navigation';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -33,11 +31,9 @@ const NUM_COLUMNS = Math.floor((width - CONTAINER_PADDING) / (MIN_CARD_WIDTH + C
 // 计算实际卡片宽度
 const CARD_WIDTH = (width - CONTAINER_PADDING - (NUM_COLUMNS - 1) * CARD_MARGIN) / NUM_COLUMNS;
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function Schedules() {
   const theme = useTheme();
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useAppNavigation();
 
   // 状态管理
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
@@ -85,10 +81,7 @@ export default function Schedules() {
       title: item.name_cn || item.name
     });
 
-    navigation.navigate('AnimeDetail', {
-      id: item.id,
-      title: item.name_cn || item.name,
-    });
+    navigation.navigateToAnimeDetail(item.id, item.name_cn || item.name);
   }, [navigation]);
 
   // 图片加载处理函数
