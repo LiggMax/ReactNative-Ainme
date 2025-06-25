@@ -169,33 +169,31 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           <View style={dynamicStyles.infoContainer}>
             <View style={dynamicStyles.titleContainer}>
               <View style={dynamicStyles.titleWrapper}>
-              <Text style={dynamicStyles.title} numberOfLines={3}>
-                {title }
-              </Text>
-
+                <Text style={dynamicStyles.title} numberOfLines={1}>
+                  {title}
+                </Text>
               </View>
-
             </View>
 
-            <Text style={dynamicStyles.ratingScore}>
-              {animeDetail.rating.score.toFixed(1)}
-            </Text>
+
             {/* 评分信息 */}
             {animeDetail.rating && (
               <View style={dynamicStyles.ratingContainer}>
-
+                <Text style={dynamicStyles.ratingScore}>
+                  {animeDetail.rating.score.toFixed(1)}
+                </Text>
                 <Text style={dynamicStyles.ratingStars}>
                   {getStarRating(animeDetail.rating.score)}
                 </Text>
-                <Text style={dynamicStyles.ratingCount}>
+                <Text style={dynamicStyles.ratingCount} numberOfLines={0}>
                   {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
                 </Text>
               </View>
             )}
-            <Text style={dynamicStyles.dateText}>
+            <Text style={dynamicStyles.dateText} numberOfLines={0}>
               {animeDetail.date || '播出时间待定'}
             </Text>
-            <Text style={dynamicStyles.episodeText}>
+            <Text style={dynamicStyles.episodeText} numberOfLines={0}>
               看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
             </Text>
             {/* 收藏数据 */}
