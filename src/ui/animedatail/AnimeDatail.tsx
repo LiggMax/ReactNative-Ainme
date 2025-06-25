@@ -177,37 +177,34 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
               <View style={dynamicStyles.titleContainer}>
                 <View style={dynamicStyles.titleWrapper}>
                 <Text style={dynamicStyles.title} numberOfLines={3}>
-                  {title}
+                  {title }
                 </Text>
-                  <Text style={dynamicStyles.ratingScore}>
-                    {animeDetail.rating.score.toFixed(1)}
-                  </Text>
-                  <Text style={dynamicStyles.ratingStars}>
-                    {getStarRating(animeDetail.rating.score)}
-                  </Text>
+
                 </View>
-                {animeDetail.name && animeDetail.name_cn && (
-                  <Text style={dynamicStyles.originalTitle} numberOfLines={2}>
-                    {animeDetail.name}
-                  </Text>
-                )}
-                <Text style={dynamicStyles.dateText}>
-                  {animeDetail.date || '播出时间待定'}
-                </Text>
-                <Text style={dynamicStyles.episodeText}>
-                  看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
-                </Text>
+
               </View>
 
+              <Text style={dynamicStyles.ratingScore}>
+                {animeDetail.rating.score.toFixed(1)}
+              </Text>
               {/* 评分信息 */}
               {animeDetail.rating && (
                 <View style={dynamicStyles.ratingContainer}>
+
+                  <Text style={dynamicStyles.ratingStars}>
+                    {getStarRating(animeDetail.rating.score)}
+                  </Text>
                   <Text style={dynamicStyles.ratingCount}>
                     {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
                   </Text>
                 </View>
               )}
-
+              <Text style={dynamicStyles.dateText}>
+                {animeDetail.date || '播出时间待定'}
+              </Text>
+              <Text style={dynamicStyles.episodeText}>
+                看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
+              </Text>
               {/* 收藏数据 */}
               {animeDetail.collection && (
                 <View style={dynamicStyles.collectionContainer}>
