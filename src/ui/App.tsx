@@ -51,9 +51,8 @@ function AppContent(): React.JSX.Element {
           <Stack.Screen
             name="AnimeDetail"
             component={AnimeDetail}
-            options={({route}) => ({
-              title: route.params?.title || '动漫详情',
-              headerBackTitle: '返回',
+            options={() => ({
+              headerShown: false,
             })}
           />
         </Stack.Navigator>
