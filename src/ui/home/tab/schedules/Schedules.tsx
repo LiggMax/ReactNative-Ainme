@@ -74,6 +74,7 @@ export default function Schedules() {
 
   // 图片加载处理函数
   const handleImageLoadStart = useCallback((itemId: number) => {
+    console.log(`🖼️ 图片开始加载: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: true
@@ -81,15 +82,18 @@ export default function Schedules() {
   }, []);
 
   const handleImageLoad = useCallback((itemId: number) => {
-    // 图片加载完成
-    setImageLoadingStates(prev => ({
-      ...prev,
-      [itemId]: false
-    }));
+    console.log(`✅ 图片加载完成: ${itemId}`);
+    // 添加小延迟确保shimmer效果能被看到，避免闪烁
+    setTimeout(() => {
+      setImageLoadingStates(prev => ({
+        ...prev,
+        [itemId]: false
+      }));
+    }, 100);
   }, []);
 
   const handleImageLoadError = useCallback((itemId: number) => {
-    console.warn(`图片加载失败: ${itemId}`);
+    console.warn(`❌ 图片加载失败: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
@@ -102,20 +106,15 @@ export default function Schedules() {
     return currentWeekday?.items || [];
   }, [scheduleData, selectedWeekday]);
 
-  // 当数据更新时，初始化所有图片的加载状态
+  // 当数据更新时，重置所有图片的加载状态
   useEffect(() => {
     const newLoadingStates: {[key: string]: boolean} = {};
     currentWeekdayData.forEach(item => {
-      if (imageLoadingStates[item.id] === undefined) {
-        newLoadingStates[item.id] = true;
-      }
+      newLoadingStates[item.id] = true; // 始终设为加载中状态
     });
 
     if (Object.keys(newLoadingStates).length > 0) {
-      setImageLoadingStates(prev => ({
-        ...prev,
-        ...newLoadingStates
-      }));
+      setImageLoadingStates(newLoadingStates); // 直接替换而不是合并，避免旧状态影响
     }
   }, [currentWeekdayData]);
 
@@ -149,8 +148,7 @@ export default function Schedules() {
               compact
               mode="outlined"
             >
-              {item.weekday.cn} {item.items.length}
-              <Text>部</Text>
+              {item.weekday.cn} {item.items.length}部
             </Chip>
           ))}
         </ScrollView>
@@ -161,7 +159,7 @@ export default function Schedules() {
   // 渲染动漫卡片
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
     // 检查加载状态，默认为true（加载中）
-    const isLoading = imageLoadingStates[item.id];
+    const isLoading = imageLoadingStates[item.id] !== false; // 只有明确设置为false时才不显示加载状态
     const imageUrl = item.images.large;
 
     return (

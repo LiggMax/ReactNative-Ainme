@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+
   },
   description: {
     fontSize: 16,
