@@ -3,9 +3,9 @@ import {StyleSheet, useWindowDimensions} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Recommend from './tab/Recommend';
-import Schedules from './tab/Schedules';
-import Ranking from './tab/Ranking';
+import Recommend from './tab/recommend/Recommend.tsx';
+import Schedules from './tab/schedules/Schedules.tsx';
+import Ranking from './tab/ranking/Ranking.tsx';
 
 export default function HomeLayout() {
   const theme = useTheme();
