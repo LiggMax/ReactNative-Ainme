@@ -273,15 +273,6 @@ class Request {
     // return await AsyncStorage.getItem('token');
     return null;
   }
-
-  /**
-   * 处理token过期
-   */
-  private handleTokenExpired(): void {
-    // 清除token，跳转到登录页等处理
-    console.log('Token已过期，需要重新登录');
-  }
-
   /**
    * 通用请求方法
    */
@@ -384,40 +375,6 @@ class Request {
   patch<T = any>(url: string, data?: any, config?: RequestConfig): Promise<T> {
     return this.request<T>(RequestType.PATCH, url, data, config);
   }
-
-  /**
-   * 上传文件
-   */
-  upload<T = any>(
-    url: string,
-    formData: FormData,
-    config?: RequestConfig,
-  ): Promise<T> {
-    const uploadConfig: RequestConfig = {
-      ...config,
-      timeout: this.getTimeoutByType(RequestType.UPLOAD, config?.timeout),
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        ...config?.headers,
-      },
-    };
-
-    return this.request<T>(RequestType.POST, url, formData, uploadConfig);
-  }
-
-  /**
-   * 下载文件
-   */
-  download(url: string, config?: RequestConfig): Promise<Blob> {
-    const downloadConfig: RequestConfig = {
-      ...config,
-      timeout: this.getTimeoutByType(RequestType.DOWNLOAD, config?.timeout),
-      responseType: 'blob',
-    };
-
-    return this.request<Blob>(RequestType.GET, url, undefined, downloadConfig);
-  }
-
   /**
    * 取消请求
    */
@@ -430,32 +387,6 @@ class Request {
     } else {
       console.warn(`⚠️  未找到请求ID: ${requestId}`);
     }
-  }
-
-  /**
-   * 取消所有请求
-   */
-  cancelAllRequests(): void {
-    this.cancelTokens.forEach((cancelSource, requestId) => {
-      cancelSource.cancel(`批量取消请求: ${requestId}`);
-    });
-    this.cancelTokens.clear();
-    console.log('🚫 已取消所有请求');
-  }
-
-  /**
-   * 设置全局超时时间
-   */
-  setGlobalTimeout(timeout: number): void {
-    this.instance.defaults.timeout = timeout;
-    console.log(`⏰ 全局超时时间已设置为: ${timeout}ms`);
-  }
-
-  /**
-   * 获取当前活跃的请求数量
-   */
-  getActiveRequestsCount(): number {
-    return this.cancelTokens.size;
   }
 }
 

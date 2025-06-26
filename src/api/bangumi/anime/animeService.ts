@@ -68,11 +68,49 @@ export interface RankingResponse {
   list: AnimeItem[];
 }
 
+// 搜索参数类型
+export interface SearchParams {
+  keyword: string;
+  page?: number;
+  size?: number;
+}
+
 /**
  * 动漫服务类
  */
 class AnimeService {
+  /**
+   * 获取动漫详情 (使用 api.bgm.tv)
+   */
+  async getAnimeDetail(id: number): Promise<AnimeItem> {
+    return apiRequest.get(API_PATHS.GET_DETAIL(id));
+  }
 
+  /**
+   * 获取动漫详情 - 兼容旧方法名
+   */
+  async getAnimeDetailService(id: number): Promise<AnimeItem> {
+    return this.getAnimeDetail(id);
+  }
+
+  /**
+   * 搜索动漫 (使用 bgm.tv)
+   */
+  async searchAnime(params: SearchParams): Promise<{
+    list: AnimeItem[];
+    total: number;
+  }> {
+    return bgmRequest.get(API_PATHS.SEARCH, {params});
+  }
+
+  /**
+   * 获取推荐动漫 (使用 api.bgm.tv)
+   */
+  async getRecommendAnime(limit: number = 10): Promise<AnimeItem[]> {
+    return apiRequest.get(API_PATHS.GET_RECOMMEND, {
+      params: {limit},
+    });
+  }
 
   /**
    * 获取排行榜 (使用 bgm.tv)
@@ -82,10 +120,30 @@ class AnimeService {
   }
 
   /**
+   * 获取排行榜 - 兼容旧方法名
+   */
+  async getRankingService(): Promise<RankingResponse> {
+    return this.getRanking();
+  }
+
+  /**
    * 获取新番时间表 (使用 bgm.tv)
    */
   async getSchedule(): Promise<ScheduleItem[]> {
-    return apiRequest.get(API_PATHS.GET_SCHEDULE);
+    return bgmRequest.get(API_PATHS.GET_SCHEDULE);
+  }
+
+  /**
+   * 获取分类列表 (使用 api.bgm.tv)
+   */
+  async getCategories(): Promise<
+    {
+      id: string;
+      name: string;
+      count: number;
+    }[]
+  > {
+    return apiRequest.get(API_PATHS.GET_CATEGORIES);
   }
 }
 
