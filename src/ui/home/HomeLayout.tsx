@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import React, { useState, useMemo, useCallback} from 'react';
 import {StyleSheet, useWindowDimensions} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
