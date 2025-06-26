@@ -45,6 +45,7 @@ export const useAppNavigation = () => {
 // 主导航器组件
 export default function AppNavigator() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const screenOptions: NativeStackNavigationOptions = {
     headerTitleStyle: {
