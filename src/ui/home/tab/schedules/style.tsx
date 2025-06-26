@@ -16,7 +16,36 @@ export const createSchedulesStyles = (theme: MD3Theme) =>
         contentContainer: {
             flex: 1,
         },
-        
+        // 紧凑的星期选择器 - 使用 Chip 组件
+        weekdayContainer: {
+            backgroundColor: theme.colors.surface,
+            paddingVertical: 6,
+            marginBottom: 4,
+            elevation: 1,
+            shadowColor: theme.colors.shadow,
+            shadowOffset: {width: 0, height: 1},
+            shadowOpacity: 0.05,
+            shadowRadius: 1,
+        },
+        weekdayScrollContent: {
+            paddingHorizontal: 12,
+            alignItems: 'center',
+        },
+        weekdayChip: {
+            marginHorizontal: 4,
+            height: 32, // 紧凑高度
+        },
+        weekdayChipSelected: {
+            backgroundColor: theme.colors.primaryContainer,
+        },
+        weekdayChipText: {
+            fontSize: 12,
+            lineHeight: 16,
+        },
+        weekdayChipTextSelected: {
+            color: theme.colors.onPrimaryContainer,
+            fontWeight: '600',
+        },
         loadingContainer: {
             flex: 1,
             justifyContent: 'center',
@@ -62,46 +91,7 @@ export const createSchedulesStyles = (theme: MD3Theme) =>
             fontSize: 16,
             fontWeight: '600',
         },
-        weekdayContainer: {
-            backgroundColor: theme.colors.surface,
-            paddingVertical: 12,
-            marginBottom: 8,
-            elevation: 2,
-            shadowColor: theme.colors.shadow,
-            shadowOffset: {width: 0, height: 1},
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-        },
-        weekdayButton: {
-            marginHorizontal: 8,
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderRadius: 20,
-            backgroundColor: theme.colors.surfaceVariant,
-            alignItems: 'center',
-            minWidth: 70,
-        },
-        weekdayButtonSelected: {
-            backgroundColor: theme.colors.primary,
-        },
-        weekdayText: {
-            fontSize: 14,
-            fontWeight: 'bold',
-            color: theme.colors.onSurfaceVariant,
-        },
-        weekdayTextSelected: {
-            color: theme.colors.onPrimary,
-        },
-        weekdayCountText: {
-            fontSize: 12,
-            color: theme.colors.onSurfaceVariant,
-            marginTop: 2,
-            opacity: 0.7,
-        },
-        weekdayCountTextSelected: {
-            color: theme.colors.onPrimary,
-            opacity: 1,
-        },
+
         animeCard: {
             backgroundColor: theme.colors.surface,
             borderRadius: 12,

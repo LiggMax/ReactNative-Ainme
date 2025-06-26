@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {useTheme, Chip} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
@@ -122,36 +122,41 @@ export default function Schedules() {
   // 动态样式
   const dynamicStyles = createSchedulesStyles(theme);
 
-  // 渲染星期选择器
-  const renderWeekdaySelector = useMemo(() => (
-    <View style={dynamicStyles.weekdayContainer}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {scheduleData.map((item) => (
-          <TouchableOpacity
-            key={item.weekday.id}
-            style={[
-              dynamicStyles.weekdayButton,
-              selectedWeekday === item.weekday.id && dynamicStyles.weekdayButtonSelected
-            ]}
-            onPress={() => setSelectedWeekday(item.weekday.id)}
-          >
-            <Text style={[
-              dynamicStyles.weekdayText,
-              selectedWeekday === item.weekday.id && dynamicStyles.weekdayTextSelected
-            ]}>
-              {item.weekday.cn}
-            </Text>
-            <Text style={[
-              dynamicStyles.weekdayCountText,
-              selectedWeekday === item.weekday.id && dynamicStyles.weekdayCountTextSelected
-            ]}>
-              {item.items.length}部
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
-  ), [scheduleData, selectedWeekday, dynamicStyles]);
+  // 渲染紧凑的星期选择器
+  const renderWeekdaySelector = useMemo(() => {
+    if (scheduleData.length === 0) return null;
+
+    return (
+      <View style={dynamicStyles.weekdayContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={dynamicStyles.weekdayScrollContent}
+        >
+          {scheduleData.map((item) => (
+            <Chip
+              key={item.weekday.id}
+              selected={selectedWeekday === item.weekday.id}
+              onPress={() => setSelectedWeekday(item.weekday.id)}
+              style={[
+                dynamicStyles.weekdayChip,
+                selectedWeekday === item.weekday.id && dynamicStyles.weekdayChipSelected
+              ]}
+              textStyle={[
+                dynamicStyles.weekdayChipText,
+                selectedWeekday === item.weekday.id && dynamicStyles.weekdayChipTextSelected
+              ]}
+              compact
+              mode="outlined"
+            >
+              {item.weekday.cn} {item.items.length}
+              <Text>部</Text>
+            </Chip>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }, [scheduleData, selectedWeekday, dynamicStyles]);
 
   // 渲染动漫卡片
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
