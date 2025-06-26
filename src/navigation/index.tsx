@@ -5,7 +5,7 @@ import {useTheme} from 'react-native-paper';
 import {useNavigation as useRNNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import ResponsiveLayout from '../ui/Layout';
+import BottomTabLayout from '../ui/Layout';
 import AnimeDetail from '../ui/animedatail/AnimeDatail';
 import {RootStackParamList} from '../types/navigation';
 
@@ -67,7 +67,7 @@ export default function AppNavigator() {
       >
         <Stack.Screen
           name="Main"
-          component={ResponsiveLayout}
+          component={BottomTabLayout}
           options={ROUTE_CONFIG.Main}
         />
         <Stack.Screen

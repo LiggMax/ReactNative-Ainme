@@ -8,11 +8,11 @@
 import React from 'react';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import AppNavigator from './src/navigation';
+import AppNavigator from '../navigation';
 import {
   StatusBarManager,
   StatusBarConfigs,
-} from './src/components/StatusBarManager.tsx';
+} from '../components/StatusBarManager';
 function App(): React.JSX.Element {
   return (
       <SafeAreaProvider>
