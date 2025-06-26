@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   SafeAreaView,
   ScrollView,
   Text,
@@ -12,35 +11,17 @@ import {useTheme} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
+import {FlatGrid} from 'react-native-super-grid';
 import animeService, {AnimeItem, ScheduleItem} from '../../../../api/bangumi/anime/animeService.ts';
 import {useAppNavigation} from '../../../../navigation';
-import {calculateAnimeCardLayout} from '../../../../util/layoutUtils.ts';
 import {createSchedulesStyles} from './style.tsx';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
 
-// 布局配置常量
-const LAYOUT_CONFIG = {
-  MIN_CARD_WIDTH: 120,     // 最小卡片宽度
-  CARD_MARGIN: 8,          // 卡片间距
-  CONTAINER_PADDING: 16,   // 容器左右内边距总和
-  ASPECT_RATIO: 3 / 4,     // 卡片宽高比（3:4，接近海报比例）
-};
-
 export default function Schedules() {
   const theme = useTheme();
   const navigation = useAppNavigation();
-
-  // 使用布局工具计算参数
-  const layoutParams = useMemo(() => {
-    return calculateAnimeCardLayout(
-      LAYOUT_CONFIG.MIN_CARD_WIDTH,
-      LAYOUT_CONFIG.CARD_MARGIN,
-      LAYOUT_CONFIG.CONTAINER_PADDING,
-      LAYOUT_CONFIG.ASPECT_RATIO
-    );
-  }, []);
 
   // 状态管理
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
@@ -139,7 +120,7 @@ export default function Schedules() {
   }, [currentWeekdayData]);
 
   // 动态样式
-  const dynamicStyles = createSchedulesStyles(theme, layoutParams);
+  const dynamicStyles = createSchedulesStyles(theme);
 
   // 渲染星期选择器
   const renderWeekdaySelector = useMemo(() => (
@@ -266,14 +247,16 @@ export default function Schedules() {
     return (
       <View style={dynamicStyles.contentContainer}>
         {renderWeekdaySelector}
-        <FlatList
+        <FlatGrid
+          itemDimension={120} // 最小卡片宽度，自动计算列数
           data={currentWeekdayData}
+          style={dynamicStyles.gridContainer}
+          spacing={8} // 卡片间距
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={layoutParams.numColumns}
-          contentContainerStyle={dynamicStyles.animeList}
-          columnWrapperStyle={layoutParams.numColumns > 1 ? dynamicStyles.row : undefined}
           showsVerticalScrollIndicator={false}
+          maxItemsPerRow={6} // 最大列数限制
+          staticDimension={undefined} // 让网格自适应容器宽度
           removeClippedSubviews={true}
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={50}

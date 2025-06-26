@@ -1,11 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {MD3Theme} from 'react-native-paper';
-import {LayoutResult} from '../../../../util/layoutUtils';
 
-export const createSchedulesStyles = (
-  theme: MD3Theme,
-  layoutParams: LayoutResult,
-) =>
+export const createSchedulesStyles = (theme: MD3Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -13,6 +9,10 @@ export const createSchedulesStyles = (
     },
     contentContainer: {
       flex: 1,
+    },
+    gridContainer: {
+      flex: 1,
+      paddingHorizontal: 8,
     },
     loadingContainer: {
       flex: 1,
@@ -100,21 +100,19 @@ export const createSchedulesStyles = (
       opacity: 1,
     },
     animeCard: {
-      width: layoutParams.cardWidth,
       backgroundColor: theme.colors.surface,
       borderRadius: 12,
-      marginBottom: 16,
-      marginRight: 8,
       shadowColor: theme.colors.shadow,
       shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 3,
+      overflow: 'hidden',
     },
     imageContainer: {
       position: 'relative',
       width: '100%',
-      height: layoutParams.cardHeight,
+      aspectRatio: 3 / 4, // 宽高比 3:4，接近海报比例
       borderRadius: 12,
       overflow: 'hidden',
     },
@@ -150,12 +148,6 @@ export const createSchedulesStyles = (
       color: 'white',
       marginBottom: 4,
       lineHeight: 24,
-    },
-    animeList: {
-      padding: 8,
-    },
-    row: {
-      justifyContent: 'flex-start',
     },
     emptyContainer: {
       flex: 1,

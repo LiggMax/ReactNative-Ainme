@@ -2,7 +2,7 @@ import React, {useState, useMemo} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {BottomNavigation, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Home from './home/HomeLayout';
+import Home from '../home/HomeLayout.tsx';
 
 export default function BottomTabLayout() {
   const theme = useTheme();
@@ -70,16 +70,24 @@ export default function BottomTabLayout() {
     return <Icon name={iconName} size={24} color={color} />;
   };
 
-  return (
-      <BottomNavigation
+    return (
+
+    <BottomNavigation
         navigationState={{index, routes}}
-        onIndexChange={setIndex}
-        renderScene={renderScene}
-        renderIcon={renderIcon}
-        barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
-        activeColor={theme.colors.primary}
-        inactiveColor={theme.colors.onSurfaceVariant}
-      />
+  onIndexChange={setIndex}
+  renderScene={renderScene}
+  renderIcon={renderIcon}
+  barStyle={[
+  styles.bottomNavigation,
+  {
+    backgroundColor: theme.colors.surface,
+    borderTopColor: theme.colors.outline,
+  }
+]}
+  activeColor={theme.colors.primary}
+  inactiveColor={theme.colors.onSurfaceVariant}
+    />
+
   );
 }
 
@@ -104,7 +112,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   bottomNavigation: {
-    elevation: 8,
-    shadowOpacity: 0.1,
+    backgroundColor: '#434343',
   },
 });
