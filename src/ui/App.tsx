@@ -15,12 +15,12 @@ import {
 } from '../components/StatusBarManager';
 function App(): React.JSX.Element {
   return (
-      <SafeAreaProvider>
-        <PaperProvider>
-          <StatusBarManager {...StatusBarConfigs.smart} />
-          <AppNavigator />
-        </PaperProvider>
-      </SafeAreaProvider>
+    <SafeAreaProvider>
+      <PaperProvider>
+        <StatusBarManager {...StatusBarConfigs.smart} />
+        <AppNavigator />
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 }
 

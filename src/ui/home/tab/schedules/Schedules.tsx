@@ -156,10 +156,12 @@ export default function Schedules() {
     );
   }, [scheduleData, selectedWeekday, dynamicStyles]);
 
+  
+
   // 渲染动漫卡片
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
     // 检查加载状态，默认为true（加载中）
-    const isLoading = imageLoadingStates[item.id] !== false; // 只有明确设置为false时才不显示加载状态
+    const isLoading = imageLoadingStates[item.id]; // 只有明确设置为false时才不显示加载状态
     const imageUrl = item.images.large;
 
     return (
@@ -272,6 +274,11 @@ export default function Schedules() {
           updateCellsBatchingPeriod={50}
           initialNumToRender={8}
           windowSize={10}
+          scrollEventThrottle={20}//优化滑动响应，减少与TabView冲突
+          directionalLockEnabled={true} // 启用方向锁定
+          alwaysBounceVertical={false}
+          bounces={false}
+          overScrollMode="never"
           ListEmptyComponent={
             <View style={dynamicStyles.emptyContainer}>
               <Text style={dynamicStyles.emptyText}>今日暂无新番</Text>

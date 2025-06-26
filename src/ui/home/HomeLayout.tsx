@@ -52,6 +52,7 @@ export default function HomeLayout() {
         pressColor="transparent"
         pressOpacity={0}
         android_ripple={null}
+        bounces={false}
       />
     ),
     [theme.colors.primary, theme.colors.surface, theme.colors.onSurfaceVariant],
