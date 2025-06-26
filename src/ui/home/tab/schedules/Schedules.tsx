@@ -14,7 +14,7 @@ import FastImage from 'react-native-fast-image';
 import {FlatGrid} from 'react-native-super-grid';
 import animeService, {AnimeItem, ScheduleItem} from '../../../../api/bangumi/anime/animeService.ts';
 import {useAppNavigation} from '../../../../navigation';
-import {createSchedulesStyles} from './style.tsx';
+import {createSchedulesStyles, GRADIENT_CONFIG} from './style.tsx';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -190,8 +190,8 @@ export default function Schedules() {
 
           {/* 渐变蒙版 - 从透明到半透明黑色的自然过渡 */}
           <LinearGradient
-            colors={['transparent', 'rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.7)']}
-            locations={[0, 0.5, 1]}
+            colors={GRADIENT_CONFIG.colors}
+            locations={GRADIENT_CONFIG.locations}
             style={dynamicStyles.gradientOverlay}
             pointerEvents="none"
           />
@@ -256,9 +256,8 @@ export default function Schedules() {
       <View style={dynamicStyles.contentContainer}>
         {renderWeekdaySelector}
         <FlatGrid
-          itemDimension={120} // 最小卡片宽度，自动计算列数
+          itemDimension={100} // 最小卡片宽度，自动计算列数
           data={currentWeekdayData}
-          style={dynamicStyles.gridContainer}
           spacing={8} // 卡片间距
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
