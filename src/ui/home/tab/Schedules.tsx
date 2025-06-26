@@ -16,7 +16,6 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/anime/animeService.ts';
 import {useAppNavigation} from '../../../navigation';
-import {getBestImageUrl} from '../../../util/imageUtils.ts';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -335,7 +334,7 @@ export default function Schedules() {
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
     // 检查加载状态，默认为true（加载中）
     const isLoading = imageLoadingStates[item.id];
-    const imageUrl = getBestImageUrl(item.images, 'large');
+    const imageUrl = item.images.large;
 
     return (
       <TouchableOpacity
@@ -353,7 +352,7 @@ export default function Schedules() {
             onLoad={() => handleImageLoad(item.id)}
             onError={() => handleImageLoadError(item.id)}
           />
-
+          
           {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
           {isLoading && (
             <ShimmerPlaceholder
