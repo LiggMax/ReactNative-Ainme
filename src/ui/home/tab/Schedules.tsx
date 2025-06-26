@@ -16,6 +16,7 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/anime/animeService.ts';
 import {useAppNavigation} from '../../../navigation';
+import {getBestImageUrl} from '../../../util/imageUtils.ts';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -92,7 +93,8 @@ export default function Schedules() {
     }));
   }, []);
 
-  const handleImageLoadEnd = useCallback((itemId: number) => {
+  const handleImageLoad = useCallback((itemId: number) => {
+    // 图片加载完成
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: false
@@ -120,6 +122,23 @@ export default function Schedules() {
     const currentWeekday = scheduleData.find(item => item.weekday.id === selectedWeekday);
     return currentWeekday?.items || [];
   }, [scheduleData, selectedWeekday]);
+
+  // 当数据更新时，初始化所有图片的加载状态
+  useEffect(() => {
+    const newLoadingStates: {[key: string]: boolean} = {};
+    currentWeekdayData.forEach(item => {
+      if (imageLoadingStates[item.id] === undefined) {
+        newLoadingStates[item.id] = true;
+      }
+    });
+
+    if (Object.keys(newLoadingStates).length > 0) {
+      setImageLoadingStates(prev => ({
+        ...prev,
+        ...newLoadingStates
+      }));
+    }
+  }, [currentWeekdayData]);
 
   // 动态样式
   const dynamicStyles = useMemo(() => StyleSheet.create({
@@ -242,7 +261,8 @@ export default function Schedules() {
       height: '100%',
       borderTopLeftRadius: 12,
       borderTopRightRadius: 12,
-      zIndex: 2,
+      zIndex: 10,
+      backgroundColor: theme.colors.surfaceVariant,
     },
     animeTitle: {
       fontSize: 14,
@@ -313,7 +333,9 @@ export default function Schedules() {
 
   // 渲染动漫卡片
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
+    // 检查加载状态，默认为true（加载中）
     const isLoading = imageLoadingStates[item.id];
+    const imageUrl = getBestImageUrl(item.images, 'large');
 
     return (
       <TouchableOpacity
@@ -322,7 +344,17 @@ export default function Schedules() {
         activeOpacity={0.8}
       >
         <View style={dynamicStyles.imageContainer}>
-          {/* 图片加载时显示Shimmer */}
+          {/* 图片 */}
+          <FastImage
+            source={{uri: imageUrl}}
+            style={styles.animeImage}
+            resizeMode="cover"
+            onLoadStart={() => handleImageLoadStart(item.id)}
+            onLoad={() => handleImageLoad(item.id)}
+            onError={() => handleImageLoadError(item.id)}
+          />
+
+          {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
           {isLoading && (
             <ShimmerPlaceholder
               style={dynamicStyles.shimmerPlaceholder}
@@ -333,15 +365,6 @@ export default function Schedules() {
               ]}
             />
           )}
-          {/* 图片 - 使用与详情页相同的简单实现 */}
-          <FastImage
-            source={{uri: item.images.large}}
-            style={styles.animeImage}
-            resizeMode="cover"
-            onLoadStart={() => handleImageLoadStart(item.id)}
-            onLoadEnd={() => handleImageLoadEnd(item.id)}
-            onError={() => handleImageLoadError(item.id)}
-          />
         </View>
         <View style={styles.animeInfo}>
           <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
@@ -370,7 +393,7 @@ export default function Schedules() {
     imageLoadingStates,
     handleCardPress,
     handleImageLoadStart,
-    handleImageLoadEnd,
+    handleImageLoad,
     handleImageLoadError,
     formatCollectionCount,
     theme.colors,
