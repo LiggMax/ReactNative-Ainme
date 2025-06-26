@@ -1,35 +1,34 @@
-import React, {useEffect, useState, useMemo, useRef} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
   Text,
-  StyleSheet,
   View,
-  ScrollView,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
   ImageBackground,
-  Dimensions, SafeAreaView,
-  Animated,
+  Dimensions,
+  StyleSheet,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
-import {StatusBarManager, StatusBarConfigs} from '../../components/StatusBarManager';
+import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
+import AnimatedHeaderPage from '../../components/AnimatedHeaderPage';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const {goBack, canGoBack} = useAppNavigation();
   const {id, title} = route.params;
 
   const [animeDetail, setAnimeDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
-
-  // 滚动动画值 - 用于动态状态栏
-  const scrollY = useRef(new Animated.Value(0)).current;
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -118,16 +117,16 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   if (loading) {
     return (
-      <View style={dynamicStyles.loadingContainer}>
+      <SafeAreaView style={[dynamicStyles.loadingContainer, {paddingTop: insets.top}]} edges={[]}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={dynamicStyles.loadingText}>加载中...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !animeDetail) {
     return (
-      <SafeAreaView style={dynamicStyles.errorContainer}>
+      <SafeAreaView style={[dynamicStyles.errorContainer, {paddingTop: insets.top}]} edges={[]}>
         <Text style={dynamicStyles.errorText}>
           {error || '获取动漫详情失败'}
         </Text>
@@ -135,170 +134,163 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     );
   }
 
-  return (
-    <SafeAreaView style={dynamicStyles.container}>
-      <StatusBarManager 
-        {...StatusBarConfigs.detail} 
-        scrollY={scrollY}
-      />
-      <Animated.ScrollView
-        style={dynamicStyles.scrollContainer}
-        contentContainerStyle={{flexGrow: 1}}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        overScrollMode="never"
-        scrollEventThrottle={16}
-        automaticallyAdjustContentInsets={false}
-        contentInsetAdjustmentBehavior="never"
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
-          {useNativeDriver: false}
-        )}
-      >
-        {/* 头部信息区域 - 带高斯模糊背景 */}
-        <View style={dynamicStyles.headerBackground}>
-          {/* 背景图片 */}
-          <ImageBackground
+  // 页面内容
+  const renderContent = () => (
+    <>
+      {/* 头部信息区域 - 带高斯模糊背景 */}
+      <View style={dynamicStyles.headerBackground}>
+        {/* 背景图片 */}
+        <ImageBackground
+          source={{uri: animeDetail.images?.large}}
+          style={StyleSheet.absoluteFillObject}
+          blurRadius={20}
+          resizeMode="cover"
+        >
+          {/* 深色遮罩层 */}
+          <View style={dynamicStyles.headerBlurOverlay} />
+
+          {/* 渐变遮罩 */}
+          <LinearGradient
+            colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+            style={dynamicStyles.headerGradient}
+          />
+        </ImageBackground>
+
+        {/* 内容区域 */}
+        <View style={[dynamicStyles.headerContainer, {paddingTop: 56 + insets.top}]}>
+          {/* 封面图片 */}
+          <FastImage
             source={{uri: animeDetail.images?.large}}
-            style={StyleSheet.absoluteFillObject}
-            blurRadius={20}
+            style={dynamicStyles.coverImage}
             resizeMode="cover"
-          >
-            {/* 深色遮罩层 */}
-            <View style={dynamicStyles.headerBlurOverlay} />
+          />
 
-            {/* 渐变遮罩 */}
-            <LinearGradient
-              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
-              style={dynamicStyles.headerGradient}
-            />
-          </ImageBackground>
-
-          {/* 内容区域 */}
-          <View style={dynamicStyles.headerContainer}>
-            {/* 封面图片 */}
-            <FastImage
-              source={{uri: animeDetail.images?.large}}
-              style={dynamicStyles.coverImage}
-              resizeMode="cover"
-            />
-
-            {/* 基本信息 */}
-            <View style={dynamicStyles.infoContainer}>
-              <View style={dynamicStyles.titleContainer}>
-                <View style={dynamicStyles.titleWrapper}>
-                <Text style={dynamicStyles.title} numberOfLines={3}>
-                  {title }
+          {/* 基本信息 */}
+          <View style={dynamicStyles.infoContainer}>
+            <View style={dynamicStyles.titleContainer}>
+              <View style={dynamicStyles.titleWrapper}>
+                <Text style={dynamicStyles.title} numberOfLines={1}>
+                  {title}
                 </Text>
-
-                </View>
-
               </View>
-
-              <Text style={dynamicStyles.ratingScore}>
-                {animeDetail.rating.score.toFixed(1)}
-              </Text>
-              {/* 评分信息 */}
-              {animeDetail.rating && (
-                <View style={dynamicStyles.ratingContainer}>
-
-                  <Text style={dynamicStyles.ratingStars}>
-                    {getStarRating(animeDetail.rating.score)}
-                  </Text>
-                  <Text style={dynamicStyles.ratingCount}>
-                    {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
-                  </Text>
-                </View>
-              )}
-              <Text style={dynamicStyles.dateText}>
-                {animeDetail.date || '播出时间待定'}
-              </Text>
-              <Text style={dynamicStyles.episodeText}>
-                看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
-              </Text>
-              {/* 收藏数据 */}
-              {animeDetail.collection && (
-                <View style={dynamicStyles.collectionContainer}>
-                  <View style={dynamicStyles.collectionItem}>
-                    <Text style={dynamicStyles.collectionNumber}>
-                      {formatNumber(animeDetail.collection.collect || 0)}
-                    </Text>
-                    <Text style={dynamicStyles.collectionLabel}>收藏</Text>
-                  </View>
-                  <View style={dynamicStyles.collectionItem}>
-                    <Text style={dynamicStyles.collectionNumber}>
-                      {formatNumber(animeDetail.collection.doing || 0)}
-                    </Text>
-                    <Text style={dynamicStyles.collectionLabel}>在看</Text>
-                  </View>
-                  <View style={dynamicStyles.collectionItem}>
-                    <Text style={dynamicStyles.collectionNumber}>
-                      {formatNumber(animeDetail.collection.wish || 0)}
-                    </Text>
-                    <Text style={dynamicStyles.collectionLabel}>想看</Text>
-                  </View>
-                </View>
-              )}
             </View>
+
+
+            {/* 评分信息 */}
+            {animeDetail.rating && (
+              <View style={dynamicStyles.ratingContainer}>
+                <Text style={dynamicStyles.ratingScore}>
+                  {animeDetail.rating.score.toFixed(1)}
+                </Text>
+                <Text style={dynamicStyles.ratingStars}>
+                  {getStarRating(animeDetail.rating.score)}
+                </Text>
+                <Text style={dynamicStyles.ratingCount} numberOfLines={0}>
+                  {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
+                </Text>
+              </View>
+            )}
+            <Text style={dynamicStyles.dateText} numberOfLines={0}>
+              {animeDetail.date || '播出时间待定'}
+            </Text>
+            <Text style={dynamicStyles.episodeText} numberOfLines={0}>
+              看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
+            </Text>
+            {/* 收藏数据 */}
+            {animeDetail.collection && (
+              <View style={dynamicStyles.collectionContainer}>
+                <View style={dynamicStyles.collectionItem}>
+                  <Text style={dynamicStyles.collectionNumber}>
+                    {formatNumber(animeDetail.collection.collect || 0)}
+                  </Text>
+                  <Text style={dynamicStyles.collectionLabel}>收藏</Text>
+                </View>
+                <View style={dynamicStyles.collectionItem}>
+                  <Text style={dynamicStyles.collectionNumber}>
+                    {formatNumber(animeDetail.collection.doing || 0)}
+                  </Text>
+                  <Text style={dynamicStyles.collectionLabel}>在看</Text>
+                </View>
+                <View style={dynamicStyles.collectionItem}>
+                  <Text style={dynamicStyles.collectionNumber}>
+                    {formatNumber(animeDetail.collection.wish || 0)}
+                  </Text>
+                  <Text style={dynamicStyles.collectionLabel}>想看</Text>
+                </View>
+              </View>
+            )}
           </View>
         </View>
+      </View>
 
-        {/* 操作按钮 */}
-        <View style={dynamicStyles.actionContainer}>
-          <TouchableOpacity style={[dynamicStyles.actionButton, dynamicStyles.watchButton]}>
-            <Text style={[dynamicStyles.actionButtonText, dynamicStyles.watchButtonText]}>
-              继续观看 {String(animeDetail.collection?.collect || 0).padStart(2, '0')} ({animeDetail.total_episodes || animeDetail.eps || 0})
+      {/* 操作按钮 */}
+      <View style={dynamicStyles.actionContainer}>
+        <TouchableOpacity style={[dynamicStyles.actionButton, dynamicStyles.watchButton]}>
+          <Text style={[dynamicStyles.actionButtonText, dynamicStyles.watchButtonText]}>
+            继续观看 {String(animeDetail.collection?.collect || 0).padStart(2, '0')} ({animeDetail.total_episodes || animeDetail.eps || 0})
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 详细内容 */}
+      <View style={dynamicStyles.contentContainer}>
+        {/* 简介 */}
+        {animeDetail.summary && (
+          <>
+            <Text style={dynamicStyles.sectionTitle}>简介</Text>
+            <Text style={dynamicStyles.summaryText}>
+              {animeDetail.summary.replace(/\r\n/g, '\n')}
             </Text>
-          </TouchableOpacity>
-        </View>
+          </>
+        )}
 
-        {/* 详细内容 */}
-        <View style={dynamicStyles.contentContainer}>
-          {/* 简介 */}
-          {animeDetail.summary && (
-            <>
-              <Text style={dynamicStyles.sectionTitle}>简介</Text>
-              <Text style={dynamicStyles.summaryText}>
-                {animeDetail.summary.replace(/\r\n/g, '\n')}
-              </Text>
-            </>
-          )}
+        {/* 标签 */}
+        {animeDetail.meta_tags && animeDetail.meta_tags.length > 0 && (
+          <>
+            <Text style={dynamicStyles.sectionTitle}>标签</Text>
+            <View style={dynamicStyles.tagsContainer}>
+              {animeDetail.meta_tags.map((tag: string, index: number) => (
+                <View key={index} style={dynamicStyles.tag}>
+                  <Text style={dynamicStyles.tagText}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
 
-          {/* 标签 */}
-          {animeDetail.meta_tags && animeDetail.meta_tags.length > 0 && (
-            <>
-              <Text style={dynamicStyles.sectionTitle}>标签</Text>
-              <View style={dynamicStyles.tagsContainer}>
-                {animeDetail.meta_tags.map((tag: string, index: number) => (
-                  <View key={index} style={dynamicStyles.tag}>
-                    <Text style={dynamicStyles.tagText}>{tag}</Text>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
+        {/* 详细信息 */}
+        {animeDetail.infobox && animeDetail.infobox.length > 0 && (
+          <>
+            <Text style={dynamicStyles.sectionTitle}>详情</Text>
+            <View style={dynamicStyles.infoGrid}>
+              {animeDetail.infobox.slice(0, 10).map((info: any, index: number) => (
+                <View key={index} style={dynamicStyles.infoRow}>
+                  <Text style={dynamicStyles.infoLabel}>{info.key}:</Text>
+                  <Text style={dynamicStyles.infoValue}>
+                    {Array.isArray(info.value)
+                      ? info.value.map((v: any) => v.v || v).join(', ')
+                      : info.value
+                    }
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
+      </View>
+    </>
+  );
 
-          {/* 详细信息 */}
-          {animeDetail.infobox && animeDetail.infobox.length > 0 && (
-            <>
-              <Text style={dynamicStyles.sectionTitle}>详情</Text>
-              <View style={dynamicStyles.infoGrid}>
-                {animeDetail.infobox.slice(0, 10).map((info: any, index: number) => (
-                  <View key={index} style={dynamicStyles.infoRow}>
-                    <Text style={dynamicStyles.infoLabel}>{info.key}:</Text>
-                    <Text style={dynamicStyles.infoValue}>
-                      {Array.isArray(info.value)
-                        ? info.value.map((v: any) => v.v || v).join(', ')
-                        : info.value
-                      }
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
-        </View>
-      </Animated.ScrollView>
-    </SafeAreaView>
+  return (
+    <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+      <AnimatedHeaderPage
+        title={title}
+        showBackButton={canGoBack()}
+        onBackPress={goBack}
+        scrollThreshold={80}
+      >
+        {renderContent()}
+      </AnimatedHeaderPage>
+    </View>
   );
 }
