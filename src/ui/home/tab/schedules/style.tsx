@@ -136,18 +136,31 @@ export const createSchedulesStyles = (theme: MD3Theme) =>
       bottom: 0,
       left: 0,
       right: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0)',
-      paddingHorizontal: 8,
-      paddingVertical: 8,
-      borderBottomLeftRadius: 13,
-      borderBottomRightRadius: 13,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      paddingTop: 24, // 增加顶部内边距，为渐变效果留出空间
+      borderBottomLeftRadius: 12,
+      borderBottomRightRadius: 12,
+    },
+    // 渐变蒙版样式
+    gradientOverlay: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 80, // 渐变蒙版高度
+      borderBottomLeftRadius: 12,
+      borderBottomRightRadius: 12,
     },
     animeTitle: {
-      fontSize: 20,
+      fontSize: 16,
       fontWeight: 'bold',
       color: 'white',
-      marginBottom: 4,
-      lineHeight: 24,
+      lineHeight: 20,
+      textShadowColor: 'rgba(0, 0, 0, 0.8)', // 添加文字阴影增强可读性
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 3,
+      zIndex: 2, // 确保文字在渐变层之上
     },
     emptyContainer: {
       flex: 1,

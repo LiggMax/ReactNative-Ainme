@@ -188,6 +188,14 @@ export default function Schedules() {
             />
           )}
 
+          {/* 渐变蒙版 - 从透明到半透明黑色的自然过渡 */}
+          <LinearGradient
+            colors={['transparent', 'rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.7)']}
+            locations={[0, 0.5, 1]}
+            style={dynamicStyles.gradientOverlay}
+            pointerEvents="none"
+          />
+
           {/* 标题覆盖层 */}
           <View style={dynamicStyles.titleOverlay}>
             <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
