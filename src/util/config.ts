@@ -2,32 +2,12 @@
  * API配置文件
  */
 
-// 环境配置
-export const ENV = {
-  DEV: 'development',
-  PROD: 'production',
-  TEST: 'test',
-} as const;
-
-// 当前环境
-export const CURRENT_ENV = __DEV__ ? ENV.DEV : ENV.PROD;
-
 // 基础URL配置
 export const BASE_URLS = {
-  [ENV.DEV]: 'https://api.bgm.tv',
-  [ENV.TEST]: 'https://test-api.example.com',
-  [ENV.PROD]: 'https://api.example.com',
-};
-
-// 获取当前环境的基础URL
-export const BASE_URL = BASE_URLS[CURRENT_ENV];
-
-// API前缀配置
-export const API_PREFIX = {
-  // 通用API前缀
-  COMMON: '',
-  // 动漫相关API
-  ANIME: '/v0',
+  // BGM API v0 接口
+  API: 'https://api.bgm.tv',
+  // BGM 主站接口
+  BGM: 'https://bgm.tv',
 } as const;
 
 // 请求超时配置
@@ -37,15 +17,3 @@ export const TIMEOUT = {
   DOWNLOAD: 60000,     // 下载60秒
 } as const;
 
-// 请求头配置
-export const HEADERS = {
-  JSON: {
-    'Content-Type': 'application/json',
-  },
-  FORM: {
-    'Content-Type': 'multipart/form-data',
-  },
-  FORM_URLENCODED: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-  },
-} as const;

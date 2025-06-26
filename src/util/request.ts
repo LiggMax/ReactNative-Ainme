@@ -8,7 +8,7 @@ import axios, {
   CancelTokenSource,
   InternalAxiosRequestConfig,
 } from 'axios';
-import {BASE_URL, TIMEOUT, HEADERS} from './config';
+import {BASE_URLS, TIMEOUT} from './config';
 
 // 扩展axios配置类型，添加metadata和requestId
 declare module 'axios' {
@@ -49,22 +49,24 @@ enum RequestType {
 
 class Request {
   private instance: AxiosInstance;
-  private baseURL: string;
   private cancelTokens: Map<string, CancelTokenSource> = new Map();
 
-  constructor() {
-    // 使用配置文件中的基础URL
-    this.baseURL = BASE_URL;
-
-    // 创建axios实例
+  constructor(baseURL?: string) {
+    // 创建axios实例，可以指定基础URL
     this.instance = axios.create({
-      baseURL: this.baseURL,
+      baseURL: baseURL || BASE_URLS.API,
       timeout: TIMEOUT.DEFAULT,
-      headers: HEADERS.JSON,
     });
 
     // 设置拦截器
     this.setInterceptors();
+  }
+
+  /**
+   * 创建使用指定基础URL的请求实例
+   */
+  static createWithBaseURL(baseURL: string): Request {
+    return new Request(baseURL);
   }
 
   /**
@@ -460,6 +462,7 @@ class Request {
 // 创建请求实例
 const request = new Request();
 
-// 导出请求实例和类型
+// 导出请求实例、类和类型
 export default request;
+export {Request};
 export type {ApiResponse, RequestConfig};

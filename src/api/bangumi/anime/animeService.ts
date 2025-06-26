@@ -1,10 +1,24 @@
 /**
  * 动漫相关API服务
  */
-import request from '../../../util/request.ts';
-import {ANIME_API} from '../../../util/api.ts';
+import request, {Request} from '../../../util/request.ts';
+import {BASE_URLS} from '../../../util/config.ts';
 
-// 动漫数据类型定义 - 更新为BGM格式
+// 创建不同基础URL的请求实例
+const apiRequest = request; // 默认使用 API 基础URL
+const bgmRequest = Request.createWithBaseURL(BASE_URLS.BGM);
+
+// API路径常量
+const API_PATHS = {
+  GET_DETAIL: (id: number) => `/v0/subjects/${id}`,
+  GET_RECOMMEND: '/v0/recommend',
+  GET_CATEGORIES: '/v0/categories',
+  SEARCH: '/search/subject/anime',
+  GET_RANKING: '/search/subject/anime',
+  GET_SCHEDULE: '/calendar',
+} as const;
+
+// 动漫数据类型定义 - BGM格式
 export interface AnimeItem {
   id: number;
   url: string;
@@ -54,76 +68,24 @@ export interface RankingResponse {
   list: AnimeItem[];
 }
 
-export interface AnimeListParams {
-  page?: number;
-  size?: number;
-  category?: string;
-  status?: string;
-  year?: number;
-}
-
-export interface SearchParams {
-  keyword: string;
-  page?: number;
-  size?: number;
-}
-
 /**
  * 动漫服务类
  */
 class AnimeService {
 
+
   /**
-   * 获取动漫详情
+   * 获取排行榜 (使用 bgm.tv)
    */
-  async getAnimeDetailService(id: number): Promise<AnimeItem> {
-    return request.get(ANIME_API.GET_DETAIL(id));
+  async getRanking(): Promise<RankingResponse> {
+    return bgmRequest.get(API_PATHS.GET_RANKING);
   }
 
   /**
-   * 搜索动漫
-   */
-  async searchAnimeService(params: SearchParams): Promise<{
-    list: AnimeItem[];
-    total: number;
-  }> {
-    return request.get(ANIME_API.SEARCH, {params});
-  }
-
-  /**
-   * 获取推荐动漫
-   */
-  async getRecommendAnime(limit: number = 10): Promise<AnimeItem[]> {
-    return request.get(ANIME_API.GET_RECOMMEND, {
-      params: {limit},
-    });
-  }
-
-  /**
-   * 获取排行榜
-   */
-  async getRankingService(): Promise<RankingResponse> {
-    return request.get(ANIME_API.GET_RANKING);
-  }
-
-  /**
-   * 获取新番时间表 - 更新返回类型
+   * 获取新番时间表 (使用 bgm.tv)
    */
   async getSchedule(): Promise<ScheduleItem[]> {
-    return request.get(ANIME_API.GET_SCHEDULE);
-  }
-
-  /**
-   * 获取分类列表
-   */
-  async getCategories(): Promise<
-    {
-      id: string;
-      name: string;
-      count: number;
-    }[]
-  > {
-    return request.get(ANIME_API.GET_CATEGORIES);
+    return apiRequest.get(API_PATHS.GET_SCHEDULE);
   }
 }
 
