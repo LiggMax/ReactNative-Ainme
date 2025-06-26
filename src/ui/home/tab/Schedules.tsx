@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -16,24 +15,32 @@ import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import animeService, {AnimeItem, ScheduleItem} from '../../../api/bangumi/anime/animeService.ts';
 import {useAppNavigation} from '../../../navigation';
+import {calculateAnimeCardLayout} from '../../../util/layoutUtils.ts';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
-const {width} = Dimensions.get('window');
 
-// 动态计算卡片布局参数
-const MIN_CARD_WIDTH = 150; // 最小卡片宽度
-const CARD_MARGIN = 16; // 卡片间距
-const CONTAINER_PADDING = 32; // 容器左右内边距总和
-
-// 计算每行卡片数量
-const NUM_COLUMNS = Math.floor((width - CONTAINER_PADDING) / (MIN_CARD_WIDTH + CARD_MARGIN));
-// 计算实际卡片宽度
-const CARD_WIDTH = (width - CONTAINER_PADDING - (NUM_COLUMNS - 1) * CARD_MARGIN) / NUM_COLUMNS;
+// 布局配置常量
+const LAYOUT_CONFIG = {
+  MIN_CARD_WIDTH: 120,     // 最小卡片宽度
+  CARD_MARGIN: 8,          // 卡片间距
+  CONTAINER_PADDING: 16,   // 容器左右内边距总和
+  ASPECT_RATIO: 3 / 4,     // 卡片宽高比（3:4，接近海报比例）
+};
 
 export default function Schedules() {
   const theme = useTheme();
   const navigation = useAppNavigation();
+
+  // 使用布局工具计算参数
+  const layoutParams = useMemo(() => {
+    return calculateAnimeCardLayout(
+      LAYOUT_CONFIG.MIN_CARD_WIDTH,
+      LAYOUT_CONFIG.CARD_MARGIN,
+      LAYOUT_CONFIG.CONTAINER_PADDING,
+      LAYOUT_CONFIG.ASPECT_RATIO
+    );
+  }, []);
 
   // 状态管理
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
@@ -106,14 +113,6 @@ export default function Schedules() {
       ...prev,
       [itemId]: false
     }));
-  }, []);
-
-  // 格式化收藏数
-  const formatCollectionCount = useCallback((count: number): string => {
-    if (count >= 10000) {
-      return `${(count / 10000).toFixed(1)}万`;
-    }
-    return count.toString();
   }, []);
 
   // 获取当前选中星期的数据
@@ -234,7 +233,7 @@ export default function Schedules() {
       opacity: 1,
     },
     animeCard: {
-      width: CARD_WIDTH,
+      width: layoutParams.cardWidth,
       backgroundColor: theme.colors.surface,
       borderRadius: 12,
       marginBottom: 16,
@@ -247,9 +246,8 @@ export default function Schedules() {
     imageContainer: {
       position: 'relative',
       width: '100%',
-      height: CARD_WIDTH * 1.4,
-      borderTopLeftRadius: 12,
-      borderTopRightRadius: 12,
+      height: layoutParams.cardHeight,
+      borderRadius: 12,
       overflow: 'hidden',
     },
     shimmerPlaceholder: {
@@ -258,32 +256,38 @@ export default function Schedules() {
       left: 0,
       width: '100%',
       height: '100%',
-      borderTopLeftRadius: 12,
-      borderTopRightRadius: 12,
+      borderRadius: 12,
       zIndex: 10,
       backgroundColor: theme.colors.surfaceVariant,
     },
+    animeImage: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 12,
+    },
+    titleOverlay: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0)',
+      paddingHorizontal: 8,
+      paddingVertical: 8,
+      borderBottomLeftRadius: 13,
+      borderBottomRightRadius: 13,
+    },
     animeTitle: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: theme.colors.onSurface,
-      marginBottom: 6,
-      lineHeight: 18,
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: 'white',
+      marginBottom: 4,
+      lineHeight: 24,
     },
-    animeDate: {
-      fontSize: 12,
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: 8,
+    animeList: {
+      padding: 8,
     },
-    animeRating: {
-      fontSize: 12,
-      color: theme.colors.tertiary,
-      fontWeight: '500',
-    },
-    animeCollection: {
-      fontSize: 12,
-      color: theme.colors.primary,
-      fontWeight: '500',
+    row: {
+      justifyContent: 'space-between',
     },
     emptyContainer: {
       flex: 1,
@@ -297,7 +301,7 @@ export default function Schedules() {
       textAlign: 'center',
       opacity: 0.7,
     },
-  }), [theme]);
+  }), [theme, layoutParams]);
 
   // 渲染星期选择器
   const renderWeekdaySelector = useMemo(() => (
@@ -346,13 +350,13 @@ export default function Schedules() {
           {/* 图片 */}
           <FastImage
             source={{uri: imageUrl}}
-            style={styles.animeImage}
+            style={dynamicStyles.animeImage}
             resizeMode="cover"
             onLoadStart={() => handleImageLoadStart(item.id)}
             onLoad={() => handleImageLoad(item.id)}
             onError={() => handleImageLoadError(item.id)}
           />
-          
+
           {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
           {isLoading && (
             <ShimmerPlaceholder
@@ -364,25 +368,12 @@ export default function Schedules() {
               ]}
             />
           )}
-        </View>
-        <View style={styles.animeInfo}>
-          <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
-            {item.name_cn || item.name}
-          </Text>
-          <Text style={dynamicStyles.animeDate}>
-            播出：{item.air_date}
-          </Text>
-          <View style={styles.animeStats}>
-            {item.rating && (
-              <Text style={dynamicStyles.animeRating}>
-                ⭐ {item.rating.score.toFixed(1)}
-              </Text>
-            )}
-            {item.collection && (
-              <Text style={dynamicStyles.animeCollection}>
-                👥 {formatCollectionCount(item.collection.doing)}
-              </Text>
-            )}
+
+          {/* 标题覆盖层 */}
+          <View style={dynamicStyles.titleOverlay}>
+            <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
+              {item.name_cn || item.name}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -394,7 +385,6 @@ export default function Schedules() {
     handleImageLoadStart,
     handleImageLoad,
     handleImageLoadError,
-    formatCollectionCount,
     theme.colors,
   ]);
 
@@ -442,9 +432,9 @@ export default function Schedules() {
           data={currentWeekdayData}
           renderItem={renderAnimeCard}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={NUM_COLUMNS}
-          contentContainerStyle={styles.animeList}
-          columnWrapperStyle={NUM_COLUMNS > 1 ? styles.row : undefined}
+          numColumns={layoutParams.numColumns}
+          contentContainerStyle={dynamicStyles.animeList}
+          columnWrapperStyle={layoutParams.numColumns > 1 ? dynamicStyles.row : undefined}
           showsVerticalScrollIndicator={false}
           removeClippedSubviews={true}
           maxToRenderPerBatch={10}
@@ -467,26 +457,3 @@ export default function Schedules() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  animeList: {
-    padding: 16,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
-  animeImage: {
-    width: '100%',
-    height: CARD_WIDTH * 1.4,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  animeInfo: {
-    padding: 12,
-  },
-  animeStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
