@@ -293,6 +293,16 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     tagChip: {
       margin: 4,
     },
+     showMoreButton: {
+      alignSelf: 'flex-end',
+      marginTop: 8,
+      marginBottom: 16,
+    },
+    showMoreText: {
+      fontSize: screenDimensions.isTablet ? 14 : 12,
+      color: theme.colors.primary,
+      fontWeight: '500',
+    },
     // 新增样式
     absoluteFill: {
       position: 'absolute',

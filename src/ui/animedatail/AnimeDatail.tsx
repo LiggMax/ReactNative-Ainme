@@ -28,6 +28,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
+  const [showAllTags, setShowAllTags] = useState(false);
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -284,7 +285,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           <>
             <Text style={dynamicStyles.sectionTitle}>标签</Text>
             <View style={dynamicStyles.tagsContainer}>
-              {animeDetail.tags.map(
+              {(showAllTags ? animeDetail.tags : animeDetail.tags.slice(0, 6)).map(
                 (tag: {name: string; count: number}, index: number) => (
                   <Chip
                     key={index}
@@ -296,6 +297,15 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
                 ),
               )}
             </View>
+            {animeDetail.tags.length > 6 && (
+              <TouchableOpacity
+                style={dynamicStyles.showMoreButton}
+                onPress={() => setShowAllTags(!showAllTags)}>
+                <Text style={dynamicStyles.showMoreText}>
+                  {showAllTags ? '收起' : '显示更多'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </>
         )}
 
