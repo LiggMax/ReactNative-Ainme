@@ -284,5 +284,39 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       lineHeight: screenDimensions.isTablet ? 24 : 20,
       marginBottom: 24,
     },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 24,
+      marginHorizontal: -4,
+    },
+    tagChip: {
+      margin: 4,
+    },
+    // 新增样式
+    absoluteFill: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    },
+    rootContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    // 详细信息项目样式
+    infoCard: {
+      padding: 12,
+    },
+    infoKeyText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+    },
+    infoValueText: {
+      fontSize: 14,
+      color: theme.colors.onSurface,
+    },
   });
 };

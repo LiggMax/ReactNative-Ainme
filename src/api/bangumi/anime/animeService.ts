@@ -68,13 +68,6 @@ export interface RankingResponse {
   list: AnimeItem[];
 }
 
-// 搜索参数类型
-export interface SearchParams {
-  keyword: string;
-  page?: number;
-  size?: number;
-}
-
 /**
  * 动漫服务类
  */

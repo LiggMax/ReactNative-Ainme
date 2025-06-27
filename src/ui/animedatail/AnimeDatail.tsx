@@ -3,11 +3,9 @@ import {
   Text,
   View,
   ActivityIndicator,
-  Alert,
   TouchableOpacity,
   ImageBackground,
   Dimensions,
-  StyleSheet,
 } from 'react-native';
 import {useTheme, Chip, Card} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -111,34 +109,36 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     return stars;
   };
 
-  // 渲染标签项目 - 使用Material Design Chip
-  const renderTagItem = useCallback(({item}: {item: string}) => (
-    <Chip mode="flat" compact style={{margin: 4}}>
-      {item}
-    </Chip>
-  ), []);
-
   // 渲染详细信息项目 - 使用Material Design Card
-  const renderInfoItem = useCallback(({item}: {item: any}) => (
-    <Card mode="elevated" style={{ padding: 12}}>
-      <Text style={{fontSize: 12, fontWeight: 'bold', color: theme.colors.primary}}>
-        {item.key}
-      </Text>
-      <Text style={{fontSize: 14, color: theme.colors.onSurface}} numberOfLines={3}>
-        {Array.isArray(item.value)
-          ? item.value.map((v: any) => v.v || v).join(', ')
-          : item.value
-        }
-      </Text>
-    </Card>
-  ), [theme.colors]);
+  const renderInfoItem = useCallback(
+    ({item}: {item: any}) => (
+      <Card mode="elevated" style={dynamicStyles.infoCard}>
+        <Text style={dynamicStyles.infoKeyText}>
+          {item.key}
+        </Text>
+        <Text
+          style={dynamicStyles.infoValueText}
+          numberOfLines={3}>
+          {Array.isArray(item.value)
+            ? item.value.map((v: any) => v.v || v).join(', ')
+            : item.value}
+        </Text>
+      </Card>
+    ),
+    [],
+  );
 
   // 动态样式
-  const dynamicStyles = useMemo(() => createAnimeDetailStyles(theme, screenDimensions), [theme, screenDimensions]);
+  const dynamicStyles = useMemo(
+    () => createAnimeDetailStyles(theme, screenDimensions),
+    [theme, screenDimensions],
+  );
 
   if (loading) {
     return (
-      <SafeAreaView style={[dynamicStyles.loadingContainer, {paddingTop: insets.top}]} edges={[]}>
+      <SafeAreaView
+        style={[dynamicStyles.loadingContainer, {paddingTop: insets.top}]}
+        edges={[]}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={dynamicStyles.loadingText}>加载中...</Text>
       </SafeAreaView>
@@ -147,7 +147,9 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   if (error || !animeDetail) {
     return (
-      <SafeAreaView style={[dynamicStyles.errorContainer, {paddingTop: insets.top}]} edges={[]}>
+      <SafeAreaView
+        style={[dynamicStyles.errorContainer, {paddingTop: insets.top}]}
+        edges={[]}>
         <Text style={dynamicStyles.errorText}>
           {error || '获取动漫详情失败'}
         </Text>
@@ -163,10 +165,9 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         {/* 背景图片 */}
         <ImageBackground
           source={{uri: animeDetail.images?.large}}
-          style={StyleSheet.absoluteFillObject}
+          style={dynamicStyles.absoluteFill}
           blurRadius={20}
-          resizeMode="cover"
-        >
+          resizeMode="cover">
           {/* 深色遮罩层 */}
           <View style={dynamicStyles.headerBlurOverlay} />
 
@@ -178,7 +179,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         </ImageBackground>
 
         {/* 内容区域 */}
-        <View style={[dynamicStyles.headerContainer, {paddingTop: 56 + insets.top}]}>
+        <View
+          style={[
+            dynamicStyles.headerContainer,
+            {paddingTop: 56 + insets.top},
+          ]}>
           {/* 封面图片 */}
           <FastImage
             source={{uri: animeDetail.images?.large}}
@@ -206,7 +211,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
                   {getStarRating(animeDetail.rating.score)}
                 </Text>
                 <Text style={dynamicStyles.ratingCount} numberOfLines={0}>
-                  {formatNumber(animeDetail.rating.total)} 人评价 #{animeDetail.rating.rank}
+                  {formatNumber(animeDetail.rating.total)} 人评价 #
+                  {animeDetail.rating.rank}
                 </Text>
               </View>
             )}
@@ -214,7 +220,9 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
               {animeDetail.date || '播出时间待定'}
             </Text>
             <Text style={dynamicStyles.episodeText} numberOfLines={0}>
-              看过 {animeDetail.collection?.collect || 0} ({animeDetail.total_episodes || animeDetail.eps || 0}) · 全 {animeDetail.total_episodes || animeDetail.eps || 0} 话
+              看过 {animeDetail.collection?.collect || 0} (
+              {animeDetail.total_episodes || animeDetail.eps || 0}) · 全{' '}
+              {animeDetail.total_episodes || animeDetail.eps || 0} 话
             </Text>
             {/* 收藏数据 */}
             {animeDetail.collection && (
@@ -245,9 +253,16 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
       {/* 操作按钮 */}
       <View style={dynamicStyles.actionContainer}>
-        <TouchableOpacity style={[dynamicStyles.actionButton, dynamicStyles.watchButton]}>
-          <Text style={[dynamicStyles.actionButtonText, dynamicStyles.watchButtonText]}>
-            继续观看 {String(animeDetail.collection?.collect || 0).padStart(2, '0')} ({animeDetail.total_episodes || animeDetail.eps || 0})
+        <TouchableOpacity
+          style={[dynamicStyles.actionButton, dynamicStyles.watchButton]}>
+          <Text
+            style={[
+              dynamicStyles.actionButtonText,
+              dynamicStyles.watchButtonText,
+            ]}>
+            继续观看{' '}
+            {String(animeDetail.collection?.collect || 0).padStart(2, '0')} (
+            {animeDetail.total_episodes || animeDetail.eps || 0})
           </Text>
         </TouchableOpacity>
       </View>
@@ -264,19 +279,23 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </>
         )}
 
-        {/* 标签 - 完全使用第三方库 FlatGrid + Material Design Chip */}
-        {animeDetail.meta_tags && animeDetail.meta_tags.length > 0 && (
+        {/* 标签 - 使用FlexWrap布局实现自适应宽度 */}
+        {animeDetail.tags && animeDetail.tags.length > 0 && (
           <>
             <Text style={dynamicStyles.sectionTitle}>标签</Text>
-            <FlatGrid
-              itemDimension={80}
-              data={animeDetail.meta_tags}
-              spacing={4}
-              renderItem={renderTagItem}
-              staticDimension={screenData.width - 32}
-              fixed={false}
-              maxItemsPerRow={screenDimensions.isTablet ? 6 : 4}
-            />
+            <View style={dynamicStyles.tagsContainer}>
+              {animeDetail.tags.map(
+                (tag: {name: string; count: number}, index: number) => (
+                  <Chip
+                    key={index}
+                    mode="flat"
+                    compact
+                    style={dynamicStyles.tagChip}>
+                    {tag.name} ({tag.count})
+                  </Chip>
+                ),
+              )}
+            </View>
           </>
         )}
 
@@ -289,7 +308,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
               data={animeDetail.infobox.slice(0, 10)}
               spacing={8}
               renderItem={renderInfoItem}
-              staticDimension={screenData.width - 32}
               fixed={false}
               maxItemsPerRow={screenDimensions.isTablet ? 2 : 1}
             />
@@ -300,13 +318,12 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+    <View style={dynamicStyles.rootContainer}>
       <AnimatedHeaderPage
         title={title}
         showBackButton={canGoBack()}
         onBackPress={goBack}
-        scrollThreshold={80}
-      >
+        scrollThreshold={80}>
         {renderContent()}
       </AnimatedHeaderPage>
     </View>
