@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {
   Text,
   View,
@@ -9,10 +9,11 @@ import {
   Dimensions,
   StyleSheet,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {useTheme, Chip, Card} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
+import {FlatGrid} from 'react-native-super-grid';
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
@@ -52,7 +53,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       isTablet,
       isLargePhone,
       isSmallPhone,
-      // 根据屏幕宽度计算布局参数 - 增大封面图片尺寸
+      // 根据屏幕宽度计算布局参数
       coverImageWidth: isTablet ? 200 : isLargePhone ? 170 : isSmallPhone ? 130 : 150,
       coverImageHeight: isTablet ? 267 : isLargePhone ? 227 : isSmallPhone ? 173 : 200,
       headerPadding: isTablet ? 24 : isSmallPhone ? 12 : 16,
@@ -75,8 +76,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       setAnimeDetail(detail);
     } catch (err) {
       console.error('❌ 获取动漫详情失败:', err);
-      setError('获取动漫详情失败，请稍后重试');
-      Alert.alert('错误', '获取动漫详情失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -111,6 +110,28 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     }
     return stars;
   };
+
+  // 渲染标签项目 - 使用Material Design Chip
+  const renderTagItem = useCallback(({item}: {item: string}) => (
+    <Chip mode="flat" compact style={{margin: 4}}>
+      {item}
+    </Chip>
+  ), []);
+
+  // 渲染详细信息项目 - 使用Material Design Card
+  const renderInfoItem = useCallback(({item}: {item: any}) => (
+    <Card mode="elevated" style={{ padding: 12}}>
+      <Text style={{fontSize: 12, fontWeight: 'bold', color: theme.colors.primary}}>
+        {item.key}
+      </Text>
+      <Text style={{fontSize: 14, color: theme.colors.onSurface}} numberOfLines={3}>
+        {Array.isArray(item.value)
+          ? item.value.map((v: any) => v.v || v).join(', ')
+          : item.value
+        }
+      </Text>
+    </Card>
+  ), [theme.colors]);
 
   // 动态样式
   const dynamicStyles = useMemo(() => createAnimeDetailStyles(theme, screenDimensions), [theme, screenDimensions]);
@@ -169,12 +190,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           <View style={dynamicStyles.infoContainer}>
             <View style={dynamicStyles.titleContainer}>
               <View style={dynamicStyles.titleWrapper}>
-                <Text style={dynamicStyles.title} numberOfLines={1}>
+                <Text style={dynamicStyles.title} numberOfLines={2}>
                   {title}
                 </Text>
               </View>
             </View>
-
 
             {/* 评分信息 */}
             {animeDetail.rating && (
@@ -244,37 +264,35 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </>
         )}
 
-        {/* 标签 */}
+        {/* 标签 - 完全使用第三方库 FlatGrid + Material Design Chip */}
         {animeDetail.meta_tags && animeDetail.meta_tags.length > 0 && (
           <>
             <Text style={dynamicStyles.sectionTitle}>标签</Text>
-            <View style={dynamicStyles.tagsContainer}>
-              {animeDetail.meta_tags.map((tag: string, index: number) => (
-                <View key={index} style={dynamicStyles.tag}>
-                  <Text style={dynamicStyles.tagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
+            <FlatGrid
+              itemDimension={80}
+              data={animeDetail.meta_tags}
+              spacing={4}
+              renderItem={renderTagItem}
+              staticDimension={screenData.width - 32}
+              fixed={false}
+              maxItemsPerRow={screenDimensions.isTablet ? 6 : 4}
+            />
           </>
         )}
 
-        {/* 详细信息 */}
+        {/* 详细信息 - 完全使用第三方库 FlatGrid + Material Design Card */}
         {animeDetail.infobox && animeDetail.infobox.length > 0 && (
           <>
             <Text style={dynamicStyles.sectionTitle}>详情</Text>
-            <View style={dynamicStyles.infoGrid}>
-              {animeDetail.infobox.slice(0, 10).map((info: any, index: number) => (
-                <View key={index} style={dynamicStyles.infoRow}>
-                  <Text style={dynamicStyles.infoLabel}>{info.key}:</Text>
-                  <Text style={dynamicStyles.infoValue}>
-                    {Array.isArray(info.value)
-                      ? info.value.map((v: any) => v.v || v).join(', ')
-                      : info.value
-                    }
-                  </Text>
-                </View>
-              ))}
-            </View>
+            <FlatGrid
+              itemDimension={screenDimensions.isTablet ? 200 : 150}
+              data={animeDetail.infobox.slice(0, 10)}
+              spacing={8}
+              renderItem={renderInfoItem}
+              staticDimension={screenData.width - 32}
+              fixed={false}
+              maxItemsPerRow={screenDimensions.isTablet ? 2 : 1}
+            />
           </>
         )}
       </View>

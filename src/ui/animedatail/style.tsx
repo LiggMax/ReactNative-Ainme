@@ -274,7 +274,7 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     },
     sectionTitle: {
       fontSize: screenDimensions.isTablet ? 20 : 16,
-      fontWeight: '600',
+      fontWeight: 'bold',
       color: theme.colors.onSurface,
       marginBottom: 12,
     },
@@ -283,44 +283,6 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       color: theme.colors.onSurfaceVariant,
       lineHeight: screenDimensions.isTablet ? 24 : 20,
       marginBottom: 24,
-    },
-    tagsContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginBottom: 24,
-      justifyContent: screenDimensions.isTablet ? 'flex-start' : 'flex-start',
-    },
-    tag: {
-      backgroundColor: theme.colors.surfaceVariant,
-      paddingHorizontal: screenDimensions.isTablet ? 16 : 12,
-      paddingVertical: screenDimensions.isTablet ? 8 : 6,
-      borderRadius: 16,
-      marginRight: 8,
-      marginBottom: 8,
-    },
-    tagText: {
-      fontSize: screenDimensions.isTablet ? 14 : 12,
-      color: theme.colors.onSurfaceVariant,
-    },
-    infoGrid: {
-      marginBottom: 24,
-    },
-    infoRow: {
-      flexDirection: 'row',
-      paddingVertical: 8,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.outline,
-    },
-    infoLabel: {
-      fontSize: 14,
-      color: theme.colors.onSurfaceVariant,
-      width: 80,
-      fontWeight: '500',
-    },
-    infoValue: {
-      fontSize: 14,
-      color: theme.colors.onSurface,
-      flex: 1,
     },
   });
 };
