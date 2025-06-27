@@ -301,7 +301,7 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     showMoreText: {
       fontSize: screenDimensions.isTablet ? 14 : 12,
       color: theme.colors.primary,
-      fontWeight: '500',
+      fontWeight: 'bold',
     },
     // 新增样式
     absoluteFill: {

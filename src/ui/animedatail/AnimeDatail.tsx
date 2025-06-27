@@ -17,6 +17,7 @@ import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
 import AnimatedHeaderPage from '../../components/AnimatedHeaderPage';
+import {TabView} from 'react-native-tab-view';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
@@ -29,6 +30,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
   const [showAllTags, setShowAllTags] = useState(false);
+  const [showFullSummary, setShowFullSummary] = useState(false);
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -53,8 +55,20 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       isLargePhone,
       isSmallPhone,
       // 根据屏幕宽度计算布局参数
-      coverImageWidth: isTablet ? 200 : isLargePhone ? 170 : isSmallPhone ? 130 : 150,
-      coverImageHeight: isTablet ? 267 : isLargePhone ? 227 : isSmallPhone ? 173 : 200,
+      coverImageWidth: isTablet
+        ? 200
+        : isLargePhone
+        ? 170
+        : isSmallPhone
+        ? 130
+        : 150,
+      coverImageHeight: isTablet
+        ? 267
+        : isLargePhone
+        ? 227
+        : isSmallPhone
+        ? 173
+        : 200,
       headerPadding: isTablet ? 24 : isSmallPhone ? 12 : 16,
       titleFontSize: isTablet ? 24 : isLargePhone ? 22 : isSmallPhone ? 18 : 20,
       infoFontSize: isTablet ? 16 : isSmallPhone ? 13 : 14,
@@ -114,12 +128,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const renderInfoItem = useCallback(
     ({item}: {item: any}) => (
       <Card mode="elevated" style={dynamicStyles.infoCard}>
-        <Text style={dynamicStyles.infoKeyText}>
-          {item.key}
-        </Text>
-        <Text
-          style={dynamicStyles.infoValueText}
-          numberOfLines={3}>
+        <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
+        <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
           {Array.isArray(item.value)
             ? item.value.map((v: any) => v.v || v).join(', ')
             : item.value}
@@ -274,9 +284,20 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         {animeDetail.summary && (
           <>
             <Text style={dynamicStyles.sectionTitle}>简介</Text>
-            <Text style={dynamicStyles.summaryText}>
+            <Text
+              style={dynamicStyles.summaryText}
+              numberOfLines={showFullSummary ? undefined : 3}>
               {animeDetail.summary.replace(/\r\n/g, '\n')}
             </Text>
+            {animeDetail.summary.length > 100 && (
+              <TouchableOpacity
+                style={dynamicStyles.showMoreButton}
+                onPress={() => setShowFullSummary(!showFullSummary)}>
+                <Text style={dynamicStyles.showMoreText}>
+                  {showFullSummary ? '收起' : '显示更多'}
+                </Text>
+              </TouchableOpacity>
+            )}
           </>
         )}
 
@@ -285,17 +306,18 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           <>
             <Text style={dynamicStyles.sectionTitle}>标签</Text>
             <View style={dynamicStyles.tagsContainer}>
-              {(showAllTags ? animeDetail.tags : animeDetail.tags.slice(0, 6)).map(
-                (tag: {name: string; count: number}, index: number) => (
-                  <Chip
-                    key={index}
-                    mode="flat"
-                    compact
-                    style={dynamicStyles.tagChip}>
-                    {tag.name} ({tag.count})
-                  </Chip>
-                ),
-              )}
+              {(showAllTags
+                ? animeDetail.tags
+                : animeDetail.tags.slice(0, 6)
+              ).map((tag: {name: string; count: number}, index: number) => (
+                <Chip
+                  key={index}
+                  mode="flat"
+                  compact
+                  style={dynamicStyles.tagChip}>
+                  {tag.name} ({tag.count})
+                </Chip>
+              ))}
             </View>
             {animeDetail.tags.length > 6 && (
               <TouchableOpacity

@@ -13,7 +13,7 @@ export default function HomeLayout() {
 
   const [routes] = useState([
     {key: 'recommend', title: '推荐'},
-    {key: 'schedules', title: '新番时间表'},
+    {key: 'schedules', title: '时间表'},
     {key: 'ranking', title: '排行榜'},
   ]);
 

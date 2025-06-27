@@ -74,7 +74,6 @@ export default function Schedules() {
 
   // 图片加载处理函数
   const handleImageLoadStart = useCallback((itemId: number) => {
-    console.log(`🖼️ 图片开始加载: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
       [itemId]: true
@@ -82,7 +81,6 @@ export default function Schedules() {
   }, []);
 
   const handleImageLoad = useCallback((itemId: number) => {
-    console.log(`✅ 图片加载完成: ${itemId}`);
     // 添加小延迟确保shimmer效果能被看到，避免闪烁
     setTimeout(() => {
       setImageLoadingStates(prev => ({
@@ -156,7 +154,7 @@ export default function Schedules() {
     );
   }, [scheduleData, selectedWeekday, dynamicStyles]);
 
-  
+
 
   // 渲染动漫卡片
   const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
