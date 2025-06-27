@@ -315,6 +315,28 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       flex: 1,
       backgroundColor: theme.colors.background,
     },
+    fixedHeaderContainer: {
+      backgroundColor: theme.colors.background,
+    },
+    navigationBar: {
+      height: 56,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      backgroundColor: theme.colors.surface,
+      elevation: 2,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      zIndex: 1000,
+    },
+    navigationTitle: {
+      flex: 1,
+      marginLeft: 16,
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.onSurface,
+    },
     // 详细信息项目样式
     infoCard: {
       padding: 12,
@@ -327,6 +349,35 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     infoValueText: {
       fontSize: 14,
       color: theme.colors.onSurface,
+    },
+    // TabView 相关样式
+    tabViewContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    tabView: {
+      flex: 1,
+    },
+    tabContent: {
+      flex: 1,
+      padding: screenDimensions.headerPadding,
+      backgroundColor: theme.colors.background,
+    },
+    tabBar: {
+      backgroundColor: theme.colors.surface,
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.outline,
+    },
+    tabLabel: {
+      fontSize: screenDimensions.isTablet ? 16 : 14,
+      fontWeight: '600',
+      textTransform: 'none',
+    },
+    tabIndicator: {
+      backgroundColor: theme.colors.primary,
+      height: 3,
     },
   });
 };
