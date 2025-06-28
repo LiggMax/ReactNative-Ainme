@@ -75,30 +75,16 @@ class AnimeService {
   /**
    * 获取动漫详情
    */
-  async getAnimeDetail(id: number): Promise<AnimeItem> {
+  async getAnimeDetailService(id: number): Promise<AnimeItem> {
     return apiRequest.get(API_PATHS.GET_DETAIL(id));
   }
 
-  /**
-   * 获取动漫详情
-   */
-  async getAnimeDetailService(id: number): Promise<AnimeItem> {
-    return this.getAnimeDetail(id);
-  }
-
-
-  /**
-   * 获取排行榜
-   */
-  async getRanking(): Promise<RankingResponse> {
-    return bgmRequest.get(API_PATHS.GET_RANKING);
-  }
 
   /**
    * 获取排行榜
    */
   async getRankingService(): Promise<RankingResponse> {
-    return this.getRanking();
+    return apiRequest.get(API_PATHS.GET_RANKING);
   }
 
   /**
