@@ -338,8 +338,17 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       color: theme.colors.onSurface,
     },
     // 详细信息项目样式
+    infoGridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginHorizontal: -4,
+    },
     infoCard: {
       padding: 12,
+      margin: 4,
+      width: screenDimensions.isTablet ? '48%' : '100%',
+      minWidth: screenDimensions.isTablet ? 200 : 150,
     },
     infoKeyText: {
       fontSize: 12,

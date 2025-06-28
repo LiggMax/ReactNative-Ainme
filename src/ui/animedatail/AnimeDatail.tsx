@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {
   Text,
   View,
@@ -11,7 +11,7 @@ import {useTheme, Chip, Card} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import {FlatGrid} from 'react-native-super-grid';
+
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
@@ -123,21 +123,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     }
     return stars;
   };
-
-  // 渲染详细信息项目 - 使用Material Design Card
-  const renderInfoItem = useCallback(
-    ({item}: {item: any}) => (
-      <Card mode="elevated" style={dynamicStyles.infoCard}>
-        <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
-        <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
-          {Array.isArray(item.value)
-            ? item.value.map((v: any) => v.v || v).join(', ')
-            : item.value}
-        </Text>
-      </Card>
-    ),
-    [],
-  );
 
   // 动态样式
   const dynamicStyles = useMemo(
@@ -331,18 +316,27 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </>
         )}
 
-        {/* 详细信息 - 完全使用第三方库 FlatGrid + Material Design Card */}
+        {/* 详细信息 - 使用普通View避免VirtualizedList嵌套 */}
         {animeDetail.infobox && animeDetail.infobox.length > 0 && (
           <>
             <Text style={dynamicStyles.sectionTitle}>详情</Text>
-            <FlatGrid
-              itemDimension={screenDimensions.isTablet ? 200 : 150}
-              data={animeDetail.infobox.slice(0, 10)}
-              spacing={8}
-              renderItem={renderInfoItem}
-              fixed={false}
-              maxItemsPerRow={screenDimensions.isTablet ? 2 : 1}
-            />
+            <View style={dynamicStyles.infoGridContainer}>
+              {animeDetail.infobox
+                .slice(0, 10)
+                .map((item: any, index: number) => (
+                  <Card
+                    key={index}
+                    mode="elevated"
+                    style={dynamicStyles.infoCard}>
+                    <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
+                    <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
+                      {Array.isArray(item.value)
+                        ? item.value.map((v: any) => v.v || v).join(', ')
+                        : item.value}
+                    </Text>
+                  </Card>
+                ))}
+            </View>
           </>
         )}
       </View>
