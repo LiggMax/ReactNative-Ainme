@@ -9,6 +9,13 @@ interface InfoBoxProps {
   dynamicStyles: any;
 }
 
+/**
+ * 详情页面
+ * @param infobox
+ * @param screenDimensions
+ * @param dynamicStyles
+ * @constructor
+ */
 export default function Index({
   infobox,
   screenDimensions,

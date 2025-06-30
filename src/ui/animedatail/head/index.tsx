@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import {View, Text, ImageBackground} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 

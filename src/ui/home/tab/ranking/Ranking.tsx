@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {Button, Dialog, Portal, useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
-import AnimeService, {AnimeItem, RankingResponse} from '../../../../api/bangumi/anime/animeService.ts';
+import AnimeService, {AnimeItem, RankingResponse} from '../../../../api/bangumi/anime/anime.ts';
 import {useAppNavigation} from '../../../../navigation';
 
 const {width} = Dimensions.get('window');

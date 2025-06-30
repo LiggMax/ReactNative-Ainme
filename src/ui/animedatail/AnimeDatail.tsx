@@ -4,17 +4,13 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
-  ImageBackground,
   Dimensions,
   ScrollView,
   PanResponder,
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import FastImage from 'react-native-fast-image';
-import LinearGradient from 'react-native-linear-gradient';
-
-import animeService from '../../api/bangumi/anime/animeService.ts';
+import animeService from '../../api/bangumi/anime/anime';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
@@ -176,11 +172,14 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
   // 创建手势响应器
   const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 10;
+    onMoveShouldSetPanResponder: (_evt, gestureState) => {
+      return (
+        Math.abs(gestureState.dx) > Math.abs(gestureState.dy) &&
+        Math.abs(gestureState.dx) > 10
+      );
     },
     onPanResponderMove: () => {},
-    onPanResponderRelease: (evt, gestureState) => {
+    onPanResponderRelease: (_evt, gestureState) => {
       if (gestureState.dx > 50 && currentPage > 0) {
         scrollToPage(currentPage - 1);
       } else if (gestureState.dx < -50 && currentPage < 1) {

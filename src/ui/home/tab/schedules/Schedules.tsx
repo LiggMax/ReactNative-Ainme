@@ -12,7 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import {FlatGrid} from 'react-native-super-grid';
-import animeService, {AnimeItem, ScheduleItem} from '../../../../api/bangumi/anime/animeService.ts';
+import animeService, {AnimeItem, ScheduleItem} from '../../../../api/bangumi/anime/anime.ts';
 import {useAppNavigation} from '../../../../navigation';
 import {createSchedulesStyles, GRADIENT_CONFIG} from './style.tsx';
 

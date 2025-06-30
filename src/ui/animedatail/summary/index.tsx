@@ -8,6 +8,13 @@ interface SummaryProps {
   dynamicStyles: any;
 }
 
+/**
+ * 简介页面
+ * @param summary
+ * @param tags
+ * @param dynamicStyles
+ * @constructor
+ */
 export default function Index({summary, tags, dynamicStyles}: SummaryProps) {
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);

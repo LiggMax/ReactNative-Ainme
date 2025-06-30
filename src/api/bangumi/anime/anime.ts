@@ -2,21 +2,9 @@
  * 动漫相关API服务
  */
 import request, {Request} from '../../../util/request.ts';
-import {BASE_URLS} from '../../../util/config.ts';
 
 // 创建不同基础URL的请求实例
-const apiRequest = request; // 默认使用 API 基础URL
-const bgmRequest = Request.createWithBaseURL(BASE_URLS.BGM);
-
-// API路径常量
-const API_PATHS = {
-  GET_DETAIL: (id: number) => `/v0/subjects/${id}`,
-  GET_RECOMMEND: '/v0/recommend',
-  GET_CATEGORIES: '/v0/categories',
-  SEARCH: '/search/subject/anime',
-  GET_RANKING: '/search/subject/anime',
-  GET_SCHEDULE: '/calendar',
-} as const;
+const apiRequest = request;
 
 // 动漫数据类型定义 - BGM格式
 export interface AnimeItem {
@@ -71,12 +59,13 @@ export interface RankingResponse {
 /**
  * 动漫服务类
  */
-class AnimeService {
+class Anime {
   /**
    * 获取动漫详情
    */
   async getAnimeDetailService(id: number): Promise<AnimeItem> {
-    return apiRequest.get(API_PATHS.GET_DETAIL(id));
+
+    return apiRequest.get(`/v0/subjects/${id}`);
   }
 
 
@@ -84,16 +73,16 @@ class AnimeService {
    * 获取排行榜
    */
   async getRankingService(): Promise<RankingResponse> {
-    return apiRequest.get(API_PATHS.GET_RANKING);
+    return apiRequest.get('/search/subject/anime');
   }
 
   /**
    * 获取新番时间表
    */
   async getSchedule(): Promise<ScheduleItem[]> {
-    return apiRequest.get(API_PATHS.GET_SCHEDULE);
+    return apiRequest.get('/calendar');
   }
 }
 
 // 导出服务实例
-export default new AnimeService();
+export default new Anime();
