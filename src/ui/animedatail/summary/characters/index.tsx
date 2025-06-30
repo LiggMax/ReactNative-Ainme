@@ -111,31 +111,23 @@ export default function Characters({animeId}: CharactersProps) {
   const renderModalCharacterItem = ({item}: {item: Character}) => (
     <View style={styles.modalCharacterItem}>
       <FastImage
-        source={{uri: item.images.medium}}
+        source={{uri: item.images.grid}}
         style={styles.modalCharacterImage}
         resizeMode="cover"
       />
       <View style={styles.modalCharacterInfo}>
-        <Text style={styles.modalCharacterName}>{item.name}</Text>
-        <Text style={styles.modalCharacterRelation}>{item.relation}</Text>
+        <View style={styles.characterNameContainer}>
+          <Text style={styles.modalCharacterRelation}>
+            {item.relation}:
+          </Text>
+          <Text style={styles.modalCharacterName} numberOfLines={1}>
+            {item.name}
+          </Text>
+        </View>
         {item.actors.length > 0 && (
-          <View style={styles.actorInfo}>
-            <FastImage
-              source={{uri: item.actors[0].images.medium}}
-              style={styles.actorImage}
-              resizeMode="cover"
-            />
-            <View style={styles.actorDetails}>
-              <Text style={styles.modalActorName}>
-                声优：{item.actors[0].name}
-              </Text>
-              {item.actors[0].short_summary && (
-                <Text style={styles.actorSummary} numberOfLines={3}>
-                  {item.actors[0].short_summary}
-                </Text>
-              )}
-            </View>
-          </View>
+          <Text style={styles.modalActorName} numberOfLines={1}>
+            声优：{item.actors[0].name}
+          </Text>
         )}
       </View>
     </View>
@@ -199,6 +191,8 @@ export default function Characters({animeId}: CharactersProps) {
               keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.modalList}
+              numColumns={2}
+              columnWrapperStyle={styles.modalRow}
             />
           </View>
         </View>

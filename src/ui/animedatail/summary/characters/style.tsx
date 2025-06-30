@@ -135,69 +135,44 @@ export const useCharacterStyles = () => {
       fontWeight: 'bold',
     },
     modalList: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 8,
       paddingBottom: 20,
+    },
+    modalRow: {
+      justifyContent: 'space-between',
     },
     modalCharacterItem: {
       flexDirection: 'row',
+      flex: 1,
       backgroundColor: theme.colors.surface,
-      borderRadius: 12,
-      padding: 15,
-      marginVertical: 8,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 3.84,
-      elevation: 5,
     },
     modalCharacterImage: {
-      width: 60,
-      height: 80,
       borderRadius: 8,
-      marginRight: 15,
+      width: 60,
+      height: 60,
+      margin:10,
     },
     modalCharacterInfo: {
-      flex: 1,
+      padding: 8,
+      marginRight: 8,
+    },
+    characterNameContainer: {
+      marginBottom: 4,
+      flexDirection: 'row',
     },
     modalCharacterName: {
-      fontSize: 16,
+      fontSize: 10,
       fontWeight: 'bold',
       color: theme.colors.onSurface,
-      marginBottom: 4,
     },
     modalCharacterRelation: {
       fontSize: 12,
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: 8,
-    },
-    actorInfo: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-    },
-    actorImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      marginRight: 10,
-    },
-    actorDetails: {
-      flex: 1,
+      color: theme.colors.primary,
+      fontWeight: '600',
     },
     modalActorName: {
-      fontSize: 12,
-      color: theme.colors.onSurfaceVariant,
-      marginBottom: 4,
-    },
-    actorSummary: {
       fontSize: 11,
-      color: theme.colors.outline,
-      lineHeight: 16,
-    },
-    characterNameContainer: {
-      flexDirection: 'row',
+      color: theme.colors.onSurfaceVariant,
     },
   });
 };
