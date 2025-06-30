@@ -183,7 +183,6 @@ export default function Characters({animeId}: CharactersProps) {
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
-    paddingHorizontal: 16,
   },
   header: {
     flexDirection: 'row',
