@@ -6,7 +6,7 @@ import {useNavigation as useRNNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import BottomTabLayout from '../ui/layout/Layout.tsx';
-import AnimeDetail from '../ui/animedatail/AnimeDatail';
+import AnimeDetail from '../ui/animedatail/AnimeData';
 import {RootStackParamList} from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

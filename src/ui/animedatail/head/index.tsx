@@ -8,11 +8,34 @@ interface HeadProps {
   title: string | undefined;
   dynamicStyles: any;
   insets: any;
-  formatNumber: (num: number) => string;
-  getStarRating: (score: number) => string;
 }
 
-export default function Head({animeDetail, title, dynamicStyles, insets, formatNumber, getStarRating}: HeadProps) {
+export default function Head({animeDetail, title, dynamicStyles, insets}: HeadProps) {
+  // 格式化收藏数
+  const formatNumber = (num: number) => {
+    if (num >= 10000) {
+      return `${(num / 10000).toFixed(1)}万`;
+    }
+    return num.toString();
+  };
+
+  // 获取评分星级
+  const getStarRating = (score: number) => {
+    const fullStars = Math.floor(score / 2);
+    const hasHalfStar = score % 2 >= 1;
+    let stars = '';
+
+    for (let i = 0; i < fullStars; i++) {
+      stars += '★';
+    }
+    if (hasHalfStar) {
+      stars += '☆';
+    }
+    while (stars.length < 5) {
+      stars += '☆';
+    }
+    return stars;
+  };
   return (
     <View style={dynamicStyles.headerBackground}>
       {/* 背景图片 */}

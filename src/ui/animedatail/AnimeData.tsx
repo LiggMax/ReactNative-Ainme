@@ -97,31 +97,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     getAnimeDetail();
   }, [id]);
 
-  // 格式化收藏数
-  const formatNumber = (num: number) => {
-    if (num >= 10000) {
-      return `${(num / 10000).toFixed(1)}万`;
-    }
-    return num.toString();
-  };
 
-  // 获取评分星级
-  const getStarRating = (score: number) => {
-    const fullStars = Math.floor(score / 2);
-    const hasHalfStar = score % 2 >= 1;
-    let stars = '';
-
-    for (let i = 0; i < fullStars; i++) {
-      stars += '★';
-    }
-    if (hasHalfStar) {
-      stars += '☆';
-    }
-    while (stars.length < 5) {
-      stars += '☆';
-    }
-    return stars;
-  };
 
   // 动态样式
   const dynamicStyles = useMemo(
@@ -197,8 +173,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         title={title}
         dynamicStyles={dynamicStyles}
         insets={insets}
-        formatNumber={formatNumber}
-        getStarRating={getStarRating}
       />
       {/* 操作按钮 */}
       <View style={dynamicStyles.actionContainer}>
