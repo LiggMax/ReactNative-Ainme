@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, Image, TouchableOpacity, Modal, FlatList, Dimensions} from 'react-native';
+import {Text, StyleSheet, View, TouchableOpacity, Modal, FlatList, Dimensions} from 'react-native';
 import animeDateService from '../../../../api/bangumi/anime/animeDate';
+import FastImage from 'react-native-fast-image';
 
 interface CharactersProps {
   animeId: number;
@@ -40,7 +41,7 @@ export default function Characters({animeId}: CharactersProps) {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  
+
   const screenHeight = Dimensions.get('window').height;
 
   const getCharacters = async () => {
@@ -58,12 +59,12 @@ export default function Characters({animeId}: CharactersProps) {
 
   // 获取主角角色
   const mainCharacters = characters.filter(char => char.relation === '主角');
-  
+
   // 渲染单个角色卡片
   const renderCharacterCard = (character: Character, isCompact = false) => (
     <View key={character.id} style={[styles.characterCard, isCompact && styles.compactCard]}>
-      <Image 
-        source={{uri: character.images.medium}} 
+      <FastImage
+        source={{uri: character.images.medium}}
         style={[styles.characterImage, isCompact && styles.compactImage]}
         resizeMode="cover"
       />
@@ -86,8 +87,8 @@ export default function Characters({animeId}: CharactersProps) {
   // 渲染模态框中的角色列表项
   const renderModalCharacterItem = ({item}: {item: Character}) => (
     <View style={styles.modalCharacterItem}>
-      <Image 
-        source={{uri: item.images.medium}} 
+      <FastImage
+        source={{uri: item.images.medium}}
         style={styles.modalCharacterImage}
         resizeMode="cover"
       />
@@ -96,8 +97,8 @@ export default function Characters({animeId}: CharactersProps) {
         <Text style={styles.modalCharacterRelation}>{item.relation}</Text>
         {item.actors.length > 0 && (
           <View style={styles.actorInfo}>
-            <Image 
-              source={{uri: item.actors[0].images.medium}} 
+            <FastImage
+              source={{uri: item.actors[0].images.medium}}
               style={styles.actorImage}
               resizeMode="cover"
             />
@@ -125,7 +126,7 @@ export default function Characters({animeId}: CharactersProps) {
       <View style={styles.header}>
         <Text style={styles.title}>角色</Text>
         {characters.length > 0 && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.viewAllButton}
             onPress={() => setModalVisible(true)}
           >
@@ -133,7 +134,7 @@ export default function Characters({animeId}: CharactersProps) {
           </TouchableOpacity>
         )}
       </View>
-      
+
       {loading ? (
         <Text style={styles.loadingText}>加载中...</Text>
       ) : mainCharacters.length > 0 ? (
@@ -159,7 +160,7 @@ export default function Characters({animeId}: CharactersProps) {
           <View style={[styles.modalContent, {maxHeight: screenHeight * 0.8}]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>角色 {characters.length}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setModalVisible(false)}
               >
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   },
   characterImage: {
     width: 80,
-    height: 100,
+    height: 80,
     borderRadius: 6,
     marginBottom: 8,
   },
