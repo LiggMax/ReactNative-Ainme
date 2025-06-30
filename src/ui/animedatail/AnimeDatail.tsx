@@ -34,6 +34,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
   const [currentPage, setCurrentPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [indicatorWidths, setIndicatorWidths] = useState([0, 0]);
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -170,7 +171,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         animated: true,
       });
     }
-    setCurrentPage(pageIndex);
+    // setCurrentPage(pageIndex); // 只在handleScroll中更新currentPage，避免跳动
   };
 
   // 创建手势响应器
@@ -303,32 +304,74 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         {/* 页面指示器 */}
         <View style={dynamicStyles.pageIndicatorContainer}>
           <TouchableOpacity
-            style={[
-              dynamicStyles.pageIndicatorButton,
-              currentPage === 0 && dynamicStyles.pageIndicatorButtonActive,
-            ]}
-            onPress={() => scrollToPage(0)}>
-            <Text
-              style={[
-                dynamicStyles.pageIndicatorText,
-                currentPage === 0 && dynamicStyles.pageIndicatorTextActive,
-              ]}>
-              简介
-            </Text>
+            style={dynamicStyles.pageIndicatorButton}
+            onPress={() => {
+              if (currentPage !== 0) scrollToPage(0);
+            }}>
+            <View>
+              <Text
+                style={[
+                  dynamicStyles.pageIndicatorText,
+                  currentPage === 0 && dynamicStyles.pageIndicatorTextActive,
+                ]}
+                onLayout={e => {
+                  const w = e.nativeEvent.layout.width;
+                  if (indicatorWidths[0] !== w) {
+                    setIndicatorWidths([w, indicatorWidths[1]]);
+                  }
+                }}>
+                简介
+              </Text>
+              {currentPage === 0 && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    bottom: -2,
+                    height: 2,
+                    backgroundColor: dynamicStyles.pageIndicatorTextActive.color,
+                    width: indicatorWidths[0],
+                    alignSelf: 'center',
+                  }}
+                />
+              )}
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[
-              dynamicStyles.pageIndicatorButton,
-              currentPage === 1 && dynamicStyles.pageIndicatorButtonActive,
-            ]}
-            onPress={() => scrollToPage(1)}>
-            <Text
-              style={[
-                dynamicStyles.pageIndicatorText,
-                currentPage === 1 && dynamicStyles.pageIndicatorTextActive,
-              ]}>
-              详情
-            </Text>
+            style={dynamicStyles.pageIndicatorButton}
+            onPress={() => {
+              if (currentPage !== 1) scrollToPage(1);
+            }}>
+            <View>
+              <Text
+                style={[
+                  dynamicStyles.pageIndicatorText,
+                  currentPage === 1 && dynamicStyles.pageIndicatorTextActive,
+                ]}
+                onLayout={e => {
+                  const w = e.nativeEvent.layout.width;
+                  if (indicatorWidths[1] !== w) {
+                    setIndicatorWidths([indicatorWidths[0], w]);
+                  }
+                }}>
+                详情
+              </Text>
+              {currentPage === 1 && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    bottom: -2,
+                    height: 2,
+                    backgroundColor: dynamicStyles.pageIndicatorTextActive.color,
+                    width: indicatorWidths[1],
+                    alignSelf: 'center',
+                  }}
+                />
+              )}
+            </View>
           </TouchableOpacity>
         </View>
 
