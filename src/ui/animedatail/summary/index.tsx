@@ -8,7 +8,7 @@ interface SummaryProps {
   dynamicStyles: any;
 }
 
-export default function Summary({summary, tags, dynamicStyles}: SummaryProps) {
+export default function Index({summary, tags, dynamicStyles}: SummaryProps) {
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
 
@@ -35,7 +35,7 @@ export default function Summary({summary, tags, dynamicStyles}: SummaryProps) {
       ) : (
         <Text style={dynamicStyles.summaryText}>暂无简介信息</Text>
       )}
-      
+
       {/* 标签 */}
       {tags && tags.length > 0 ? (
         <>

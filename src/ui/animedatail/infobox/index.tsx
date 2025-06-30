@@ -9,7 +9,7 @@ interface InfoBoxProps {
   dynamicStyles: any;
 }
 
-export default function InfoBox({
+export default function Index({
   infobox,
   screenDimensions,
   dynamicStyles,

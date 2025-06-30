@@ -19,8 +19,9 @@ import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
 import AnimatedHeaderPage from '../../components/AnimatedHeaderPage';
-import Summary from './summary/Summary';
-import InfoBox from './infobox/InfoBox';
+import Summary from './summary';
+import Infobox from './infobox';
+import Head from './head';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
@@ -34,7 +35,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
   const [currentPage, setCurrentPage] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const [indicatorWidths, setIndicatorWidths] = useState([0, 0]);
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -192,97 +192,15 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   // 页面内容
   const renderContent = () => (
     <>
-      {/* 头部信息区域 - 带高斯模糊背景 */}
-      <View style={dynamicStyles.headerBackground}>
-        {/* 背景图片 */}
-        <ImageBackground
-          source={{uri: animeDetail.images?.large}}
-          style={dynamicStyles.absoluteFill}
-          blurRadius={20}
-          resizeMode="cover">
-          {/* 深色遮罩层 */}
-          <View style={dynamicStyles.headerBlurOverlay} />
-
-          {/* 渐变遮罩 */}
-          <LinearGradient
-            colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
-            style={dynamicStyles.headerGradient}
-          />
-        </ImageBackground>
-
-        {/* 内容区域 */}
-        <View
-          style={[
-            dynamicStyles.headerContainer,
-            {paddingTop: 56 + insets.top},
-          ]}>
-          {/* 封面图片 */}
-          <FastImage
-            source={{uri: animeDetail.images?.large}}
-            style={dynamicStyles.coverImage}
-            resizeMode="cover"
-          />
-
-          {/* 基本信息 */}
-          <View style={dynamicStyles.infoContainer}>
-            <View style={dynamicStyles.titleContainer}>
-              <View style={dynamicStyles.titleWrapper}>
-                <Text style={dynamicStyles.title} numberOfLines={2}>
-                  {title}
-                </Text>
-              </View>
-            </View>
-
-            {/* 评分信息 */}
-            {animeDetail.rating && (
-              <View style={dynamicStyles.ratingContainer}>
-                <Text style={dynamicStyles.ratingScore}>
-                  {animeDetail.rating.score.toFixed(1)}
-                </Text>
-                <Text style={dynamicStyles.ratingStars}>
-                  {getStarRating(animeDetail.rating.score)}
-                </Text>
-                <Text style={dynamicStyles.ratingCount} numberOfLines={0}>
-                  {formatNumber(animeDetail.rating.total)} 人评价 #
-                  {animeDetail.rating.rank}
-                </Text>
-              </View>
-            )}
-            <Text style={dynamicStyles.dateText} numberOfLines={0}>
-              {animeDetail.date || '播出时间待定'}
-            </Text>
-            <Text style={dynamicStyles.episodeText} numberOfLines={0}>
-              看过 {animeDetail.collection?.collect || 0} (
-              {animeDetail.total_episodes || animeDetail.eps || 0}) · 全{' '}
-              {animeDetail.total_episodes || animeDetail.eps || 0} 话
-            </Text>
-            {/* 收藏数据 */}
-            {animeDetail.collection && (
-              <View style={dynamicStyles.collectionContainer}>
-                <View style={dynamicStyles.collectionItem}>
-                  <Text style={dynamicStyles.collectionNumber}>
-                    {formatNumber(animeDetail.collection.collect || 0)}
-                  </Text>
-                  <Text style={dynamicStyles.collectionLabel}>收藏</Text>
-                </View>
-                <View style={dynamicStyles.collectionItem}>
-                  <Text style={dynamicStyles.collectionNumber}>
-                    {formatNumber(animeDetail.collection.doing || 0)}
-                  </Text>
-                  <Text style={dynamicStyles.collectionLabel}>在看</Text>
-                </View>
-                <View style={dynamicStyles.collectionItem}>
-                  <Text style={dynamicStyles.collectionNumber}>
-                    {formatNumber(animeDetail.collection.wish || 0)}
-                  </Text>
-                  <Text style={dynamicStyles.collectionLabel}>想看</Text>
-                </View>
-              </View>
-            )}
-          </View>
-        </View>
-      </View>
-
+      {/* 头部信息区域 - 拆分为 Head 组件 */}
+      <Head
+        animeDetail={animeDetail}
+        title={title}
+        dynamicStyles={dynamicStyles}
+        insets={insets}
+        formatNumber={formatNumber}
+        getStarRating={getStarRating}
+      />
       {/* 操作按钮 */}
       <View style={dynamicStyles.actionContainer}>
         <TouchableOpacity
@@ -298,80 +216,41 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </Text>
         </TouchableOpacity>
       </View>
-
       {/* 水平滑动内容区域 */}
       <View style={dynamicStyles.horizontalScrollContainer}>
         {/* 页面指示器 */}
         <View style={dynamicStyles.pageIndicatorContainer}>
           <TouchableOpacity
-            style={dynamicStyles.pageIndicatorButton}
+            style={[
+              dynamicStyles.pageIndicatorButton,
+              currentPage === 0 && dynamicStyles.pageIndicatorButtonActive,
+            ]}
             onPress={() => {
               if (currentPage !== 0) scrollToPage(0);
             }}>
-            <View>
-              <Text
-                style={[
-                  dynamicStyles.pageIndicatorText,
-                  currentPage === 0 && dynamicStyles.pageIndicatorTextActive,
-                ]}
-                onLayout={e => {
-                  const w = e.nativeEvent.layout.width;
-                  if (indicatorWidths[0] !== w) {
-                    setIndicatorWidths([w, indicatorWidths[1]]);
-                  }
-                }}>
-                简介
-              </Text>
-              {currentPage === 0 && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    bottom: -2,
-                    height: 2,
-                    backgroundColor: dynamicStyles.pageIndicatorTextActive.color,
-                    width: indicatorWidths[0],
-                    alignSelf: 'center',
-                  }}
-                />
-              )}
-            </View>
+            <Text
+              style={[
+                dynamicStyles.pageIndicatorText,
+                currentPage === 0 && dynamicStyles.pageIndicatorTextActive,
+              ]}>
+              简介
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={dynamicStyles.pageIndicatorButton}
+            style={[
+              dynamicStyles.pageIndicatorButton,
+              currentPage === 1 && dynamicStyles.pageIndicatorButtonActive,
+            ]}
             onPress={() => {
               if (currentPage !== 1) scrollToPage(1);
             }}>
-            <View>
-              <Text
-                style={[
-                  dynamicStyles.pageIndicatorText,
-                  currentPage === 1 && dynamicStyles.pageIndicatorTextActive,
-                ]}
-                onLayout={e => {
-                  const w = e.nativeEvent.layout.width;
-                  if (indicatorWidths[1] !== w) {
-                    setIndicatorWidths([indicatorWidths[0], w]);
-                  }
-                }}>
-                详情
-              </Text>
-              {currentPage === 1 && (
-                <View
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    bottom: -2,
-                    height: 2,
-                    backgroundColor: dynamicStyles.pageIndicatorTextActive.color,
-                    width: indicatorWidths[1],
-                    alignSelf: 'center',
-                  }}
-                />
-              )}
-            </View>
+            <Text
+              style={[
+                dynamicStyles.pageIndicatorText,
+                currentPage === 1 && dynamicStyles.pageIndicatorTextActive,
+              ]}>
+              详情
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -396,7 +275,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
 
           {/* 详情页面 */}
           <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
-            <InfoBox
+            <Infobox
               infobox={animeDetail.infobox}
               screenDimensions={screenDimensions}
               dynamicStyles={dynamicStyles}
