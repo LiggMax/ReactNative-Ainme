@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useRef} from 'react';
 import {
   Text,
   View,
@@ -7,18 +7,20 @@ import {
   ImageBackground,
   Dimensions,
   ScrollView,
+  PanResponder,
 } from 'react-native';
-import {useTheme, Chip, Card} from 'react-native-paper';
+import {useTheme} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 
 import animeService from '../../api/bangumi/anime/animeService.ts';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
 import AnimatedHeaderPage from '../../components/AnimatedHeaderPage';
+import Summary from './summary/Summary';
+import InfoBox from './infobox/InfoBox';
 
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
@@ -30,13 +32,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
-  const [showAllTags, setShowAllTags] = useState(false);
-  const [showFullSummary, setShowFullSummary] = useState(false);
-  const [tabIndex, setTabIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'overview', title: '简介和标签' },
-    { key: 'details', title: '详细信息' },
-  ]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // 监听屏幕尺寸变化
   useEffect(() => {
@@ -158,108 +155,38 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     );
   }
 
-  // 渲染简介和标签页面
-  const renderOverviewScene = () => (
-    <ScrollView style={dynamicStyles.tabContent}>
-      {/* 简介 */}
-      {animeDetail.summary && (
-        <>
-          <Text style={dynamicStyles.sectionTitle}>简介</Text>
-          <Text
-            style={dynamicStyles.summaryText}
-            numberOfLines={showFullSummary ? undefined : 3}>
-            {animeDetail.summary.replace(/\r\n/g, '\n')}
-          </Text>
-          {animeDetail.summary.length > 100 && (
-            <TouchableOpacity
-              style={dynamicStyles.showMoreButton}
-              onPress={() => setShowFullSummary(!showFullSummary)}>
-              <Text style={dynamicStyles.showMoreText}>
-                {showFullSummary ? '收起' : '显示更多'}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </>
-      )}
+  // 处理水平滑动
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const pageIndex = Math.round(offsetX / screenDimensions.width);
+    setCurrentPage(pageIndex);
+  };
 
-      {/* 标签 */}
-      {animeDetail.tags && animeDetail.tags.length > 0 && (
-        <>
-          <Text style={dynamicStyles.sectionTitle}>标签</Text>
-          <View style={dynamicStyles.tagsContainer}>
-            {(showAllTags
-              ? animeDetail.tags
-              : animeDetail.tags.slice(0, 6)
-            ).map((tag: {name: string; count: number}, index: number) => (
-              <Chip
-                key={index}
-                mode="flat"
-                compact
-                style={dynamicStyles.tagChip}>
-                {tag.name} ({tag.count})
-              </Chip>
-            ))}
-          </View>
-          {animeDetail.tags.length > 6 && (
-            <TouchableOpacity
-              style={dynamicStyles.showMoreButton}
-              onPress={() => setShowAllTags(!showAllTags)}>
-              <Text style={dynamicStyles.showMoreText}>
-                {showAllTags ? '收起' : '显示更多'}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </>
-      )}
-    </ScrollView>
-  );
+  // 滑动到指定页面
+  const scrollToPage = (pageIndex: number) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        x: pageIndex * screenDimensions.width,
+        animated: true,
+      });
+    }
+    setCurrentPage(pageIndex);
+  };
 
-  // 渲染详细信息页面
-  const renderDetailsScene = () => (
-    <ScrollView style={dynamicStyles.tabContent}>
-      {/* 详细信息 */}
-      {animeDetail.infobox && animeDetail.infobox.length > 0 && (
-        <>
-          <Text style={dynamicStyles.sectionTitle}>详情</Text>
-          <View style={dynamicStyles.infoGridContainer}>
-            {animeDetail.infobox
-              .slice(0, 10)
-              .map((item: any, index: number) => (
-                <Card
-                  key={index}
-                  mode="elevated"
-                  style={dynamicStyles.infoCard}>
-                  <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
-                  <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
-                    {Array.isArray(item.value)
-                      ? item.value.map((v: any) => v.v || v).join(', ')
-                      : item.value}
-                  </Text>
-                </Card>
-              ))}
-          </View>
-        </>
-      )}
-    </ScrollView>
-  );
-
-  // TabView场景映射
-  const renderScene = SceneMap({
-    overview: renderOverviewScene,
-    details: renderDetailsScene,
+  // 创建手势响应器
+  const panResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: (evt, gestureState) => {
+      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 10;
+    },
+    onPanResponderMove: () => {},
+    onPanResponderRelease: (evt, gestureState) => {
+      if (gestureState.dx > 50 && currentPage > 0) {
+        scrollToPage(currentPage - 1);
+      } else if (gestureState.dx < -50 && currentPage < 1) {
+        scrollToPage(currentPage + 1);
+      }
+    },
   });
-
-  // 自定义TabBar
-  const renderTabBar = (props: any) => (
-    <TabBar
-      {...props}
-      indicatorStyle={dynamicStyles.tabIndicator}
-      style={dynamicStyles.tabBar}
-      labelStyle={dynamicStyles.tabLabel}
-      activeColor={theme.colors.primary}
-      inactiveColor={theme.colors.onSurfaceVariant}
-    />
-  );
 
   // 页面内容
   const renderContent = () => (
@@ -371,16 +298,68 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         </TouchableOpacity>
       </View>
 
-      {/* TabView内容区域 */}
-      <View style={dynamicStyles.tabViewContainer}>
-        <TabView
-          navigationState={{index: tabIndex, routes}}
-          renderScene={renderScene}
-          renderTabBar={renderTabBar}
-          onIndexChange={setTabIndex}
-          initialLayout={{width: screenDimensions.width}}
-          style={dynamicStyles.tabView}
-        />
+      {/* 水平滑动内容区域 */}
+      <View style={dynamicStyles.horizontalScrollContainer}>
+        {/* 页面指示器 */}
+        <View style={dynamicStyles.pageIndicatorContainer}>
+          <TouchableOpacity
+            style={[
+              dynamicStyles.pageIndicatorButton,
+              currentPage === 0 && dynamicStyles.pageIndicatorButtonActive,
+            ]}
+            onPress={() => scrollToPage(0)}>
+            <Text
+              style={[
+                dynamicStyles.pageIndicatorText,
+                currentPage === 0 && dynamicStyles.pageIndicatorTextActive,
+              ]}>
+              简介
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              dynamicStyles.pageIndicatorButton,
+              currentPage === 1 && dynamicStyles.pageIndicatorButtonActive,
+            ]}
+            onPress={() => scrollToPage(1)}>
+            <Text
+              style={[
+                dynamicStyles.pageIndicatorText,
+                currentPage === 1 && dynamicStyles.pageIndicatorTextActive,
+              ]}>
+              详情
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 水平滑动内容 */}
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          style={dynamicStyles.horizontalScrollView}
+          {...panResponder.panHandlers}>
+          {/* 简介页面 */}
+          <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
+            <Summary
+              summary={animeDetail.summary}
+              tags={animeDetail.tags}
+              dynamicStyles={dynamicStyles}
+            />
+          </View>
+
+          {/* 详情页面 */}
+          <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
+            <InfoBox
+              infobox={animeDetail.infobox}
+              screenDimensions={screenDimensions}
+              dynamicStyles={dynamicStyles}
+            />
+          </View>
+        </ScrollView>
       </View>
     </>
   );

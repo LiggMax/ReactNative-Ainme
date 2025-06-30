@@ -1,0 +1,1 @@
+D:\Exploitation\Project\ReactNative\Anime\node_modules\react-native-windows\fmt\fmt.vcxproj(114,5): error MSB3923: 未能下载文件“https://github.com/fmtlib/fmt/archive/refs/tags/10.1.0.zip”。发送请求时出错。 ---> 基础连接已经关闭: 发送时发生错误。 ---> 由于远程方已关闭传输流，身份验证失败。

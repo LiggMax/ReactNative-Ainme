@@ -359,34 +359,50 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       fontSize: 14,
       color: theme.colors.onSurface,
     },
-    // TabView 相关样式
-    tabViewContainer: {
+    // 水平滑动相关样式
+    horizontalScrollContainer: {
       flex: 1,
       backgroundColor: theme.colors.background,
     },
-    tabView: {
+    pageIndicatorContainer: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.surface,
+      paddingHorizontal: screenDimensions.headerPadding,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.outline,
+    },
+    pageIndicatorButton: {
+      flex: 1,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      marginHorizontal: 4,
+      borderRadius: 20,
+      backgroundColor: 'transparent',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pageIndicatorButtonActive: {
+      backgroundColor: theme.colors.primaryContainer,
+    },
+    pageIndicatorText: {
+      fontSize: screenDimensions.isTablet ? 16 : 14,
+      fontWeight: '600',
+      color: theme.colors.onSurfaceVariant,
+    },
+    pageIndicatorTextActive: {
+      color: theme.colors.primary,
+    },
+    horizontalScrollView: {
+      flex: 1,
+    },
+    pageContainer: {
       flex: 1,
     },
     tabContent: {
       flex: 1,
       padding: screenDimensions.headerPadding,
       backgroundColor: theme.colors.background,
-    },
-    tabBar: {
-      backgroundColor: theme.colors.surface,
-      elevation: 0,
-      shadowOpacity: 0,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.outline,
-    },
-    tabLabel: {
-      fontSize: screenDimensions.isTablet ? 16 : 14,
-      fontWeight: '600',
-      textTransform: 'none',
-    },
-    tabIndicator: {
-      backgroundColor: theme.colors.primary,
-      height: 3,
     },
   });
 };
