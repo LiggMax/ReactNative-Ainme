@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {Chip} from 'react-native-paper';
+import Characters from './characters';
 
 interface SummaryProps {
   summary?: string;
   tags?: Array<{name: string; count: number}>;
   dynamicStyles: any;
+  animeId: number;
 }
 
 /**
@@ -13,9 +15,10 @@ interface SummaryProps {
  * @param summary
  * @param tags
  * @param dynamicStyles
+ * @param animeId
  * @constructor
  */
-export default function Index({summary, tags, dynamicStyles}: SummaryProps) {
+export default function Index({summary, tags, dynamicStyles, animeId}: SummaryProps) {
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
 
@@ -73,6 +76,9 @@ export default function Index({summary, tags, dynamicStyles}: SummaryProps) {
       ) : (
         <Text style={dynamicStyles.summaryText}>暂无标签信息</Text>
       )}
+
+      {/* 角色信息 */}
+      <Characters animeId={animeId} />
     </View>
   );
 }

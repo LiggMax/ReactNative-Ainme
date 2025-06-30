@@ -61,15 +61,6 @@ export interface RankingResponse {
  */
 class Anime {
   /**
-   * 获取动漫详情
-   */
-  async getAnimeDetailService(id: number): Promise<AnimeItem> {
-
-    return apiRequest.get(`/v0/subjects/${id}`);
-  }
-
-
-  /**
    * 获取排行榜
    */
   async getRankingService(): Promise<RankingResponse> {

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {useTheme} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import animeService from '../../api/bangumi/anime/anime';
+import animeDateService from '../../api/bangumi/anime/animeDate';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
 import {createAnimeDetailStyles} from './style';
@@ -82,7 +82,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       setLoading(true);
       setError(null);
 
-      const detail = await animeService.getAnimeDetailService(id);
+      const detail = await animeDateService.getAnimeDetailService(id);
       console.log('✅ 动漫详情获取成功:', detail);
 
       setAnimeDetail(detail);
@@ -269,6 +269,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
               summary={animeDetail.summary}
               tags={animeDetail.tags}
               dynamicStyles={dynamicStyles}
+              animeId={id}
             />
           </View>
 
