@@ -77,8 +77,8 @@ export default function Characters({animeId}: CharactersProps) {
     }
   };
 
-  // 获取主角角色
-  const mainCharacters = characters.filter(char => char.relation === '6');
+  // 获取主角和配角角色
+  const mainCharacters = characters.filter(char => char.relation === '主角' || char.relation === '配角');
 
   // 渲染单个角色卡片
   const renderCharacterCard = (character: Character, isCompact = false) => (
