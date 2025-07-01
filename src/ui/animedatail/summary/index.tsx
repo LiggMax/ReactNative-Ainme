@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {Chip} from 'react-native-paper';
 import Characters from './characters';
+import Related from './related'
 
 interface SummaryProps {
   summary?: string;
@@ -79,6 +80,9 @@ export default function Index({summary, tags, dynamicStyles, animeId}: SummaryPr
 
       {/* 角色信息 */}
       <Characters animeId={animeId} />
+
+      {/*相关条目数据*/}
+      <Related animeId={animeId} />
     </View>
   );
 }

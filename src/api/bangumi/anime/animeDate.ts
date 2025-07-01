@@ -22,6 +22,13 @@ class AnimeDate{
   async getCharactersService(id: number) {
     return apiRequest.get(`/v0/subjects/${id}/characters`);
   }
+
+  /**
+   * 番剧相关条目
+   */
+  async getRelatedService(id: number) {
+    return apiRequest.get(`/v0/subjects/${id}/subjects`)
+  }
 }
 
 
