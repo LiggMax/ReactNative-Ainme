@@ -100,8 +100,6 @@ export default function index({animeId}: RelatedProps) {
         numColumns={2}
         showsVerticalScrollIndicator={false}
         columnWrapperStyle={styles.row}
-        scrollEnabled={false}
-        nestedScrollEnabled={true}
       />
     </View>
   );

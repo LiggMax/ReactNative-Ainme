@@ -236,36 +236,23 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           onScroll={handleScroll}
           scrollEventThrottle={16}
           style={dynamicStyles.horizontalScrollView}
-          nestedScrollEnabled={false}
           {...panResponder.panHandlers}>
           {/* 简介页面 */}
           <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
-            <ScrollView 
-              style={{flex: 1}} 
-              showsVerticalScrollIndicator={false}
-              nestedScrollEnabled={true}
-            >
-              <Summary
-                summary={animeDetail.summary}
-                tags={animeDetail.tags}
-                animeId={id}
-                screenDimensions={screenDimensions}
-              />
-            </ScrollView>
+            <Summary
+              summary={animeDetail.summary}
+              tags={animeDetail.tags}
+              animeId={id}
+              screenDimensions={screenDimensions}
+            />
           </View>
 
           {/* 详情页面 */}
           <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
-            <ScrollView 
-              style={{flex: 1}} 
-              showsVerticalScrollIndicator={false}
-              nestedScrollEnabled={true}
-            >
-              <Infobox
-                infobox={animeDetail.infobox}
-                screenDimensions={screenDimensions}
-              />
-            </ScrollView>
+            <Infobox
+              infobox={animeDetail.infobox}
+              screenDimensions={screenDimensions}
+            />
           </View>
         </ScrollView>
       </View>
