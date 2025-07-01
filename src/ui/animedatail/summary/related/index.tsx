@@ -2,11 +2,12 @@
  * 番剧相关条目
  */
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList} from 'react-native';
+import {Text, View, FlatList, Dimensions} from 'react-native';
 import {Card, } from 'react-native-paper';
 import animeDate from '../../../../api/bangumi/anime/animeDate.ts';
-import {styles} from './style';
+import {useStyles} from './style';
 import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface RelatedItem {
   images: {
@@ -30,6 +31,7 @@ interface RelatedProps {
 export default function index({animeId}: RelatedProps) {
   const [relatedData, setRelatedData] = useState<RelatedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const styles = useStyles();
 
   /**
    * 获取相关条目
@@ -54,20 +56,26 @@ export default function index({animeId}: RelatedProps) {
   }, [animeId]);
 
   const renderRelatedItem = ({item}: {item: RelatedItem}) => (
-    <Card style={styles.card}>
-      <Card.Content style={styles.cardContent}>
-        {item.images.common && (
-          <FastImage source={{uri: item.images.common}} style={styles.image} />
-        )}
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{item.name_cn || item.name}</Text>
-          <Text style={styles.relation}>{item.relation}</Text>
-          {item.name_cn && item.name !== item.name_cn && (
-            <Text style={styles.originalName}>{item.name}</Text>
+    <View style={styles.gridItem}>
+      <Card style={styles.card}>
+        <View style={styles.imageContainer}>
+          {item.images.common && (
+            <FastImage source={{uri: item.images.common}} style={styles.image} />
           )}
+          <View style={styles.overlay}>
+            <Text style={styles.relation}>{item.relation}</Text>
+          </View>
+          <View style={styles.titleOverlay}>
+            <LinearGradient
+              colors={['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.8)']}
+              style={styles.titleGradient}
+            >
+              <Text style={styles.title} numberOfLines={2}>{item.name_cn || item.name}</Text>
+            </LinearGradient>
+          </View>
         </View>
-      </Card.Content>
-    </Card>
+      </Card>
+    </View>
   );
 
   if (loading) {
@@ -89,7 +97,9 @@ export default function index({animeId}: RelatedProps) {
         data={relatedData}
         renderItem={renderRelatedItem}
         keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
         showsVerticalScrollIndicator={false}
+        columnWrapperStyle={styles.row}
       />
     </View>
   );

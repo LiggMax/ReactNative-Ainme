@@ -191,7 +191,7 @@ export default function AnimatedHeaderPage({
       {/* 内容区域 */}
       <Animated.ScrollView
         style={baseStyles.scrollContainer}
-        contentContainerStyle={[{flexGrow: 1}, contentContainerStyle]}
+        contentContainerStyle={contentContainerStyle}
         showsVerticalScrollIndicator={false}
         bounces={false}
         overScrollMode="never"

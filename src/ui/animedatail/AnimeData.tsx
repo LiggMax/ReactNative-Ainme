@@ -242,8 +242,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
             <Summary
               summary={animeDetail.summary}
               tags={animeDetail.tags}
-              dynamicStyles={dynamicStyles}
               animeId={id}
+              screenDimensions={screenDimensions}
             />
           </View>
 
@@ -252,7 +252,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
             <Infobox
               infobox={animeDetail.infobox}
               screenDimensions={screenDimensions}
-              dynamicStyles={dynamicStyles}
             />
           </View>
         </ScrollView>
