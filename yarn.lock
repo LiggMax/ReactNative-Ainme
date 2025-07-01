@@ -6550,6 +6550,16 @@ react-is@^19.0.0, react-is@^19.1.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-19.1.0.tgz"
   integrity sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==
 
+react-native-animated-bottom-drawer@^0.0.23:
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/react-native-animated-bottom-drawer/-/react-native-animated-bottom-drawer-0.0.23.tgz#22ebe9f5964ebb267d4c366e2b46a5e3e205fc5d"
+  integrity sha512-xOYOWxNViNno9wtYtvDpW90M5N4RDgdLq2jRjR9lxTAcpKsl93C7oex/NANQzd5aC9Vh7SEnyh0DlbSqprB6kg==
+
+react-native-bottom-drawer@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-bottom-drawer/-/react-native-bottom-drawer-1.0.2.tgz#e687ba15aeaac60c15735da381f60dcbd72bb81d"
+  integrity sha512-FyM08/OQuW0lzjmPONWuvZB08B0Pmh1VbmPo2IJ1ATavl8YRwFscFGDORep0qCSTQ3BUSjN0+es0S3YuP+anQQ==
+
 react-native-fast-image@^8.6.3:
   version "8.6.3"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz#6edc3f9190092a909d636d93eecbcc54a8822255"

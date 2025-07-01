@@ -1,9 +1,8 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState, useRef} from 'react';
 import {
   Text,
   View,
   TouchableOpacity,
-  Modal,
   FlatList,
   Dimensions,
 } from 'react-native';
@@ -11,6 +10,7 @@ import animeDateService from '../../../../api/bangumi/anime/animeDate';
 import {useTheme} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
 import {useCharacterStyles} from './style';
+import BottomDrawer, {BottomDrawerMethods} from 'react-native-animated-bottom-drawer';
 
 interface CharactersProps {
   animeId: number;
@@ -49,7 +49,7 @@ interface Character {
 export default function Characters({animeId}: CharactersProps) {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
   const styles = useCharacterStyles();
 
   const screenHeight = Dimensions.get('window').height;
@@ -68,7 +68,7 @@ export default function Characters({animeId}: CharactersProps) {
   };
 
   // 获取主角角色
-  const mainCharacters = characters.filter(char => char.relation === '主角');
+  const mainCharacters = characters.filter(char => char.relation === '6');
 
   // 渲染单个角色卡片
   const renderCharacterCard = (character: Character, isCompact = false) => (
@@ -145,7 +145,7 @@ export default function Characters({animeId}: CharactersProps) {
         {characters.length > 0 && (
           <TouchableOpacity
             style={styles.viewAllButton}
-            onPress={() => setModalVisible(true)}>
+            onPress={() => bottomDrawerRef.current?.open()}>
             <Text style={styles.viewAllText}>查看全部</Text>
           </TouchableOpacity>
         )}
@@ -170,33 +170,32 @@ export default function Characters({animeId}: CharactersProps) {
       )}
 
       {/* 底部抽屉模态框 */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, {maxHeight: screenHeight * 0.8}]}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>角色 {characters.length}</Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.closeButtonText}>×</Text>
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={characters}
-              renderItem={renderModalCharacterItem}
-              keyExtractor={item => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.modalList}
-              numColumns={2}
-              columnWrapperStyle={styles.modalRow}
-            />
-          </View>
+      <BottomDrawer
+        ref={bottomDrawerRef}
+        initialHeight={screenHeight * 0.8}
+        customStyles={{
+          container: styles.modalContent,
+        }}
+        onClose={() => {}}
+        closeOnBackdropPress={true}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>角色 {characters.length}</Text>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => bottomDrawerRef.current?.close()}>
+            <Text style={styles.closeButtonText}>×</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+        <FlatList
+          data={characters}
+          renderItem={renderModalCharacterItem}
+          keyExtractor={item => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.modalList}
+          numColumns={2}
+          columnWrapperStyle={styles.modalRow}
+        />
+      </BottomDrawer>
     </View>
   );
 }

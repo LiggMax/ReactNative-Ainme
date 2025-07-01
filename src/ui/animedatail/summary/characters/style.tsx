@@ -95,12 +95,7 @@ export const useCharacterStyles = () => {
     compactActor: {
       fontSize: 10,
     },
-    // 模态框样式
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: 'flex-end',
-    },
+    // 底部抽屉样式
     modalContent: {
       backgroundColor: theme.colors.surface,
       borderTopLeftRadius: 20,
@@ -111,7 +106,7 @@ export const useCharacterStyles = () => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 20,
+      paddingHorizontal: 10,
       paddingBottom: 15,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.outline,
