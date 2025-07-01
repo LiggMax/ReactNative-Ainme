@@ -270,7 +270,38 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       maxWidth: screenDimensions.isTablet ? 800 : '100%',
       alignSelf: screenDimensions.isTablet ? 'center' : 'stretch',
     },
-
+    sectionTitle: {
+      fontSize: screenDimensions.isTablet ? 20 : 16,
+      fontWeight: 'bold',
+      color: theme.colors.onSurface,
+      marginBottom: 12,
+    },
+    summaryText: {
+      fontSize: screenDimensions.isTablet ? 16 : 14,
+      color: theme.colors.onSurfaceVariant,
+      lineHeight: screenDimensions.isTablet ? 24 : 20,
+      marginBottom: 24,
+    },
+    tagsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: 24,
+      marginHorizontal: -4,
+    },
+    tagChip: {
+      margin: 4,
+    },
+     showMoreButton: {
+      alignSelf: 'flex-end',
+      marginTop: 8,
+      marginBottom: 16,
+    },
+    showMoreText: {
+      fontSize: screenDimensions.isTablet ? 14 : 12,
+      color: theme.colors.primary,
+      fontWeight: 'bold',
+    },
+    // 新增样式
     absoluteFill: {
       position: 'absolute',
       top: 0,
@@ -304,7 +335,27 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       fontWeight: '600',
       color: theme.colors.onSurface,
     },
-
+    // 详细信息项目样式
+    infoGridContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginHorizontal: -4,
+    },
+    infoCard: {
+      padding: 12,
+      width: screenDimensions.isTablet ? '48%' : '100%',
+      minWidth: screenDimensions.isTablet ? 200 : 150,
+    },
+    infoKeyText: {
+      fontSize: 12,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+    },
+    infoValueText: {
+      fontSize: 14,
+      color: theme.colors.onSurface,
+    },
     // 水平滑动相关样式
     horizontalScrollContainer: {
       flex: 1,
@@ -340,7 +391,12 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       flex: 1,
     },
     pageContainer: {
-      minHeight: '100%',
+      flex: 1,
+    },
+    tabContent: {
+      flex: 1,
+      padding: screenDimensions.headerPadding,
+      backgroundColor: theme.colors.background,
     },
   });
 };

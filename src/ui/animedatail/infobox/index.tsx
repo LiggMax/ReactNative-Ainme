@@ -1,48 +1,43 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback} from 'react';
 import {Text, View} from 'react-native';
-import {Card, useTheme} from 'react-native-paper';
+import {Card} from 'react-native-paper';
 import {FlatGrid} from 'react-native-super-grid';
-import {createInfoboxStyles} from './style';
 
 interface InfoBoxProps {
   infobox?: Array<{key: string; value: any}>;
   screenDimensions: any;
+  dynamicStyles: any;
 }
 
 /**
  * 详情页面
  * @param infobox
  * @param screenDimensions
+ * @param dynamicStyles
  * @constructor
  */
 export default function Index({
   infobox,
   screenDimensions,
+  dynamicStyles,
 }: InfoBoxProps) {
-  const theme = useTheme();
-
-  // 创建样式
-  const styles = useMemo(
-    () => createInfoboxStyles(theme, screenDimensions),
-    [theme, screenDimensions],
-  );
   // 渲染详细信息项目 - 使用Material Design Card
   const renderInfoItem = useCallback(
     ({item}: {item: any}) => (
-      <Card mode='contained' style={styles.infoCard}>
-        <Text style={styles.infoKeyText}>{item.key}</Text>
-        <Text style={styles.infoValueText} numberOfLines={3}>
+      <Card mode='contained' style={dynamicStyles.infoCard}>
+        <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
+        <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
           {Array.isArray(item.value)
             ? item.value.map((v: any) => v.v || v).join(', ')
             : item.value}
         </Text>
       </Card>
     ),
-    [styles],
+    [dynamicStyles],
   );
 
   return (
-    <View style={styles.tabContent}>
+    <View style={dynamicStyles.tabContent}>
       {infobox && infobox.length > 0 ? (
         <FlatGrid
           itemDimension={screenDimensions.isTablet ? 200 : 150}
@@ -54,7 +49,7 @@ export default function Index({
           scrollEnabled={false}
         />
       ) : (
-        <Text style={styles.summaryText}>暂无详细信息</Text>
+        <Text style={dynamicStyles.summaryText}>暂无详细信息</Text>
       )}
     </View>
   );

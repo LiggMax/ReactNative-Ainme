@@ -7,6 +7,7 @@ export const useStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      padding: 16,
       backgroundColor: theme.colors.background,
     },
     sectionTitle: {
@@ -15,58 +16,37 @@ export const useStyles = () => {
       marginBottom: 12,
       color: theme.colors.onBackground,
     },
-    row: {
-      justifyContent: 'space-between',
-      paddingHorizontal: 4,
-    },
-    gridItem: {
-      flex: 1,
-      margin: 4,
-      maxWidth: '48%',
-    },
     card: {
+      marginBottom: 12,
       elevation: 2,
       backgroundColor: theme.colors.surface,
-      overflow: 'hidden',
     },
-    imageContainer: {
-      position: 'relative',
-      width: '100%',
-      aspectRatio: 3/4,
+    cardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
     },
     image: {
-      width: '100%',
-      height: '100%',
+      width: 60,
+      height: 80,
+      borderRadius: 4,
+      marginRight: 12,
       backgroundColor: theme.colors.surfaceVariant,
     },
-    overlay: {
-      position: 'absolute',
-      top: 8,
-      left: 8,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      paddingHorizontal: 6,
-      paddingVertical: 2,
-      borderRadius: 4,
-    },
-    titleOverlay: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-    },
-    titleGradient: {
-      padding: 8,
+    textContainer: {
+      flex: 1,
+      justifyContent: 'center',
     },
     title: {
-      fontSize: 12,
+      fontSize: 16,
       fontWeight: '600',
-      color: '#FFFFFF',
-      textAlign: 'center',
+      marginBottom: 4,
+      color: theme.colors.onSurface,
     },
     relation: {
-      fontSize: 10,
-      color: '#FFFFFF',
-      fontWeight: '500',
+      fontSize: 14,
+      color: theme.colors.primary,
+      marginBottom: 2,
     },
     originalName: {
       fontSize: 12,
@@ -75,3 +55,48 @@ export const useStyles = () => {
     },
   });
 };
+
+// 导出静态样式供不使用hook的地方使用
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  card: {
+    marginBottom: 12,
+    elevation: 2,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+  },
+  image: {
+    width: 60,
+    height: 80,
+    borderRadius: 4,
+    marginRight: 12,
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  relation: {
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  originalName: {
+    fontSize: 12,
+    fontStyle: 'italic',
+  },
+});
