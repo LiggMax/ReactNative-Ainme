@@ -166,7 +166,6 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     episodeText: {
       fontSize: screenDimensions.infoFontSize,
       color: 'rgba(255, 255, 255, 0.8)',
-      marginBottom: 12,
       textShadowColor: 'rgba(0, 0, 0, 0.8)',
       textShadowOffset: {width: 1, height: 1},
       textShadowRadius: 2,
@@ -214,7 +213,6 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       justifyContent: screenDimensions.isSmallPhone ? 'center' : 'flex-start',
       flexWrap: 'wrap',
       maxWidth: '100%',
-      marginTop: 8,
     },
     collectionItem: {
       marginRight: screenDimensions.isSmallPhone ? 0 : 16,
