@@ -101,6 +101,8 @@ export const useCharacterStyles = () => {
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       paddingTop: 20,
+      flex: 1,
+      maxHeight: '100%',
     },
     modalHeader: {
       flexDirection: 'row',
@@ -129,6 +131,7 @@ export const useCharacterStyles = () => {
     modalList: {
       paddingHorizontal: 8,
       paddingBottom: 20,
+      flexGrow: 1,
     },
     modalRow: {
       justifyContent: 'space-between',
@@ -160,7 +163,9 @@ export const useCharacterStyles = () => {
     modalCharacterRelation: {
       fontSize: 12,
       color: theme.colors.primary,
-      fontWeight: '600',
+      fontWeight: 'bold',
+      marginBottom: 8,
+      marginRight:5,
     },
     modalActorName: {
       fontSize: 11,

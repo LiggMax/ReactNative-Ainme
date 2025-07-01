@@ -20,6 +20,7 @@ interface AnimatedHeaderPageProps {
   renderCustomHeader?: (scrollY: Animated.Value) => ReactNode;
   headerBackgroundImage?: string;
   scrollThreshold?: number;
+  Begin?: number;
   contentContainerStyle?: ViewStyle;
   statusBarConfig?: any;
 }
@@ -30,7 +31,8 @@ export default function AnimatedHeaderPage({
   showBackButton = true,
   onBackPress,
   renderCustomHeader,
-  scrollThreshold = 100,
+  Begin = 50,
+  scrollThreshold = 150,
   contentContainerStyle,
   statusBarConfig = StatusBarConfigs.detail,
 }: AnimatedHeaderPageProps) {
@@ -94,40 +96,40 @@ export default function AnimatedHeaderPage({
   const animatedStyles = useMemo(() => {
     // 根据滚动位置计算背景色透明度
     const headerBackgroundColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: ['rgba(255,255,255,0)', 'rgb(238,238,238)'],
       extrapolate: 'clamp',
     });
 
     // 根据滚动位置计算文字颜色
     const titleColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.87)'],
       extrapolate: 'clamp',
     });
 
     // 根据滚动位置计算返回按钮图标颜色
     const backButtonIconColor = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: ['rgba(255,255,255,1)', 'rgba(0,0,0,0.87)'],
       extrapolate: 'clamp',
     });
 
     // 动态阴影
     const shadowOpacity = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: [0, 0.1],
       extrapolate: 'clamp',
     });
 
     const shadowRadius = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: [0, 3],
       extrapolate: 'clamp',
     });
 
     const elevation = scrollY.interpolate({
-      inputRange: [0, scrollThreshold],
+      inputRange: [Begin, scrollThreshold],
       outputRange: [0, 4],
       extrapolate: 'clamp',
     });
@@ -144,36 +146,36 @@ export default function AnimatedHeaderPage({
 
   // 默认的顶部导航栏
   const renderDefaultHeader = () => (
-    <Animated.View style={[
-      baseStyles.topBar,
-      {
-        backgroundColor: animatedStyles.headerBackgroundColor,
-        shadowOpacity: animatedStyles.shadowOpacity,
-        shadowRadius: animatedStyles.shadowRadius,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: animatedStyles.elevation,
-      }
-    ]}>
+    <Animated.View
+      style={[
+        baseStyles.topBar,
+        {
+          backgroundColor: animatedStyles.headerBackgroundColor,
+          shadowOpacity: animatedStyles.shadowOpacity,
+          shadowRadius: animatedStyles.shadowRadius,
+          shadowOffset: {width: 0, height: 2},
+          elevation: animatedStyles.elevation,
+        },
+      ]}>
       {showBackButton && (
         <Animated.View style={baseStyles.backButtonContainer}>
           <TouchableOpacity
             style={baseStyles.backButton}
             onPress={onBackPress}
-            activeOpacity={0.7}
-          >
-            <Animated.Text style={[
-              { fontSize: 24 },
-              { color: animatedStyles.backButtonIconColor }
-            ]}>
+            activeOpacity={0.7}>
+            <Animated.Text
+              style={[
+                {fontSize: 24},
+                {color: animatedStyles.backButtonIconColor},
+              ]}>
               <Icon name="chevron-back" size={24} />
             </Animated.Text>
           </TouchableOpacity>
         </Animated.View>
       )}
-      <Animated.Text style={[
-        baseStyles.title,
-        { color: animatedStyles.titleColor }
-      ]} numberOfLines={1}>
+      <Animated.Text
+        style={[baseStyles.title, {color: animatedStyles.titleColor}]}
+        numberOfLines={1}>
         {title}
       </Animated.Text>
     </Animated.View>
@@ -181,10 +183,7 @@ export default function AnimatedHeaderPage({
 
   return (
     <View style={baseStyles.container}>
-      <StatusBarManager
-        {...statusBarConfig}
-        scrollY={scrollY}
-      />
+      <StatusBarManager {...statusBarConfig} scrollY={scrollY} />
 
       {/* 顶部导航栏 */}
       {renderCustomHeader ? renderCustomHeader(scrollY) : renderDefaultHeader()}
@@ -192,10 +191,7 @@ export default function AnimatedHeaderPage({
       {/* 内容区域 */}
       <Animated.ScrollView
         style={baseStyles.scrollContainer}
-        contentContainerStyle={[
-          { flexGrow: 1 },
-          contentContainerStyle
-        ]}
+        contentContainerStyle={[{flexGrow: 1}, contentContainerStyle]}
         showsVerticalScrollIndicator={false}
         bounces={false}
         overScrollMode="never"
@@ -204,9 +200,8 @@ export default function AnimatedHeaderPage({
         contentInsetAdjustmentBehavior="never"
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
-          {useNativeDriver: false}
-        )}
-      >
+          {useNativeDriver: false},
+        )}>
         {children}
 
         {/* 底部安全距离 */}

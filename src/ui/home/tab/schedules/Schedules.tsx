@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useTheme, Chip} from 'react-native-paper';
+import {Chip, useTheme} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
 import FastImage from 'react-native-fast-image';
 import {FlatGrid} from 'react-native-super-grid';
-import animeService, {AnimeItem, ScheduleItem} from '../../../../api/bangumi/anime/anime.ts';
+import animeService, {
+  AnimeItem,
+  ScheduleItem,
+} from '../../../../api/bangumi/anime/anime.ts';
 import {useAppNavigation} from '../../../../navigation';
 import {createSchedulesStyles, GRADIENT_CONFIG} from './style.tsx';
 
@@ -98,10 +101,18 @@ export default function Schedules() {
     }));
   }, []);
 
-  // 获取当前选中星期的数据
+  // 获取当前选中星期的数据，过滤掉没有封面的动漫
   const currentWeekdayData = useMemo((): AnimeItem[] => {
     const currentWeekday = scheduleData.find(item => item.weekday.id === selectedWeekday);
-    return currentWeekday?.items || [];
+    const items = currentWeekday?.items || [];
+
+    // 过滤掉没有封面图片的动漫
+    return items.filter(item => {
+      return (
+        item.images &&
+        (item.images.large || item.images.medium || item.images.small)
+      );
+    });
   }, [scheduleData, selectedWeekday]);
 
   // 当数据更新时，重置所有图片的加载状态

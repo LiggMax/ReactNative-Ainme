@@ -266,7 +266,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         title={title}
         showBackButton={canGoBack()}
         onBackPress={goBack}
-        scrollThreshold={80}>
+        Begin={50}
+        scrollThreshold={150}>
         {renderContent()}
       </AnimatedHeaderPage>
     </View>

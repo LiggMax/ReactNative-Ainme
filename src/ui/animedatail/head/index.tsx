@@ -73,6 +73,10 @@ export default function Head({animeDetail, title, dynamicStyles, insets}: HeadPr
               </Text>
             </View>
           </View>
+          {/*播出时间*/}
+          <Text style={dynamicStyles.dateText} numberOfLines={0}>
+            {animeDetail.date || '播出时间待定'}
+          </Text>
           {/* 评分信息 */}
           {animeDetail.rating && (
             <View style={dynamicStyles.ratingContainer}>
@@ -87,9 +91,7 @@ export default function Head({animeDetail, title, dynamicStyles, insets}: HeadPr
               </Text>
             </View>
           )}
-          <Text style={dynamicStyles.dateText} numberOfLines={0}>
-            {animeDetail.date || '播出时间待定'}
-          </Text>
+          {/* 播放数据 */}
           <Text style={dynamicStyles.episodeText} numberOfLines={0}>
             看过 {animeDetail.collection?.collect || 0} (
             {animeDetail.total_episodes || animeDetail.eps || 0}) · 全{' '}
