@@ -167,9 +167,17 @@ class Request {
         const startTime = Date.now();
         config.metadata = {startTime};
 
+        // 构建完整的请求路径
+        const baseURL = config.baseURL || '';
+        const fullUrl = config.url?.startsWith('http') ? config.url : `${baseURL}${config.url}`;
         console.log(
-          `🚀 发送请求: ${config.method?.toUpperCase()} ${config.url}`,
+          `🚀 发送请求: ${config.method?.toUpperCase()} ${fullUrl}`,
         );
+
+        // 设置User-Agent，避免Bangumi API的403错误
+        if (config.headers) {
+          config.headers['User-Agent'] = 'ReactNative-Anime/1.0.0 (https://github.com/LiggMax/ReactNative-Ainme)';
+        }
 
         // 在这里可以添加token
         const token = this.getToken();
@@ -325,7 +333,6 @@ class Request {
           default:
             throw new Error(`不支持的请求方法: ${method}`);
         }
-
         return response as T;
       } finally {
         // 清理取消令牌
