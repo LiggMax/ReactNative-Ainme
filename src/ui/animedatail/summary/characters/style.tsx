@@ -22,12 +22,12 @@ export const useCharacterStyles = () => {
     viewAllButton: {
       paddingHorizontal: 12,
       paddingVertical: 6,
-      backgroundColor: theme.colors.surfaceVariant,
       borderRadius: 15,
     },
     viewAllText: {
       fontSize: 12,
-      color: theme.colors.onSurfaceVariant,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
     },
     loadingText: {
       fontSize: 14,
@@ -108,8 +108,6 @@ export const useCharacterStyles = () => {
       alignItems: 'center',
       paddingHorizontal: 10,
       paddingBottom: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.outline,
     },
     modalTitle: {
       fontSize: 18,
@@ -120,7 +118,6 @@ export const useCharacterStyles = () => {
       width: 30,
       height: 30,
       borderRadius: 15,
-      backgroundColor: theme.colors.surfaceVariant,
       justifyContent: 'center',
       alignItems: 'center',
     },

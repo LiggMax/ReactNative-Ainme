@@ -346,7 +346,6 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
     },
     infoCard: {
       padding: 12,
-      margin: 4,
       width: screenDimensions.isTablet ? '48%' : '100%',
       minWidth: screenDimensions.isTablet ? 200 : 150,
     },

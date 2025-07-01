@@ -180,11 +180,6 @@ export default function Characters({animeId}: CharactersProps) {
         closeOnBackdropPress={true}>
         <View style={styles.modalHeader}>
           <Text style={styles.modalTitle}>角色 {characters.length}</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => bottomDrawerRef.current?.close()}>
-            <Text style={styles.closeButtonText}>×</Text>
-          </TouchableOpacity>
         </View>
         <FlatList
           data={characters}

@@ -24,7 +24,7 @@ export default function Index({
   // 渲染详细信息项目 - 使用Material Design Card
   const renderInfoItem = useCallback(
     ({item}: {item: any}) => (
-      <Card mode="elevated" style={dynamicStyles.infoCard}>
+      <Card mode='contained' style={dynamicStyles.infoCard}>
         <Text style={dynamicStyles.infoKeyText}>{item.key}</Text>
         <Text style={dynamicStyles.infoValueText} numberOfLines={3}>
           {Array.isArray(item.value)
