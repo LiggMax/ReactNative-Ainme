@@ -1,3 +1,4 @@
+import React from 'react';
 import {StyleSheet} from 'react-native';
 import {MD3Theme} from 'react-native-paper';
 
@@ -18,7 +19,6 @@ interface ScreenDimensions {
 export const createInfoboxStyles = (theme: MD3Theme, screenDimensions: ScreenDimensions) => {
   return StyleSheet.create({
     tabContent: {
-      flex: 1,
       padding: screenDimensions.headerPadding,
       backgroundColor: theme.colors.background,
     },

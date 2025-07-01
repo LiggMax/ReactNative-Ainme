@@ -340,7 +340,8 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       flex: 1,
     },
     pageContainer: {
-      minHeight: '100%',
+      height: screenDimensions.height - 100, // 使用固定高度，彻底隔离页面高度
+      // 移除flex: 1，避免高度共享
     },
   });
 };

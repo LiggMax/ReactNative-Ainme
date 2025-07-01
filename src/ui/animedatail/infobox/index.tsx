@@ -52,6 +52,7 @@ export default function Index({
           fixed={false}
           maxItemsPerRow={screenDimensions.isTablet ? 2 : 1}
           scrollEnabled={false}
+          staticDimension={screenDimensions.width - (screenDimensions.headerPadding * 2)}
         />
       ) : (
         <Text style={styles.summaryText}>暂无详细信息</Text>
