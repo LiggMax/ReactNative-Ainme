@@ -21,7 +21,7 @@ export const useStyles = () => {
     },
     gridItem: {
       flex: 1,
-      margin: 4,
+      marginBottom: 10,
       maxWidth: '48%',
     },
     card: {
@@ -58,8 +58,8 @@ export const useStyles = () => {
       padding: 8,
     },
     title: {
-      fontSize: 12,
-      fontWeight: '600',
+      fontSize: 20,
+      fontWeight: 'bold',
       color: '#FFFFFF',
       textAlign: 'center',
     },
