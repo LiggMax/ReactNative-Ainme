@@ -2,8 +2,10 @@ import React, {useEffect, useState, useRef} from 'react';
 import {StatusBar, Platform, Animated, useColorScheme} from 'react-native';
 import { useAppTheme } from '../context/ThemeContext';
 
+type StatusBarStyle = 'default' | 'light-content' | 'dark-content';
+
 interface StatusBarManagerProps {
-  barStyle?: 'default' | 'light-content' | 'dark-content';
+  barStyle?: StatusBarStyle;
   backgroundColor?: string;
   translucent?: boolean;
   hidden?: boolean;
@@ -11,8 +13,8 @@ interface StatusBarManagerProps {
   dynamicBarStyle?: boolean; // 是否启用动态样式
   scrollY?: Animated.Value; // 滚动位置
   scrollThreshold?: number; // 滚动阈值
-  lightBarStyle?: 'light-content' | 'dark-content'; // 浅色背景时的样式
-  darkBarStyle?: 'light-content' | 'dark-content'; // 深色背景时的样式
+  lightBarStyle?: StatusBarStyle; // 浅色背景时的样式
+  darkBarStyle?: StatusBarStyle; // 深色背景时的样式
   autoDetectTheme?: boolean; // 是否自动检测系统主题
   useGlobalTheme?: boolean; // 是否使用全局主题
 }
@@ -60,7 +62,20 @@ export const StatusBarManager: React.FC<StatusBarManagerProps> = ({
 
       // 添加新的监听器
       scrollListener.current = scrollY.addListener(({value}) => {
-        const newBarStyle = value > scrollThreshold ? lightBarStyle : darkBarStyle;
+        let newBarStyle: StatusBarStyle;
+        if (useGlobalTheme) {
+          // 使用全局主题时，根据主题和滚动位置决定状态栏样式
+          if (isDarkTheme) {
+            // 深色主题：滚动时保持浅色文字，未滚动时也是浅色文字
+            newBarStyle = 'light-content';
+          } else {
+            // 浅色主题：滚动时深色文字，未滚动时浅色文字
+            newBarStyle = value > scrollThreshold ? 'dark-content' : 'light-content';
+          }
+        } else {
+          // 不使用全局主题时，使用原有逻辑
+          newBarStyle = value > scrollThreshold ? (lightBarStyle || 'dark-content') : (darkBarStyle || 'light-content');
+        }
         setCurrentBarStyle(newBarStyle);
       });
 
@@ -70,7 +85,7 @@ export const StatusBarManager: React.FC<StatusBarManagerProps> = ({
         }
       };
     }
-  }, [dynamicBarStyle, scrollY, scrollThreshold, lightBarStyle, darkBarStyle]);
+  }, [dynamicBarStyle, scrollY, scrollThreshold, lightBarStyle, darkBarStyle, useGlobalTheme, isDarkTheme]);
 
   // 应用状态栏设置
   useEffect(() => {
@@ -111,6 +126,7 @@ export const StatusBarConfigs = {
     translucent: true,
     hidden: false,
     dynamicBarStyle: true,
+    useGlobalTheme: true,
     lightBarStyle: 'dark-content' as const,
     darkBarStyle: 'light-content' as const,
     scrollThreshold: 80,
