@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {StatusBar, Platform, Animated, useColorScheme} from 'react-native';
+import { useAppTheme } from '../context/ThemeContext';
 
 interface StatusBarManagerProps {
   barStyle?: 'default' | 'light-content' | 'dark-content';
@@ -13,6 +14,7 @@ interface StatusBarManagerProps {
   lightBarStyle?: 'light-content' | 'dark-content'; // 浅色背景时的样式
   darkBarStyle?: 'light-content' | 'dark-content'; // 深色背景时的样式
   autoDetectTheme?: boolean; // 是否自动检测系统主题
+  useGlobalTheme?: boolean; // 是否使用全局主题
 }
 
 export const StatusBarManager: React.FC<StatusBarManagerProps> = ({
@@ -26,20 +28,27 @@ export const StatusBarManager: React.FC<StatusBarManagerProps> = ({
   lightBarStyle = 'dark-content',
   darkBarStyle = 'light-content',
   autoDetectTheme = false,
+  useGlobalTheme = true,
 }) => {
   const colorScheme = useColorScheme();
+  const { isDarkTheme } = useAppTheme();
   const [currentBarStyle, setCurrentBarStyle] = useState(barStyle);
   const scrollListener = useRef<string | null>(null);
 
-  // 自动检测系统主题并设置状态栏样式
+  // 自动检测主题并设置状态栏样式
   useEffect(() => {
-    if (autoDetectTheme) {
+    if (useGlobalTheme) {
+      // 使用全局主题
+      const themeBasedStyle = isDarkTheme ? darkBarStyle : lightBarStyle;
+      setCurrentBarStyle(themeBasedStyle);
+    } else if (autoDetectTheme) {
+      // 使用系统主题
       const themeBasedStyle = colorScheme === 'dark' ? darkBarStyle : lightBarStyle;
       setCurrentBarStyle(themeBasedStyle);
     } else {
       setCurrentBarStyle(barStyle);
     }
-  }, [autoDetectTheme, colorScheme, barStyle, lightBarStyle, darkBarStyle]);
+  }, [useGlobalTheme, isDarkTheme, autoDetectTheme, colorScheme, barStyle, lightBarStyle, darkBarStyle]);
 
   // 滚动监听器 - 根据滚动位置动态改变状态栏
   useEffect(() => {
@@ -127,13 +136,13 @@ export const StatusBarConfigs = {
     translucent: false,
     hidden: false,
   },
-  // 智能主题（自动检测系统主题）
+  // 智能主题（使用全局主题）
   smart: {
     barStyle: 'dark-content' as const,
     backgroundColor: 'transparent',
     translucent: true,
     hidden: false,
-    autoDetectTheme: true,
+    useGlobalTheme: true,
     lightBarStyle: 'dark-content' as const,
     darkBarStyle: 'light-content' as const,
   },

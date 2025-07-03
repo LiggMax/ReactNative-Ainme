@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager, StatusBarConfigs} from './StatusBarManager';
+import { useAppTheme } from '../context/ThemeContext';
 
 interface AnimatedHeaderPageProps {
   children: ReactNode;
@@ -37,6 +38,7 @@ export default function AnimatedHeaderPage({
   statusBarConfig = StatusBarConfigs.detail,
 }: AnimatedHeaderPageProps) {
   const theme = useTheme();
+  const { isDarkTheme } = useAppTheme();
   const insets = useSafeAreaInsets();
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -94,24 +96,27 @@ export default function AnimatedHeaderPage({
 
   // 动态样式值
   const animatedStyles = useMemo(() => {
-    // 根据滚动位置计算背景色透明度
+    // 根据主题和滚动位置计算背景色透明度
+    const transparentColor = 'rgba(0,0,0,0)';
+    const solidColor = isDarkTheme ? theme.colors.surface : theme.colors.surface;
+    
     const headerBackgroundColor = scrollY.interpolate({
       inputRange: [Begin, scrollThreshold],
-      outputRange: ['rgba(255,255,255,0)', 'rgb(238,238,238)'],
+      outputRange: [transparentColor, solidColor],
       extrapolate: 'clamp',
     });
 
-    // 根据滚动位置计算文字颜色
+    // 根据主题和滚动位置计算文字颜色
     const titleColor = scrollY.interpolate({
       inputRange: [Begin, scrollThreshold],
-      outputRange: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.87)'],
+      outputRange: ['rgba(255,255,255,0)', theme.colors.onSurface],
       extrapolate: 'clamp',
     });
 
-    // 根据滚动位置计算返回按钮图标颜色
+    // 根据主题和滚动位置计算返回按钮图标颜色
     const backButtonIconColor = scrollY.interpolate({
       inputRange: [Begin, scrollThreshold],
-      outputRange: ['rgba(255,255,255,1)', 'rgba(0,0,0,0.87)'],
+      outputRange: ['rgba(255,255,255,1)', theme.colors.onSurface],
       extrapolate: 'clamp',
     });
 
@@ -142,7 +147,7 @@ export default function AnimatedHeaderPage({
       shadowRadius,
       elevation,
     };
-  }, [scrollY, scrollThreshold]);
+  }, [scrollY, scrollThreshold, theme.colors, isDarkTheme]);
 
   // 默认的顶部导航栏
   const renderDefaultHeader = () => (
