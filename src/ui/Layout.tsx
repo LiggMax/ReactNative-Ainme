@@ -4,6 +4,7 @@ import {BottomNavigation, useTheme, Surface, Divider} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Home from './home/HomeLayout.tsx';
+import Profile from './profile/ProfileLayout.tsx';
 
 // 定义路由接口
 interface RouteItem {
@@ -61,10 +62,7 @@ export default function BottomTabLayout() {
   ), [theme.colors]);
 
   const ProfileScreen = useCallback(() => (
-    <View style={styles.screenContainer}>
-      <Text style={[styles.screenTitle, {color: theme.colors.onSurface}]}>个人资料</Text>
-      <Text style={[styles.screenContent, {color: theme.colors.onSurfaceVariant}]}>我的动漫收藏</Text>
-    </View>
+    <Profile/>
   ), [theme.colors]);
 
   const routes: RouteItem[] = useMemo(() => [

@@ -13,13 +13,25 @@ import {
   StatusBarManager,
   StatusBarConfigs,
 } from './src/components/StatusBarManager.tsx';
+import { ThemeProvider, useAppTheme } from './src/context/ThemeContext';
+
+// 内部应用组件，使用主题
+const AppContent: React.FC = () => {
+  const { theme } = useAppTheme();
+  
+  return (
+    <PaperProvider theme={theme}>
+      <StatusBarManager {...StatusBarConfigs.smart} />
+      <AppNavigator />
+    </PaperProvider>
+  );
+};
 function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
-      <PaperProvider>
-        <StatusBarManager {...StatusBarConfigs.smart} />
-        <AppNavigator />
-      </PaperProvider>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

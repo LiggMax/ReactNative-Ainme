@@ -2174,6 +2174,15 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
+"@react-navigation/material-top-tabs@^7.3.2":
+  version "7.3.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-7.3.2.tgz#e0c4ad3595bf2072e9cbf890ef5b7c9e0dae9b28"
+  integrity sha512-ggZlsWV8ZiKWdVoxBZ1fiq8Af/VxYivsLWAccIvOQKom7yquSUkk0VKOc+rdfnRxXv40JhCmGhqCVLko9fjsRA==
+  dependencies:
+    "@react-navigation/elements" "^2.5.2"
+    color "^4.2.3"
+    react-native-tab-view "^4.1.2"
+
 "@react-navigation/native-stack@^7.3.21":
   version "7.3.21"
   resolved "https://registry.yarnpkg.com/@react-navigation/native-stack/-/native-stack-7.3.21.tgz#224ee559b8039c18901c1f7f95a7fd8861c1a398"
@@ -6635,7 +6644,7 @@ react-native-super-grid@^6.0.1:
 
 react-native-tab-view@^4.1.2:
   version "4.1.2"
-  resolved "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-4.1.2.tgz"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-4.1.2.tgz#c4aa05812668f24a048d2e574d53182f47f4fed2"
   integrity sha512-uzC1hxZGNXeQay8rSjCc7egnoYGHRpB/Y1tAwK5/nnZwrziKry7T6+gNscZgoq88+7Aag/JeNOifdWMZyRclOA==
   dependencies:
     use-latest-callback "^0.2.4"
