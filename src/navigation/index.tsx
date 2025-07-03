@@ -5,7 +5,7 @@ import {useTheme} from 'react-native-paper';
 import {useNavigation as useRNNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import BottomTabLayout from '../ui/layout/Layout.tsx';
+import BottomTabLayout from '../ui/Layout.tsx';
 import AnimeDetail from '../ui/animedatail/AnimeData';
 import {RootStackParamList} from '../types/navigation';
 
