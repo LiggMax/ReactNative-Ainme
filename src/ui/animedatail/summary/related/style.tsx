@@ -32,7 +32,7 @@ export const useStyles = () => {
     imageContainer: {
       position: 'relative',
       width: '100%',
-      aspectRatio: 3/4,
+      aspectRatio: 1,// 宽高比 1:1
     },
     image: {
       width: '100%',
