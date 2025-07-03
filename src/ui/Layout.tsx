@@ -3,7 +3,8 @@ import {Text, StyleSheet, View, Dimensions, TouchableOpacity} from 'react-native
 import {BottomNavigation, useTheme, Surface, Divider} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Home from '../home/HomeLayout';
+import Home from './home/HomeLayout.tsx';
+import Profile from './profile/ProfileLayout.tsx';
 
 // 定义路由接口
 interface RouteItem {
@@ -36,7 +37,7 @@ export default function BottomTabLayout() {
   // 计算是否应该使用侧边导航
   const shouldUseSideNavigation = useMemo(() => {
     const {width, height} = screenData;
-    
+
     // 在以下情况使用侧边导航：
     // 1. 屏幕宽度大于平板断点
     // 2. 横屏模式（宽度大于高度且宽度大于大屏手机断点）
@@ -61,10 +62,7 @@ export default function BottomTabLayout() {
   ), [theme.colors]);
 
   const ProfileScreen = useCallback(() => (
-    <View style={styles.screenContainer}>
-      <Text style={[styles.screenTitle, {color: theme.colors.onSurface}]}>个人资料</Text>
-      <Text style={[styles.screenContent, {color: theme.colors.onSurfaceVariant}]}>我的动漫收藏</Text>
-    </View>
+    <Profile/>
   ), [theme.colors]);
 
   const routes: RouteItem[] = useMemo(() => [
@@ -111,9 +109,9 @@ export default function BottomTabLayout() {
         <View style={styles.sideNavHeader}>
           <Text style={[styles.appTitle, {color: theme.colors.primary}]}>动漫应用</Text>
         </View>
-        
+
         <Divider style={{backgroundColor: theme.colors.outline}} />
-        
+
         {/* 导航项目 */}
         <View style={styles.navItemsContainer}>
           {routes.map((route, routeIndex) => (
@@ -229,7 +227,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
   },
-  
+
   // 手机布局样式
   screenContainer: {
     flex: 1,

@@ -283,11 +283,9 @@ export default function Schedules() {
           updateCellsBatchingPeriod={50}
           initialNumToRender={8}
           windowSize={10}
-          scrollEventThrottle={20}//优化滑动响应，减少与TabView冲突
           directionalLockEnabled={true} // 启用方向锁定
           alwaysBounceVertical={false}
           bounces={false}
-          overScrollMode="never"
           ListEmptyComponent={
             <View style={dynamicStyles.emptyContainer}>
               <Text style={dynamicStyles.emptyText}>今日暂无新番</Text>
