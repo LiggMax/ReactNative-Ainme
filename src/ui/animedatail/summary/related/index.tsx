@@ -2,11 +2,12 @@
  * 番剧相关条目
  */
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList} from 'react-native';
-import {Card, } from 'react-native-paper';
+import {View, FlatList, Dimensions} from 'react-native';
+import {Card,Text} from 'react-native-paper';
 import animeDate from '../../../../api/bangumi/anime/animeDate.ts';
-import {styles} from './style';
+import {useStyles} from './style';
 import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
 
 interface RelatedItem {
   images: {
@@ -30,6 +31,22 @@ interface RelatedProps {
 export default function index({animeId}: RelatedProps) {
   const [relatedData, setRelatedData] = useState<RelatedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+
+  /**
+   *动态样式
+   */
+  const styles = useStyles();
+
+  // 计算列数
+  const getNumColumns = () => {
+    const itemWidth = 120; // 每个项目的最小宽度
+    const padding = 32; // 左右padding
+    const spacing = 12; // 项目间距
+    const availableWidth = screenWidth - padding;
+    const columns = Math.floor((availableWidth + spacing) / (itemWidth + spacing));
+    return Math.max(2, Math.min(4, columns)); // 最少2列，最多4列
+  };
 
   /**
    * 获取相关条目
@@ -51,23 +68,37 @@ export default function index({animeId}: RelatedProps) {
 
   useEffect(() => {
     getRelated();
+
+    const subscription = Dimensions.addEventListener('change', ({window}) => {
+      setScreenWidth(window.width);
+    });
+
+    return () => subscription?.remove();
   }, [animeId]);
 
   const renderRelatedItem = ({item}: {item: RelatedItem}) => (
-    <Card style={styles.card}>
-      <Card.Content style={styles.cardContent}>
+    <View style={styles.itemContainer}>
+      <Card style={styles.card}>
         {item.images.common && (
-          <FastImage source={{uri: item.images.common}} style={styles.image} />
+          <View style={styles.imageContainer}>
+            <FastImage source={{uri: item.images.common}} style={styles.image} />
+            {/* relation标签在左上角 */}
+            <View style={styles.relationBadge}>
+              <Text style={styles.relationText}>{item.relation}</Text>
+            </View>
+            {/* 标题覆盖在底部 - 使用渐变蒙版 */}
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.5)', 'rgba(0,0,0,0.7)']}
+              style={styles.titleOverlay}
+            >
+              <Text style={styles.titleText} numberOfLines={2}>
+                {item.name_cn || item.name}
+              </Text>
+            </LinearGradient>
+          </View>
         )}
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{item.name_cn || item.name}</Text>
-          <Text style={styles.relation}>{item.relation}</Text>
-          {item.name_cn && item.name !== item.name_cn && (
-            <Text style={styles.originalName}>{item.name}</Text>
-          )}
-        </View>
-      </Card.Content>
-    </Card>
+      </Card>
+    </View>
   );
 
   if (loading) {
@@ -84,12 +115,16 @@ export default function index({animeId}: RelatedProps) {
 
   return (
     <View style={styles.container}>
-      <Text  style={styles.sectionTitle}>相关条目</Text>
+      <Text style={styles.sectionTitle}>相关条目</Text>
       <FlatList
         data={relatedData}
         renderItem={renderRelatedItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        numColumns={getNumColumns()}
+        key={getNumColumns()} // 强制重新渲染当列数改变时
+        columnWrapperStyle={getNumColumns() > 1 ? styles.row : undefined}
+        contentContainerStyle={styles.listContainer}
       />
     </View>
   );
