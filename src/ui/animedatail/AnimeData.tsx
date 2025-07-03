@@ -175,8 +175,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       {/* 操作按钮 */}
       <View style={dynamicStyles.actionContainer}>
         <IconButton
-          icon={'camera'}
-          iconColor={theme.colors.onSurface}
+          icon={'apps-box'}
+          iconColor={theme.colors.primary}
           size={45}
           style={dynamicStyles.iconButton}
         />

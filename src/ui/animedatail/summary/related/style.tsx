@@ -25,6 +25,7 @@ export const useStyles = () => {
     itemContainer: {
       flex: 1,
       maxWidth: '48%', // 确保在2列布局时不会太宽
+      margin: 8
     },
     card: {
       elevation: 3,
@@ -52,7 +53,6 @@ export const useStyles = () => {
     relationBadge: {
       position: 'absolute',
       top: 8,
-      left: 8,
       backgroundColor: theme.colors.primary,
       paddingHorizontal: 6,
       paddingVertical: 2,
