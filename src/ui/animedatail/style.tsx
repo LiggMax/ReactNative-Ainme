@@ -19,7 +19,10 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.onSurfaceVariant,
+    },
+    iconButton:{
+      marginRight: 8,
     },
     loadingContainer: {
       flex: 1,
@@ -36,6 +39,10 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 32,
+    },
+    button:{
+      width: "80%",
+      height: 50
     },
     errorText: {
       fontSize: 16,
@@ -235,10 +242,11 @@ export const createAnimeDetailStyles = (theme: MD3Theme, screenDimensions: Scree
       textShadowRadius: 2,
     },
     actionContainer: {
+      alignSelf: 'flex-end',
       flexDirection: 'row',
+      alignItems: 'center',  //垂直居中
       padding: screenDimensions.headerPadding,
       backgroundColor: theme.colors.surface,
-      borderTopWidth: 1,
       borderTopColor: theme.colors.outline,
     },
     actionButton: {

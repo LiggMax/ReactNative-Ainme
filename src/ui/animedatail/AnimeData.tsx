@@ -8,7 +8,7 @@ import {
   ScrollView,
   PanResponder,
 } from 'react-native';
-import {useTheme} from 'react-native-paper';
+import {Button, useTheme, IconButton} from 'react-native-paper';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import animeDateService from '../../api/bangumi/anime/animeDate';
 import {AnimeDetailScreenProps} from '../../types/navigation';
@@ -97,8 +97,6 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     getAnimeDetail();
   }, [id]);
 
-
-
   // 动态样式
   const dynamicStyles = useMemo(
     () => createAnimeDetailStyles(theme, screenDimensions),
@@ -176,18 +174,15 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       />
       {/* 操作按钮 */}
       <View style={dynamicStyles.actionContainer}>
-        <TouchableOpacity
-          style={[dynamicStyles.actionButton, dynamicStyles.watchButton]}>
-          <Text
-            style={[
-              dynamicStyles.actionButtonText,
-              dynamicStyles.watchButtonText,
-            ]}>
-            继续观看{' '}
-            {String(animeDetail.collection?.collect || 0).padStart(2, '0')} (
-            {animeDetail.total_episodes || animeDetail.eps || 0})
-          </Text>
-        </TouchableOpacity>
+        <IconButton
+          icon={'camera'}
+          iconColor={theme.colors.onSurface}
+          size={45}
+          style={dynamicStyles.iconButton}
+        />
+        <Button mode={'contained'} style={dynamicStyles.button}>
+          继续观看
+        </Button>
       </View>
       {/* 水平滑动内容区域 */}
       <View style={dynamicStyles.horizontalScrollContainer}>
@@ -238,7 +233,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           style={dynamicStyles.horizontalScrollView}
           {...panResponder.panHandlers}>
           {/* 简介页面 */}
-          <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
+          <View
+            style={[
+              dynamicStyles.pageContainer,
+              {width: screenDimensions.width},
+            ]}>
             <Summary
               summary={animeDetail.summary}
               tags={animeDetail.tags}
@@ -248,7 +247,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           </View>
 
           {/* 详情页面 */}
-          <View style={[dynamicStyles.pageContainer, {width: screenDimensions.width}]}>
+          <View
+            style={[
+              dynamicStyles.pageContainer,
+              {width: screenDimensions.width},
+            ]}>
             <Infobox
               infobox={animeDetail.infobox}
               screenDimensions={screenDimensions}
