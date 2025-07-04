@@ -25,7 +25,7 @@ const VideoPlayer = () => {
       source={{
         uri: 'https://hydownload.pan.wo.cn/openapi/download?fid=cuMwJ_Awyv/9Vz90UFRmmYt0tBkUEjxpzM%2B1farvUAsAM4oFwLFCvpwYx4V930TI7mwaZA1Q0ns%2BY5fuhs2U7N85AHKw==',
       }}
-      // 商店参考
+
       ref={videoRef}
       // 远端视频缓冲回调
       onBuffer={onBuffer}
@@ -38,7 +38,7 @@ const VideoPlayer = () => {
       // 显示控制条
       controls={true}
       // 自动播放
-      paused={false}
+      paused={true}
       // 调整模式
       resizeMode="contain"
     />

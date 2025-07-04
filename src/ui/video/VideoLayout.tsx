@@ -30,7 +30,7 @@ const VideoLayout = ({route}: VideoScreenProps) => {
 
       {/* 信息栏 */}
       <View style={styles.infoContainer}>
-        <Text style={styles.info}>视频ID: {id}</Text>
+        <Text style={styles.info}>视频标题: {title}</Text>
       </View>
     </SafeAreaView>
   );

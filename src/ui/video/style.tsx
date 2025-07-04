@@ -26,7 +26,6 @@ export const videoStyles = () => {
     infoContainer: {
       paddingHorizontal: 16,
       paddingVertical: 12,
-      marginTop: 'auto',
     },
     info: {
       fontSize: 14,
