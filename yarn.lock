@@ -6593,6 +6593,11 @@ react-native-linear-gradient@^2.8.3:
   resolved "https://registry.npmmirror.com/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz#9a116649f86d74747304ee13db325e20b21e564f"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
 
+react-native-nitro-modules@^0.26.3:
+  version "0.26.3"
+  resolved "https://registry.yarnpkg.com/react-native-nitro-modules/-/react-native-nitro-modules-0.26.3.tgz#80d7d01fe1b9f657182f5b886f74ac37e185423d"
+  integrity sha512-M6XXalSeRhz3X44vxlRnmRAcyTfC3EHxKBsAKHRNlTtVyu9IUQeUBBtjtIZgK6CM3km1387buYtRVIg6XGmoGQ==
+
 react-native-pager-view@^6.8.1:
   version "6.8.1"
   resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.8.1.tgz"
@@ -6656,6 +6661,11 @@ react-native-vector-icons@^10.2.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-video@^6.16.0:
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-6.16.0.tgz#78ad0affc6f4a09c366d83532b36be562149d3f5"
+  integrity sha512-FS9lb7qCd5wN6KAifziXH8PogAkAPy5YD8lJ2t/1FkBG+09hD+CsP4C7EfWFzvY/RxhO30iVZ1g5ZquofKIzrg==
 
 react-native-windows@^0.79.1:
   version "0.79.1"
