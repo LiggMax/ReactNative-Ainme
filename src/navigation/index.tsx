@@ -7,6 +7,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import BottomTabLayout from '../ui/Layout.tsx';
 import AnimeDetail from '../ui/animedatail/AnimeData';
+import VideoLayout from '../ui/video/VideoLayout';
 import {RootStackParamList} from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -17,6 +18,10 @@ const ROUTE_CONFIG: Record<keyof RootStackParamList, NativeStackNavigationOption
     headerShown: false,
   },
   AnimeDetail: {
+    headerShown: false,
+    animation: 'slide_from_right',
+  },
+  Video: {
     headerShown: false,
     animation: 'slide_from_right',
   },
@@ -33,6 +38,9 @@ export const useAppNavigation = () => {
     navigateToAnimeDetail: (id: number, title?: string) => {
       navigation.navigate('AnimeDetail', {id, title});
     },
+    navigateToVideo: (id: number, title?: string) => {
+      navigation.navigate('Video', {id, title});
+    },
     goBack: () => {
       navigation.goBack();
     },
@@ -45,8 +53,7 @@ export const useAppNavigation = () => {
 // 主导航器组件
 export default function AppNavigator() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-
+  useSafeAreaInsets();
   const screenOptions: NativeStackNavigationOptions = {
     headerTitleStyle: {
       fontWeight: '600',
@@ -75,6 +82,11 @@ export default function AppNavigator() {
           name="AnimeDetail"
           component={AnimeDetail}
           options={ROUTE_CONFIG.AnimeDetail}
+        />
+        <Stack.Screen
+          name="Video"
+          component={VideoLayout}
+          options={ROUTE_CONFIG.Video}
         />
       </Stack.Navigator>
     </NavigationContainer>

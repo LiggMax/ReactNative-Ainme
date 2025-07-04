@@ -22,7 +22,7 @@ import Head from './head';
 export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const {goBack, canGoBack} = useAppNavigation();
+  const {goBack, canGoBack, navigateToVideo} = useAppNavigation();
   const {id, title} = route.params;
 
   const [animeDetail, setAnimeDetail] = useState<any>(null);
@@ -144,6 +144,11 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     // setCurrentPage(pageIndex); // 只在handleScroll中更新currentPage，避免跳动
   };
 
+  // 处理继续观看按钮点击
+  const handleContinueWatch = () => {
+    navigateToVideo(id, title);
+  };
+
   // 创建手势响应器
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_evt, gestureState) => {
@@ -180,7 +185,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           size={45}
           style={dynamicStyles.iconButton}
         />
-        <Button mode={'contained'} style={dynamicStyles.button}>
+        <Button mode={'contained'} style={dynamicStyles.button} onPress={handleContinueWatch}>
           继续观看
         </Button>
       </View>

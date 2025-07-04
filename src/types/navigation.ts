@@ -7,15 +7,18 @@ export type RootStackParamList = {
     id: number;
     title?: string;
   };
+  Video: {
+    id: number;
+    title?: string;
+  };
 };
 
 // 定义屏幕组件的Props类型
-export type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 export type AnimeDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'AnimeDetail'>;
+export type VideoScreenProps = NativeStackScreenProps<RootStackParamList, 'Video'>;
 
 // 导航相关的类型声明
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList {}
   }
 }
