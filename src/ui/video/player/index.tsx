@@ -3,14 +3,13 @@ import Video, {VideoRef} from 'react-native-video';
 import {useRef} from 'react';
 import {playerStyles} from './style'
 
-/**
- * 动态样式
- */
-const styles = playerStyles();
-
 const VideoPlayer = () => {
-
   const videoRef = useRef<VideoRef>(null);
+  
+  /**
+   * 动态样式
+   */
+  const styles = playerStyles();
 
 
   // 视频错误回调
