@@ -15,6 +15,7 @@ const VideoPlayer = () => {
   const videoRef = useRef<VideoRef>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [bufferedTime, setBufferedTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -32,6 +33,8 @@ const VideoPlayer = () => {
   // 视频播放进度回调
   const onProgress = (data: OnProgressData) => {
     setCurrentTime(data.currentTime);
+    // 更新缓存进度 (playableDuration 表示已缓存的时长)
+    setBufferedTime(data.playableDuration || 0);
   };
   // 全屏切换函数
   const toggleFullscreen = () => {
@@ -110,6 +113,7 @@ const VideoPlayer = () => {
       <VideoControls
         currentTime={currentTime}
         duration={duration}
+        bufferedTime={bufferedTime}
         isPlaying={isPlaying}
         onSeek={onSeek}
         onPlayPause={onPlayPause}

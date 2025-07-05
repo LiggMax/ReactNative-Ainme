@@ -24,6 +24,7 @@ import controlsStyle from './style';
 interface VideoControlsProps {
   currentTime?: number;
   duration?: number;
+  bufferedTime?: number;
   isPlaying?: boolean;
   onSeek?: (time: number) => void;
   onPlayPause?: () => void;
@@ -37,6 +38,7 @@ const PROGRESS_BAR_WIDTH = screenWidth - 88; // 减去左右边距和IconButton�
 const VideoControls: React.FC<VideoControlsProps> = ({
   currentTime = 0,
   duration = 0,
+  bufferedTime = 0,
   isPlaying = false,
   onSeek,
   onPlayPause,
@@ -45,6 +47,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const progress = useSharedValue(0);
+  const bufferedProgress = useSharedValue(0);
   const thumbScale = useSharedValue(1);
 
   // 更新进度
@@ -53,6 +56,13 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       progress.value = currentTime / duration;
     }
   }, [currentTime, duration, isDragging]);
+
+  // 更新缓存进度
+  useEffect(() => {
+    if (duration > 0) {
+      bufferedProgress.value = bufferedTime / duration;
+    }
+  }, [bufferedTime, duration]);
 
   // 手势处理
   const gesture = Gesture.Pan()
@@ -93,6 +103,10 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     width: `${progress.value * 100}%`,
   }));
 
+  const bufferedFillStyle = useAnimatedStyle(() => ({
+    width: `${bufferedProgress.value * 100}%`,
+  }));
+
   const progressThumbStyle = useAnimatedStyle(() => ({
     left: `${progress.value * 100}%`,
     transform: [{scale: thumbScale.value}],
@@ -118,9 +132,15 @@ const VideoControls: React.FC<VideoControlsProps> = ({
               onPress={handlePress}
               activeOpacity={1}>
               <View style={styles.progressTrack}>
+                {/* 缓存进度条 */}
+                <Animated.View
+                  style={[styles.bufferedFill, bufferedFillStyle]}
+                />
+                {/* 播放进度条 */}
                 <Animated.View
                   style={[styles.progressFill, progressFillStyle]}
                 />
+                {/* 拖动按钮 */}
                 <Animated.View
                   style={[styles.progressThumb, progressThumbStyle]}
                 />

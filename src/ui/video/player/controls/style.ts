@@ -35,10 +35,21 @@ const controlsStyle = () => {
       borderRadius: 2,
       position: 'relative',
     },
+    bufferedFill: {
+      position: 'absolute',
+      height: 4,
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      borderRadius: 2,
+      left: 0,
+      top: 0,
+    },
     progressFill: {
+      position: 'absolute',
       height: 4,
       backgroundColor: theme.colors.primary,
       borderRadius: 2,
+      left: 0,
+      top: 0,
     },
     progressThumb: {
       position: 'absolute',
