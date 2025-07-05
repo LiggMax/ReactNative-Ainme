@@ -2,20 +2,15 @@
  * @Author Ligg
  * @Time 2025/7/5
  *
- * 播放器控件
+ * 播放器控件 - 极简版本
  **/
-import React, {useState, useRef, useCallback, useMemo, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, TouchableOpacity, View} from 'react-native';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
   runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
 import {
   Gesture,
@@ -31,6 +26,7 @@ interface VideoControlsProps {
 }
 
 const {width: screenWidth} = Dimensions.get('window');
+const PROGRESS_BAR_WIDTH = screenWidth - 40;
 
 const VideoControls: React.FC<VideoControlsProps> = ({
   currentTime = 0,
@@ -38,159 +34,73 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   onSeek,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const progressBarRef = useRef<View>(null);
-  const progressBarWidth = useMemo(() => screenWidth - 40, []);
-
-  // 使用 react-native-reanimated 的 SharedValue
-  const initialProgress = duration > 0 ? currentTime / duration : 0;
-  const progressValue = useSharedValue(initialProgress);
+  const progress = useSharedValue(0);
   const thumbScale = useSharedValue(1);
-  const thumbPosition = useSharedValue(initialProgress);
-  const isDraggingValue = useSharedValue(false);
 
-  // 将需要在 worklet 中使用的值转换为共享值
-  const progressBarWidthValue = useSharedValue(progressBarWidth);
-  const durationValue = useSharedValue(duration);
-
-  // 动画更新进度
-  const animateToProgress = useCallback((progress: number, animationDuration: number = 200) => {
-    progressValue.value = withTiming(progress, { duration: animationDuration });
-    thumbPosition.value = withTiming(progress, { duration: animationDuration });
-  }, [progressValue, thumbPosition]);
-
-  // 监听进度变化并触发动画
+  // 更新进度
   useEffect(() => {
-    if (!isDragging) {
-      const progress = duration > 0 ? currentTime / duration : 0;
-      // 直接设置值，避免不必要的动画
-      progressValue.value = progress;
-      thumbPosition.value = progress;
+    if (!isDragging && duration > 0) {
+      progress.value = currentTime / duration;
     }
-    // 更新共享值
-    durationValue.value = duration;
-  }, [currentTime, duration, isDragging, progressValue, thumbPosition, durationValue]);
-
-  // 更新进度条宽度共享值
-  useEffect(() => {
-    progressBarWidthValue.value = progressBarWidth;
-  }, [progressBarWidth, progressBarWidthValue]);
-
-  // 延迟设置拖拽状态的函数
-  const setDraggingWithDelay = useCallback(() => {
-    setTimeout(() => {
-      setIsDragging(false);
-    }, 100);
-  }, []);
+  }, [currentTime, duration, isDragging]);
 
   // 手势处理
-  const panGesture = useMemo(() => {
-    const onBeginWorklet = (event: any) => {
+  const gesture = Gesture.Pan()
+    .onBegin(() => {
       'worklet';
-      isDraggingValue.value = true;
       runOnJS(setIsDragging)(true);
-
-      const progress = Math.max(0, Math.min(1, event.x / progressBarWidthValue.value));
-      progressValue.value = progress;
-      thumbPosition.value = progress;
-
-      // 拖拽开始时的缩放动画效果
-      thumbScale.value = withSpring(1.3, {
-        damping: 15,
-        stiffness: 150,
-      });
-    };
-
-    const onUpdateWorklet = (event: any) => {
+      thumbScale.value = withSpring(1.3);
+    })
+    .onUpdate((event) => {
       'worklet';
-      const progress = Math.max(0, Math.min(1, event.x / progressBarWidthValue.value));
-      progressValue.value = progress;
-      thumbPosition.value = progress;
-    };
-
-    const onEndWorklet = () => {
+      progress.value = Math.max(0, Math.min(1, event.x / PROGRESS_BAR_WIDTH));
+    })
+    .onEnd(() => {
       'worklet';
-      isDraggingValue.value = false;
+      const seekTime = progress.value * duration;
+      thumbScale.value = withSpring(1);
       
-      const seekTime = progressValue.value * durationValue.value;
       if (onSeek) {
         runOnJS(onSeek)(seekTime);
       }
+      runOnJS(setIsDragging)(false);
+    });
 
-      // 拖拽结束时的缩放动画效果
-      thumbScale.value = withSpring(1, {
-        damping: 15,
-        stiffness: 150,
-      });
-
-      // 延迟设置isDragging状态，避免useEffect立即触发动画
-      runOnJS(setDraggingWithDelay)();
-    };
-
-    return Gesture.Pan()
-      .onBegin(onBeginWorklet)
-      .onUpdate(onUpdateWorklet)
-      .onEnd(onEndWorklet);
-  }, [progressBarWidthValue, durationValue, onSeek, progressValue, thumbPosition, thumbScale, isDraggingValue, setDraggingWithDelay]);
-
-  // 进度条点击处理
-  const handleProgressPress = useCallback((evt: any) => {
-    const touchX = evt.nativeEvent.locationX;
-    const progress = Math.max(0, Math.min(1, touchX / progressBarWidth));
-    const seekTime = progress * duration;
+  // 点击处理
+  const handlePress = (event: any) => {
+    if (isDragging) return;
+    
+    const touchX = event.nativeEvent.locationX;
+    const newProgress = Math.max(0, Math.min(1, touchX / PROGRESS_BAR_WIDTH));
+    const seekTime = newProgress * duration;
+    
+    progress.value = newProgress;
     onSeek?.(seekTime);
+  };
 
-    // 点击时的动画效果
-    animateToProgress(progress, 300);
-  }, [progressBarWidth, duration, onSeek, animateToProgress]);
+  // 样式
+  const progressFillStyle = useAnimatedStyle(() => ({
+    width: `${progress.value * 100}%`,
+  }));
 
-  // 注意：进度显示现在完全由动画值控制，不再需要displayProgress变量
+  const progressThumbStyle = useAnimatedStyle(() => ({
+    left: `${progress.value * 100}%`,
+    transform: [{scale: thumbScale.value}],
+  }));
 
-  /**
-   * 动态样式
-   */
-  const styles =controlsStyle();
-
-  // 进度条填充动画样式
-  const progressFillAnimStyle = useAnimatedStyle(() => {
-    return {
-      width: `${progressValue.value * 100}%`,
-    };
-  });
-
-  // 进度条拖拽圆点动画样式
-  const progressThumbAnimStyle = useAnimatedStyle(() => {
-    return {
-      left: `${thumbPosition.value * 100}%`,
-      transform: [
-        {
-          scale: thumbScale.value,
-        },
-      ],
-    };
-  });
+  const styles = controlsStyle();
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* 底部进度条 */}
       <View style={styles.bottomProgressContainer}>
-        <GestureDetector gesture={panGesture}>
+        <GestureDetector gesture={gesture}>
           <TouchableOpacity
             style={styles.progressBar}
-            onPress={handleProgressPress}
+            onPress={handlePress}
             activeOpacity={1}>
-            <View style={styles.progressTrack} ref={progressBarRef}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  progressFillAnimStyle,
-                ]}
-              />
-              <Animated.View
-                style={[
-                  styles.progressThumb,
-                  progressThumbAnimStyle,
-                ]}
-              />
+            <View style={styles.progressTrack}>
+              <Animated.View style={[styles.progressFill, progressFillStyle]} />
+              <Animated.View style={[styles.progressThumb, progressThumbStyle]} />
             </View>
           </TouchableOpacity>
         </GestureDetector>
@@ -198,4 +108,5 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     </GestureHandlerRootView>
   );
 };
+
 export default VideoControls;
