@@ -16,21 +16,11 @@ const controlsStyle = () => {
       bottom: 0,
       backgroundColor: 'transparent',
       justifyContent: 'flex-end',
-    },
-    bottomProgressContainer: {
-      paddingHorizontal: 20,
+      paddingBottom: 0, // 底部控件区域距离播放器底部的间距
     },
     controlsRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 12,
-    },
-    playPauseButton: {
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    playPauseIcon: {
-      color: theme.colors.primary,
     },
     progressContainer: {
       flex: 1,

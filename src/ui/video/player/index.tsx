@@ -16,6 +16,7 @@ const VideoPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   /**
    * 动态样式
@@ -32,7 +33,26 @@ const VideoPlayer = () => {
   const onProgress = (data: OnProgressData) => {
     setCurrentTime(data.currentTime);
   };
+  // 全屏切换函数
+  const toggleFullscreen = () => {
+    if (videoRef.current) {
+      if (isFullscreen) {
+        videoRef.current.dismissFullscreenPlayer();
+      } else {
+        videoRef.current.presentFullscreenPlayer();
+      }
+    }
+  };
 
+  // 全屏状态变化回调
+  const onFullscreenPlayerWillPresent = () => {
+    setIsFullscreen(true);
+  };
+
+  // 全屏状态变化回调
+  const onFullscreenPlayerWillDismiss = () => {
+    setIsFullscreen(false);
+  };
   // 进度条拖拽回调
   const onSeek = (time: number) => {
     if (videoRef.current) {
@@ -72,6 +92,9 @@ const VideoPlayer = () => {
         onLoad={onLoad}
         // 视频播放进度回调
         onProgress={onProgress}
+        //全屏状态变化回调
+        onFullscreenPlayerWillPresent={onFullscreenPlayerWillPresent}
+        onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
         // 远端视频缓冲回调
         onBuffer={onBuffer}
         // 视频无法加载回调
@@ -90,6 +113,8 @@ const VideoPlayer = () => {
         isPlaying={isPlaying}
         onSeek={onSeek}
         onPlayPause={onPlayPause}
+        isFullscreen={isFullscreen}
+        onFullscreen={toggleFullscreen}
       />
     </View>
   );

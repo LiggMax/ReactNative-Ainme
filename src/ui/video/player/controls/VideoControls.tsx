@@ -6,6 +6,8 @@
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
+import {IconButton} from 'react-native-paper';
+
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -17,7 +19,6 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import controlsStyle from './style';
 
 interface VideoControlsProps {
@@ -26,10 +27,12 @@ interface VideoControlsProps {
   isPlaying?: boolean;
   onSeek?: (time: number) => void;
   onPlayPause?: () => void;
+  isFullscreen?: boolean;
+  onFullscreen?: () => void;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
-const PROGRESS_BAR_WIDTH = screenWidth - 40 - 40 - 12; // 减去左右边距、按钮宽度和间距
+const PROGRESS_BAR_WIDTH = screenWidth - 88; // 减去左右边距和IconButton宽度
 
 const VideoControls: React.FC<VideoControlsProps> = ({
   currentTime = 0,
@@ -37,6 +40,8 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   isPlaying = false,
   onSeek,
   onPlayPause,
+  isFullscreen = false, //全屏状态
+  onFullscreen, //全屏回调
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const progress = useSharedValue(0);
@@ -96,43 +101,42 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   const styles = controlsStyle();
 
   return (
-      <GestureHandlerRootView style={styles.container}>
-        <View style={styles.bottomProgressContainer}>
-          <View style={styles.controlsRow}>
-            {/* 暂停/播放按钮 */}
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.controlsRow}>
+        {/* 暂停/播放按钮 */}
+        <IconButton
+          icon={isPlaying ? 'pause' : 'play'}
+          size={32}
+          iconColor={styles.progressFill.backgroundColor}
+          onPress={onPlayPause}
+        />
+        {/* 进度条 */}
+        <View style={styles.progressContainer}>
+          <GestureDetector gesture={gesture}>
             <TouchableOpacity
-              style={styles.playPauseButton}
-              onPress={onPlayPause}
-              activeOpacity={0.7}>
-              <Icon
-                style={styles.playPauseIcon}
-                name={isPlaying ? 'pause' : 'play-arrow'}
-                size={40}
-                color="white"
-              />
+              style={styles.progressBar}
+              onPress={handlePress}
+              activeOpacity={1}>
+              <View style={styles.progressTrack}>
+                <Animated.View
+                  style={[styles.progressFill, progressFillStyle]}
+                />
+                <Animated.View
+                  style={[styles.progressThumb, progressThumbStyle]}
+                />
+              </View>
             </TouchableOpacity>
-
-            {/* 进度条 */}
-            <View style={styles.progressContainer}>
-              <GestureDetector gesture={gesture}>
-                <TouchableOpacity
-                  style={styles.progressBar}
-                  onPress={handlePress}
-                  activeOpacity={1}>
-                  <View style={styles.progressTrack}>
-                    <Animated.View
-                      style={[styles.progressFill, progressFillStyle]}
-                    />
-                    <Animated.View
-                      style={[styles.progressThumb, progressThumbStyle]}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </GestureDetector>
-            </View>
-          </View>
+          </GestureDetector>
         </View>
-      </GestureHandlerRootView>
+        {/*全屏按钮*/}
+        <IconButton
+          icon={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
+          size={35}
+          iconColor={styles.progressFill.backgroundColor}
+          onPress={onFullscreen}
+        />
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
