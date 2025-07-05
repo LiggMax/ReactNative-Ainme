@@ -35,6 +35,14 @@ const controlsStyle = () => {
       flexDirection: 'row',
       alignItems: 'center',
     },
+    leftControls: {
+    },
+    timeText: {
+      color: 'white',
+      fontSize: 12,
+      marginLeft: 12,
+      fontWeight: '500',
+    },
     progressContainer: {
       flex: 1,
     },

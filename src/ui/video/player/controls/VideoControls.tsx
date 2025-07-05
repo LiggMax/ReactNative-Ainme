@@ -6,7 +6,7 @@
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
-import {IconButton} from 'react-native-paper';
+import {IconButton, Text} from 'react-native-paper';
 
 import Animated, {
   runOnJS,
@@ -35,6 +35,13 @@ interface VideoControlsProps {
 
 const {width: screenWidth} = Dimensions.get('window');
 const PROGRESS_BAR_WIDTH = screenWidth - 88; // 减去左右边距和IconButton宽度
+
+// 格式化时间函数
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
 
 const VideoControls: React.FC<VideoControlsProps> = ({
   currentTime = 0,
@@ -130,15 +137,19 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           />
         </View>
       )}
+      {/*播放时间*/}
+      <Text style={styles.timeText}>
+        {formatTime(currentTime)} / {formatTime(duration)}
+      </Text>
       {/* 底部控制栏 */}
       <View style={styles.controlsRow}>
-        {/* 暂停/播放按钮 */}
-        <IconButton
-          icon={isPlaying ? 'pause' : 'play'}
-          size={32}
-          iconColor={styles.progressFill.backgroundColor}
-          onPress={onPlayPause}
-        />
+          {/* 暂停/播放按钮 */}
+          <IconButton
+            icon={isPlaying ? 'pause' : 'play'}
+            size={32}
+            iconColor={styles.progressFill.backgroundColor}
+            onPress={onPlayPause}
+          />
         {/* 进度条 */}
         <View style={styles.progressContainer}>
           <GestureDetector gesture={gesture}>
