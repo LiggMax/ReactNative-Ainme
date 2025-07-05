@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react';
 import {View, FlatList, Dimensions} from 'react-native';
 import {Card,Text} from 'react-native-paper';
 import animeDate from '../../../../api/bangumi/anime/animeDate.ts';
-import {useStyles} from './style';
+import {useStyles} from './style.ts';
 import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 

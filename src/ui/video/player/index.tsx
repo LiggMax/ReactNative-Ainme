@@ -1,16 +1,43 @@
-// Load the module
-import Video, {VideoRef} from 'react-native-video';
-import {useRef} from 'react';
-import {playerStyles} from './style'
+/**
+ * @Author Ligg
+ * @Time 2025/7/4
+ *
+ * 播放器
+ */
+import Video, {VideoRef, OnLoadData, OnProgressData} from 'react-native-video';
+import {useRef, useState} from 'react';
+import {playerStyles} from './style';
+import {DEFAULT_VIDEO_CONFIG} from './Config';
+import {View} from 'react-native';
+import VideoControls from './controls/VideoControls';
 
 const VideoPlayer = () => {
   const videoRef = useRef<VideoRef>(null);
-  
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   /**
    * 动态样式
    */
   const styles = playerStyles();
 
+  // 视频加载完成回调
+  const onLoad = (data: OnLoadData) => {
+    console.log('视频加载完成:', data);
+    setDuration(data.duration);
+  };
+
+  // 视频播放进度回调
+  const onProgress = (data: OnProgressData) => {
+    setCurrentTime(data.currentTime);
+  };
+
+  // 进度条拖拽回调
+  const onSeek = (time: number) => {
+    if (videoRef.current) {
+      videoRef.current.seek(time);
+    }
+  };
 
   // 视频错误回调
   function onError() {}
@@ -18,29 +45,38 @@ const VideoPlayer = () => {
   // 远端视频缓冲回调
   function onBuffer() {}
 
+  let videoUrl =
+    'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
   return (
-    <Video
-      // 可以是 URL 或本地文件。
-      source={{
-        uri: 'https://m3u8.girigirilove.com/addons/aplyer/atom.php?key=0&url=https://m3u8.girigirilove.com/zijian/oldanime/2025/07/cht/DanDaDanS2CHT/13/playlist.m3u8',
-      }}
-
-      ref={videoRef}
-      // 远端视频缓冲回调
-      onBuffer={onBuffer}
-      // 视频无法加载回调
-      onError={onError}
-      //视频结束回调
-      onEnd={() => {}}
-      // 添加样式使视频可见
-      style={styles.backgroundVideo}
-      // 显示控制条
-      controls={true}
-      // 自动播放
-      paused={true}
-      // 调整模式
-      resizeMode="contain"
-    />
+    <View>
+      <Video
+        // 视频源配置
+        source={{
+          uri: videoUrl,
+        }}
+        ref={videoRef}
+        // 视频加载完成回调
+        onLoad={onLoad}
+        // 视频播放进度回调
+        onProgress={onProgress}
+        // 远端视频缓冲回调
+        onBuffer={onBuffer}
+        // 视频无法加载回调
+        onError={onError}
+        // 视频结束回调
+        onEnd={() => {}}
+        // 添加样式使视频可见
+        style={styles.backgroundVideo}
+        // 使用配置文件中的播放器配置
+        {...DEFAULT_VIDEO_CONFIG}
+      />
+      {/*自定义控件*/}
+      <VideoControls
+        currentTime={currentTime}
+        duration={duration}
+        onSeek={onSeek}
+      />
+    </View>
   );
 };
 export default VideoPlayer;

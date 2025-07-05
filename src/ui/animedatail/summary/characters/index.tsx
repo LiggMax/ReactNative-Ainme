@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import animeDateService from '../../../../api/bangumi/anime/animeDate';
 import FastImage from 'react-native-fast-image';
-import {useCharacterStyles} from './style';
+import {useCharacterStyles} from './style.ts';
 import BottomDrawer, {BottomDrawerMethods} from 'react-native-animated-bottom-drawer';
 
 interface CharactersProps {
@@ -52,15 +52,15 @@ export default function Characters({animeId}: CharactersProps) {
   const styles = useCharacterStyles();
 
   const screenHeight = Dimensions.get('window').height;
-  
+
   // 根据角色数量动态计算抽屉高度
   const drawerHeight = useMemo(() => {
     const baseHeight = screenHeight * 0.5;
     const maxHeight = screenHeight * 0.85;
-    
+
     // 每行显示2个角色，每个角色高度约80px，加上header和padding
     const estimatedHeight = Math.ceil(characters.length / 2) * 80 + 100;
-    
+
     return Math.min(Math.max(baseHeight, estimatedHeight), maxHeight);
   }, [characters.length, screenHeight]);
 

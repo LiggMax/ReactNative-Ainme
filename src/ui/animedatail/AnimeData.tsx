@@ -13,7 +13,7 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import animeDateService from '../../api/bangumi/anime/animeDate';
 import {AnimeDetailScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
-import {createAnimeDetailStyles} from './style';
+import {createAnimeDetailStyles} from './style.ts';
 import AnimatedHeaderPage from '../../components/AnimatedHeaderPage';
 import Summary from './summary';
 import Infobox from './infobox';

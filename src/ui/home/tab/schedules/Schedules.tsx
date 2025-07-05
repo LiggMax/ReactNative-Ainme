@@ -17,7 +17,7 @@ import animeService, {
   ScheduleItem,
 } from '../../../../api/bangumi/anime/anime.ts';
 import {useAppNavigation} from '../../../../navigation';
-import {createSchedulesStyles, GRADIENT_CONFIG} from './style.tsx';
+import {createSchedulesStyles, GRADIENT_CONFIG} from './style.ts';
 
 // 创建Shimmer组件
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient);
@@ -67,11 +67,6 @@ export default function Schedules() {
 
   // 处理卡片点击事件
   const handleCardPress = useCallback((item: AnimeItem) => {
-    console.log('🎯 点击卡片，跳转到详情页:', {
-      id: item.id,
-      title: item.name_cn || item.name
-    });
-
     navigation.navigateToAnimeDetail(item.id, item.name_cn || item.name);
   }, [navigation]);
 
