@@ -137,12 +137,14 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           />
         </View>
       )}
-      {/*播放时间*/}
+      {/* 时间信息 */}
       <Text style={styles.timeText}>
         {formatTime(currentTime)} / {formatTime(duration)}
       </Text>
       {/* 底部控制栏 */}
       <View style={styles.controlsRow}>
+        {/* 左侧区域：播放按钮和时间信息 */}
+        <View style={styles.leftControls}>
           {/* 暂停/播放按钮 */}
           <IconButton
             icon={isPlaying ? 'pause' : 'play'}
@@ -150,6 +152,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
             iconColor={styles.progressFill.backgroundColor}
             onPress={onPlayPause}
           />
+        </View>
         {/* 进度条 */}
         <View style={styles.progressContainer}>
           <GestureDetector gesture={gesture}>

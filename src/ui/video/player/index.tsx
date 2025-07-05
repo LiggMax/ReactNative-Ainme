@@ -68,12 +68,22 @@ const VideoPlayer = () => {
   // 播放/暂停控制
   const onPlayPause = () => {
     if (videoRef.current) {
-      setIsPlaying(!isPlaying);
       if (isPlaying) {
         videoRef.current.pause();
+        // 暂停状态会通过 onPlaybackStateChanged 回调自动设置
       } else {
         videoRef.current.resume();
+        // 播放状态会通过 onPlaybackStateChanged 回调自动设置
       }
+    }
+  };
+
+  // 播放状态变化回调
+  const onPlaybackStateChanged = (data: any) => {
+    console.log('播放状态变化:', data);
+    // 根据播放状态更新 isPlaying
+    if (data.isPlaying !== undefined) {
+      setIsPlaying(data.isPlaying);
     }
   };
 
@@ -97,6 +107,8 @@ const VideoPlayer = () => {
         onLoad={onLoad}
         // 视频播放进度回调
         onProgress={onProgress}
+        // 播放状态变化回调
+        onPlaybackStateChanged={onPlaybackStateChanged}
         //全屏状态变化回调
         onFullscreenPlayerWillPresent={onFullscreenPlayerWillPresent}
         onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
