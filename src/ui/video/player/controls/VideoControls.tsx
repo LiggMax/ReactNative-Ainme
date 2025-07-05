@@ -17,21 +17,26 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import controlsStyle from './style';
 
 interface VideoControlsProps {
   currentTime?: number;
   duration?: number;
+  isPlaying?: boolean;
   onSeek?: (time: number) => void;
+  onPlayPause?: () => void;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
-const PROGRESS_BAR_WIDTH = screenWidth - 40;
+const PROGRESS_BAR_WIDTH = screenWidth - 40 - 40 - 12; // 减去左右边距、按钮宽度和间距
 
 const VideoControls: React.FC<VideoControlsProps> = ({
   currentTime = 0,
   duration = 0,
+  isPlaying = false,
   onSeek,
+  onPlayPause,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const progress = useSharedValue(0);
@@ -51,7 +56,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       runOnJS(setIsDragging)(true);
       thumbScale.value = withSpring(1.3);
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       'worklet';
       progress.value = Math.max(0, Math.min(1, event.x / PROGRESS_BAR_WIDTH));
     })
@@ -59,7 +64,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       'worklet';
       const seekTime = progress.value * duration;
       thumbScale.value = withSpring(1);
-      
+
       if (onSeek) {
         runOnJS(onSeek)(seekTime);
       }
@@ -69,11 +74,11 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   // 点击处理
   const handlePress = (event: any) => {
     if (isDragging) return;
-    
+
     const touchX = event.nativeEvent.locationX;
     const newProgress = Math.max(0, Math.min(1, touchX / PROGRESS_BAR_WIDTH));
     const seekTime = newProgress * duration;
-    
+
     progress.value = newProgress;
     onSeek?.(seekTime);
   };
@@ -91,21 +96,43 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   const styles = controlsStyle();
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <View style={styles.bottomProgressContainer}>
-        <GestureDetector gesture={gesture}>
-          <TouchableOpacity
-            style={styles.progressBar}
-            onPress={handlePress}
-            activeOpacity={1}>
-            <View style={styles.progressTrack}>
-              <Animated.View style={[styles.progressFill, progressFillStyle]} />
-              <Animated.View style={[styles.progressThumb, progressThumbStyle]} />
+      <GestureHandlerRootView style={styles.container}>
+        <View style={styles.bottomProgressContainer}>
+          <View style={styles.controlsRow}>
+            {/* 暂停/播放按钮 */}
+            <TouchableOpacity
+              style={styles.playPauseButton}
+              onPress={onPlayPause}
+              activeOpacity={0.7}>
+              <Icon
+                style={styles.playPauseIcon}
+                name={isPlaying ? 'pause' : 'play-arrow'}
+                size={40}
+                color="white"
+              />
+            </TouchableOpacity>
+
+            {/* 进度条 */}
+            <View style={styles.progressContainer}>
+              <GestureDetector gesture={gesture}>
+                <TouchableOpacity
+                  style={styles.progressBar}
+                  onPress={handlePress}
+                  activeOpacity={1}>
+                  <View style={styles.progressTrack}>
+                    <Animated.View
+                      style={[styles.progressFill, progressFillStyle]}
+                    />
+                    <Animated.View
+                      style={[styles.progressThumb, progressThumbStyle]}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </GestureDetector>
             </View>
-          </TouchableOpacity>
-        </GestureDetector>
-      </View>
-    </GestureHandlerRootView>
+          </View>
+        </View>
+      </GestureHandlerRootView>
   );
 };
 

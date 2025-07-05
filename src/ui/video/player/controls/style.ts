@@ -20,6 +20,21 @@ const controlsStyle = () => {
     bottomProgressContainer: {
       paddingHorizontal: 20,
     },
+    controlsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    playPauseButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    playPauseIcon: {
+      color: theme.colors.primary,
+    },
+    progressContainer: {
+      flex: 1,
+    },
     progressBar: {
       height: 40,
       justifyContent: 'center',

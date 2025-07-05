@@ -15,6 +15,7 @@ const VideoPlayer = () => {
   const videoRef = useRef<VideoRef>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   /**
    * 动态样式
@@ -36,6 +37,18 @@ const VideoPlayer = () => {
   const onSeek = (time: number) => {
     if (videoRef.current) {
       videoRef.current.seek(time);
+    }
+  };
+
+  // 播放/暂停控制
+  const onPlayPause = () => {
+    if (videoRef.current) {
+      setIsPlaying(!isPlaying);
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.resume();
+      }
     }
   };
 
@@ -74,7 +87,9 @@ const VideoPlayer = () => {
       <VideoControls
         currentTime={currentTime}
         duration={duration}
+        isPlaying={isPlaying}
         onSeek={onSeek}
+        onPlayPause={onPlayPause}
       />
     </View>
   );
