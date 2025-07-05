@@ -30,6 +30,7 @@ interface VideoControlsProps {
   onPlayPause?: () => void;
   isFullscreen?: boolean;
   onFullscreen?: () => void;
+  onBack?: () => void;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -44,6 +45,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   onPlayPause,
   isFullscreen = false, //全屏状态
   onFullscreen, //全屏回调
+  onBack, //返回回调
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const progress = useSharedValue(0);
@@ -116,6 +118,19 @@ const VideoControls: React.FC<VideoControlsProps> = ({
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      {/* 顶部返回按钮 */}
+      {onBack && (
+        <View style={styles.topControls}>
+          <IconButton
+            icon="arrow-left"
+            size={28}
+            iconColor={styles.progressFill.backgroundColor}
+            onPress={onBack}
+            style={styles.backButton}
+          />
+        </View>
+      )}
+      {/* 底部控制栏 */}
       <View style={styles.controlsRow}>
         {/* 暂停/播放按钮 */}
         <IconButton

@@ -18,6 +18,19 @@ const controlsStyle = () => {
       justifyContent: 'flex-end',
       paddingBottom: 0, // 底部控件区域距离播放器底部的间距
     },
+    topControls: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      zIndex: 1,
+    },
+    backButton: {
+      borderRadius: 20,
+    },
     controlsRow: {
       flexDirection: 'row',
       alignItems: 'center',

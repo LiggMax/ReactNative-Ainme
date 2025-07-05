@@ -10,6 +10,7 @@ import {playerStyles} from './style';
 import {DEFAULT_VIDEO_CONFIG} from './Config';
 import {View} from 'react-native';
 import VideoControls from './controls/VideoControls';
+import {useAppNavigation} from '../../../navigation';
 
 const VideoPlayer = () => {
   const videoRef = useRef<VideoRef>(null);
@@ -18,6 +19,7 @@ const VideoPlayer = () => {
   const [bufferedTime, setBufferedTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const {goBack, canGoBack} = useAppNavigation();
 
   /**
    * 动态样式
@@ -119,6 +121,12 @@ const VideoPlayer = () => {
         onPlayPause={onPlayPause}
         isFullscreen={isFullscreen}
         onFullscreen={toggleFullscreen}
+        onBack={() => {
+          // 返回到上一个导航页面
+          if (canGoBack()) {
+            goBack();
+          }
+        }}
       />
     </View>
   );
