@@ -3,14 +3,13 @@ import Video, {VideoRef} from 'react-native-video';
 import {useRef} from 'react';
 import {playerStyles} from './style'
 
-/**
- * 动态样式
- */
-const styles = playerStyles();
-
 const VideoPlayer = () => {
-
   const videoRef = useRef<VideoRef>(null);
+  
+  /**
+   * 动态样式
+   */
+  const styles = playerStyles();
 
 
   // 视频错误回调
@@ -23,7 +22,7 @@ const VideoPlayer = () => {
     <Video
       // 可以是 URL 或本地文件。
       source={{
-        uri: 'https://hydownload.pan.wo.cn/openapi/download?fid=cuMwJ_Awyv/9Vz90UFRmmYt0tBkUEjxpzM%2B1farvUAsAM4oFwLFCvpwYx4V930TI7mwaZA1Q0ns%2BY5fuhs2U7N85AHKw==',
+        uri: 'https://m3u8.girigirilove.com/addons/aplyer/atom.php?key=0&url=https://m3u8.girigirilove.com/zijian/oldanime/2025/07/cht/DanDaDanS2CHT/13/playlist.m3u8',
       }}
 
       ref={videoRef}
