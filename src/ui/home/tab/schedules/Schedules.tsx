@@ -175,16 +175,6 @@ export default function Schedules() {
         activeOpacity={0.8}
       >
         <View style={dynamicStyles.imageContainer}>
-          {/* 图片 */}
-          <FastImage
-            source={{uri: imageUrl}}
-            style={dynamicStyles.animeImage}
-            resizeMode="cover"
-            onLoadStart={() => handleImageLoadStart(item.id)}
-            onLoad={() => handleImageLoad(item.id)}
-            onError={() => handleImageLoadError(item.id)}
-          />
-
           {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
           {isLoading && (
             <ShimmerPlaceholder
@@ -196,6 +186,15 @@ export default function Schedules() {
               ]}
             />
           )}
+          {/* 图片 */}
+          <FastImage
+            source={{uri: imageUrl}}
+            style={dynamicStyles.animeImage}
+            resizeMode="cover"
+            onLoadStart={() => handleImageLoadStart(item.id)}
+            onLoad={() => handleImageLoad(item.id)}
+            onError={() => handleImageLoadError(item.id)}
+          />
 
           {/* 渐变蒙版 - 从透明到半透明黑色的自然过渡 */}
           <LinearGradient

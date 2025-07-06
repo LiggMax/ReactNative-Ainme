@@ -148,7 +148,7 @@ export const createSchedulesStyles = (theme: MD3Theme) =>
     animeTitle: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: 'white',
+      color: 'rgba(255,255,255,0.8)',
       lineHeight: 20,
       textShadowColor: 'rgba(0, 0, 0, 0.8)', // 添加文字阴影增强可读性
       textShadowOffset: {width: 0, height: 1},
