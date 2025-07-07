@@ -30,7 +30,7 @@
     "react-native-gesture-handler": "^2.26.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-macos": "^0.78.0-0",
-    "react-native-nitro-modules": "^0.26.3",
+
     "react-native-orientation-locker": "^1.7.0",
     "react-native-pager-view": "^6.8.1",
     "react-native-paper": "^5.14.5",

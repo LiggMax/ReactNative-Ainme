@@ -7286,11 +7286,6 @@ react-native-macos@^0.78.0-0:
     ws "^6.2.3"
     yargs "^17.6.2"
 
-react-native-nitro-modules@^0.26.3:
-  version "0.26.3"
-  resolved "https://registry.npmjs.org/react-native-nitro-modules/-/react-native-nitro-modules-0.26.3.tgz"
-  integrity sha512-M6XXalSeRhz3X44vxlRnmRAcyTfC3EHxKBsAKHRNlTtVyu9IUQeUBBtjtIZgK6CM3km1387buYtRVIg6XGmoGQ==
-
 react-native-orientation-locker@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/react-native-orientation-locker/-/react-native-orientation-locker-1.7.0.tgz#47ef2b9c24618e40f0a521f184b51270e576b028"
