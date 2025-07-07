@@ -8,6 +8,17 @@ const rnwPath = fs.realpathSync(
   path.resolve(require.resolve('react-native-windows/package.json'), '..'),
 );
 
+// macOS support
+let rnmPath;
+try {
+  rnmPath = fs.realpathSync(
+    path.resolve(require.resolve('react-native-macos/package.json'), '..'),
+  );
+} catch (e) {
+  // react-native-macos not installed
+  rnmPath = null;
+}
+
 
 /**
  * Metro configuration
@@ -28,7 +39,14 @@ const config = {
       new RegExp(`${rnwPath}/build/.*`),
       new RegExp(`${rnwPath}/target/.*`),
       /.*\.ProjectImports\.zip/,
-    ]),
+      // macOS exclusions
+      ...(rnmPath ? [
+        new RegExp(
+          `${path.resolve(__dirname, 'macos').replace(/[/\\]/g, '/')}.*`,
+        ),
+        new RegExp(`${rnmPath}/build/.*`),
+      ] : []),
+    ])
     //
   },
   transformer: {

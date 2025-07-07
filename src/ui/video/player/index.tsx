@@ -5,10 +5,10 @@
  * 播放器
  */
 import Video, {VideoRef, OnLoadData, OnProgressData} from 'react-native-video';
-import {useRef, useState, useEffect} from 'react';
+import {useRef, useState, useEffect, useCallback} from 'react';
 import {playerStyles} from './style';
 import {DEFAULT_VIDEO_CONFIG} from './Config';
-import {View, StatusBar} from 'react-native';
+import {View, StatusBar, Platform, Dimensions} from 'react-native';
 import VideoControls from './controls/VideoControls';
 import {useAppNavigation} from '../../../navigation';
 import Orientation from 'react-native-orientation-locker';
@@ -28,12 +28,17 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
 
   // 组件挂载时设置初始方向
   useEffect(() => {
-    // 初始化为竖屏模式
-    Orientation.lockToPortrait();
+    // macOS 平台不需要方向锁定，因为它是桌面应用
+    if (Platform.OS !== 'macos') {
+      // 初始化为竖屏模式
+      Orientation.lockToPortrait();
+    }
 
     // 组件卸载时解锁所有方向
     return () => {
-      Orientation.unlockAllOrientations();
+      if (Platform.OS !== 'macos') {
+        Orientation.unlockAllOrientations();
+      }
     };
   }, []);
 
@@ -55,37 +60,45 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
     setBufferedTime(data.playableDuration || 0);
   };
   // 全屏切换函数
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (videoRef.current) {
       if (isFullscreen) {
         videoRef.current.dismissFullscreenPlayer();
-        // 退出全屏时恢复竖屏
-        Orientation.lockToPortrait();
+        // 退出全屏时恢复竖屏（macOS 除外）
+        if (Platform.OS !== 'macos') {
+          Orientation.lockToPortrait();
+        }
       } else {
         videoRef.current.presentFullscreenPlayer();
-        // 进入全屏时切换到横屏
-        Orientation.lockToLandscape();
+        // 进入全屏时切换到横屏（macOS 除外）
+        if (Platform.OS !== 'macos') {
+          Orientation.lockToLandscape();
+        }
       }
     }
-  };
+  }, [isFullscreen]);
 
   // 全屏状态变化回调
-  const onFullscreenPlayerWillPresent = () => {
+  const onFullscreenPlayerWillPresent = useCallback(() => {
     setIsFullscreen(true);
-    // 隐藏状态栏以获得更好的全屏体验
-    StatusBar.setHidden(true, 'fade');
-    // 确保进入全屏时为横屏
-    Orientation.lockToLandscape();
-  };
+    // 隐藏状态栏以获得更好的全屏体验（移动平台）
+    if (Platform.OS !== 'macos') {
+      StatusBar.setHidden(true, 'fade');
+      // 确保进入全屏时为横屏
+      Orientation.lockToLandscape();
+    }
+  }, []);
 
   // 全屏状态变化回调
-  const onFullscreenPlayerWillDismiss = () => {
+  const onFullscreenPlayerWillDismiss = useCallback(() => {
     setIsFullscreen(false);
-    // 恢复状态栏显示
-    StatusBar.setHidden(false, 'fade');
-    // 确保退出全屏时恢复竖屏
-    Orientation.lockToPortrait();
-  };
+    // 恢复状态栏显示（移动平台）
+    if (Platform.OS !== 'macos') {
+      StatusBar.setHidden(false, 'fade');
+      // 确保退出全屏时恢复竖屏
+      Orientation.lockToPortrait();
+    }
+  }, []);
   // 进度条拖拽回调
   const onSeek = (time: number) => {
     if (videoRef.current) {
