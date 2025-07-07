@@ -6,7 +6,7 @@
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
-import {IconButton, Text} from 'react-native-paper';
+import {IconButton, Text,} from 'react-native-paper';
 
 import Animated, {
   runOnJS,
@@ -22,6 +22,7 @@ import {
 import controlsStyle from './style';
 
 interface VideoControlsProps {
+  title?: string;
   currentTime?: number;
   duration?: number;
   bufferedTime?: number;
@@ -46,6 +47,7 @@ const formatTime = (seconds: number): string => {
 };
 
 const VideoControls: React.FC<VideoControlsProps> = ({
+  title = '',
   currentTime = 0,
   duration = 0,
   bufferedTime = 0,
@@ -137,6 +139,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
             onPress={onBack}
             style={styles.backButton}
           />
+          <Text >{title}</Text>
         </View>
       )}
 

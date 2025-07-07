@@ -25,7 +25,8 @@ const VideoLayout = ({route}: VideoScreenProps) => {
     <SafeAreaView style={styles.container}>
       {/* 视频播放器容器*/}
       <View style={[styles.videoContainer]}>
-        <VideoPlayer />
+        <VideoPlayer title={title}
+        />
       </View>
 
       {/* 信息栏 */}

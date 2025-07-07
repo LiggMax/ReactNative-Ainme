@@ -8,12 +8,16 @@ import Video, {VideoRef, OnLoadData, OnProgressData} from 'react-native-video';
 import {useRef, useState, useEffect} from 'react';
 import {playerStyles} from './style';
 import {DEFAULT_VIDEO_CONFIG} from './Config';
-import {View, StatusBar, Dimensions} from 'react-native';
+import {View, StatusBar} from 'react-native';
 import VideoControls from './controls/VideoControls';
 import {useAppNavigation} from '../../../navigation';
 import Orientation from 'react-native-orientation-locker';
 
-const VideoPlayer = () => {
+interface VideoPlayerProps {
+  title?: string;
+}
+
+const VideoPlayer = ({ title}: VideoPlayerProps) => {
   const videoRef = useRef<VideoRef>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -26,7 +30,7 @@ const VideoPlayer = () => {
   useEffect(() => {
     // 初始化为竖屏模式
     Orientation.lockToPortrait();
-    
+
     // 组件卸载时解锁所有方向
     return () => {
       Orientation.unlockAllOrientations();
@@ -117,14 +121,13 @@ const VideoPlayer = () => {
   // 远端视频缓冲回调
   function onBuffer() {}
 
-  let videoUrl =
-    'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
+  let url = 'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
   return (
     <View>
       <Video
         // 视频源配置
         source={{
-          uri: videoUrl,
+          uri: url,
         }}
         ref={videoRef}
         // 视频加载完成回调
@@ -149,6 +152,7 @@ const VideoPlayer = () => {
       />
       {/*自定义控件*/}
       <VideoControls
+        title={title}
         currentTime={currentTime}
         duration={duration}
         bufferedTime={bufferedTime}
