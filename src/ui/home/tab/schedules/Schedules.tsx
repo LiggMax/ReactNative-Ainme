@@ -30,7 +30,9 @@ export default function Schedules() {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageLoadingStates, setImageLoadingStates] = useState<{[key: string]: boolean}>({});
+  const [imageLoadingStates, setImageLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   // 获取当前星期
   const getCurrentWeekday = () => {
@@ -39,7 +41,9 @@ export default function Schedules() {
     return day === 0 ? 7 : day; // 星期天为7
   };
 
-  const [selectedWeekday, setSelectedWeekday] = useState<number>(getCurrentWeekday());
+  const [selectedWeekday, setSelectedWeekday] = useState<number>(
+    getCurrentWeekday(),
+  );
 
   // 获取新番时间表数据
   const fetchScheduleData = useCallback(async () => {
@@ -66,15 +70,18 @@ export default function Schedules() {
   }, [fetchScheduleData]);
 
   // 处理卡片点击事件
-  const handleCardPress = useCallback((item: AnimeItem) => {
-    navigation.navigateToAnimeDetail(item.id, item.name_cn || item.name);
-  }, [navigation]);
+  const handleCardPress = useCallback(
+    (item: AnimeItem) => {
+      navigation.navigateToAnimeDetail(item.id, item.name_cn || item.name);
+    },
+    [navigation],
+  );
 
   // 图片加载处理函数
   const handleImageLoadStart = useCallback((itemId: number) => {
     setImageLoadingStates(prev => ({
       ...prev,
-      [itemId]: true
+      [itemId]: true,
     }));
   }, []);
 
@@ -83,7 +90,7 @@ export default function Schedules() {
     setTimeout(() => {
       setImageLoadingStates(prev => ({
         ...prev,
-        [itemId]: false
+        [itemId]: false,
       }));
     }, 100);
   }, []);
@@ -92,13 +99,15 @@ export default function Schedules() {
     console.warn(`❌ 图片加载失败: ${itemId}`);
     setImageLoadingStates(prev => ({
       ...prev,
-      [itemId]: false
+      [itemId]: false,
     }));
   }, []);
 
   // 获取当前选中星期的数据，过滤掉没有封面的动漫
   const currentWeekdayData = useMemo((): AnimeItem[] => {
-    const currentWeekday = scheduleData.find(item => item.weekday.id === selectedWeekday);
+    const currentWeekday = scheduleData.find(
+      item => item.weekday.id === selectedWeekday,
+    );
     const items = currentWeekday?.items || [];
 
     // 过滤掉没有封面图片的动漫
@@ -134,94 +143,104 @@ export default function Schedules() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={dynamicStyles.weekdayScrollContent}
-        >
-          {scheduleData.map((item) => (
+          contentContainerStyle={dynamicStyles.weekdayScrollContent}>
+          {scheduleData.map(item => (
             <Chip
               key={item.weekday.id}
               selected={selectedWeekday === item.weekday.id}
               onPress={() => setSelectedWeekday(item.weekday.id)}
               style={[
                 dynamicStyles.weekdayChip,
-                selectedWeekday === item.weekday.id && dynamicStyles.weekdayChipSelected
+                selectedWeekday === item.weekday.id &&
+                  dynamicStyles.weekdayChipSelected,
               ]}
               textStyle={[
                 dynamicStyles.weekdayChipText,
-                selectedWeekday === item.weekday.id && dynamicStyles.weekdayChipTextSelected
+                selectedWeekday === item.weekday.id &&
+                  dynamicStyles.weekdayChipTextSelected,
               ]}
               compact
-              mode="outlined"
-            >
+              mode="outlined">
               {item.weekday.cn} {item.items.length}部
             </Chip>
           ))}
         </ScrollView>
       </View>
     );
-  }, [scheduleData, selectedWeekday, dynamicStyles]);
-
-
+  }, [
+    scheduleData,
+    selectedWeekday,
+    dynamicStyles.weekdayContainer,
+    dynamicStyles.weekdayScrollContent,
+    dynamicStyles.weekdayChip,
+  ]);
 
   // 渲染动漫卡片
-  const renderAnimeCard = useCallback(({item}: {item: AnimeItem}) => {
-    // 检查加载状态，默认为true（加载中）
-    const isLoading = imageLoadingStates[item.id]; // 只有明确设置为false时才不显示加载状态
-    const imageUrl = item.images.large;
+  const renderAnimeCard = useCallback(
+    ({item}: {item: AnimeItem}) => {
+      // 检查加载状态，默认为true（加载中）
+      const isLoading = imageLoadingStates[item.id]; // 只有明确设置为false时才不显示加载状态
+      const imageUrl = item.images.large;
 
-    return (
-      <TouchableOpacity
-        style={dynamicStyles.animeCard}
-        onPress={() => handleCardPress(item)}
-        activeOpacity={0.8}
-      >
-        <View style={dynamicStyles.imageContainer}>
-          {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
-          {isLoading && (
-            <ShimmerPlaceholder
-              style={dynamicStyles.shimmerPlaceholder}
-              shimmerColors={[
-                theme.colors.surfaceVariant,
-                theme.colors.surface,
-                theme.colors.surfaceVariant,
-              ]}
+      return (
+        <TouchableOpacity
+          style={dynamicStyles.animeCard}
+          onPress={() => handleCardPress(item)}
+          activeOpacity={0.8}>
+          <View style={dynamicStyles.imageContainer}>
+            {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
+            {isLoading && (
+              <ShimmerPlaceholder
+                style={dynamicStyles.shimmerPlaceholder}
+                shimmerColors={[
+                  theme.colors.surfaceVariant,
+                  theme.colors.surface,
+                  theme.colors.surfaceVariant,
+                ]}
+              />
+            )}
+            {/* 图片 */}
+            <FastImage
+              source={{uri: imageUrl}}
+              style={dynamicStyles.animeImage}
+              resizeMode="cover"
+              onLoadStart={() => handleImageLoadStart(item.id)}
+              onLoad={() => handleImageLoad(item.id)}
+              onError={() => handleImageLoadError(item.id)}
             />
-          )}
-          {/* 图片 */}
-          <FastImage
-            source={{uri: imageUrl}}
-            style={dynamicStyles.animeImage}
-            resizeMode="cover"
-            onLoadStart={() => handleImageLoadStart(item.id)}
-            onLoad={() => handleImageLoad(item.id)}
-            onError={() => handleImageLoadError(item.id)}
-          />
 
-          {/* 渐变蒙版 - 从透明到半透明黑色的自然过渡 */}
-          <LinearGradient
-            colors={GRADIENT_CONFIG.colors}
-            locations={GRADIENT_CONFIG.locations}
-            style={dynamicStyles.gradientOverlay}
-            pointerEvents="none"
-          />
+            {/* 渐变蒙版 - 从透明到半透明黑色的自然过渡 */}
+            <LinearGradient
+              colors={GRADIENT_CONFIG.colors}
+              locations={GRADIENT_CONFIG.locations}
+              style={dynamicStyles.gradientOverlay}
+              pointerEvents="none"
+            />
 
-          {/* 标题覆盖层 */}
-          <View style={dynamicStyles.titleOverlay}>
-            <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
-              {item.name_cn || item.name}
-            </Text>
+            {/* 标题覆盖层 */}
+            <View style={dynamicStyles.titleOverlay}>
+              <Text style={dynamicStyles.animeTitle} numberOfLines={2}>
+                {item.name_cn || item.name}
+              </Text>
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
-    );
-  }, [
-    dynamicStyles,
-    imageLoadingStates,
-    handleCardPress,
-    handleImageLoadStart,
-    handleImageLoad,
-    handleImageLoadError,
-    theme.colors,
-  ]);
+        </TouchableOpacity>
+      );
+    },
+    [
+      imageLoadingStates,
+      handleCardPress,
+      handleImageLoad,
+      dynamicStyles.animeCard,
+      dynamicStyles.imageContainer,
+      dynamicStyles.shimmerPlaceholder,
+      theme.colors.surface,
+      dynamicStyles.animeImage,
+      dynamicStyles.gradientOverlay,
+      dynamicStyles.titleOverlay,
+      dynamicStyles.animeTitle,
+    ],
+  );
 
   // 渲染错误状态
   const renderErrorState = () => (
@@ -231,7 +250,9 @@ export default function Schedules() {
       <Text style={dynamicStyles.errorMessage}>
         {error || '获取新番时间表失败，请检查网络连接后重试'}
       </Text>
-      <TouchableOpacity style={dynamicStyles.retryButton} onPress={fetchScheduleData}>
+      <TouchableOpacity
+        style={dynamicStyles.retryButton}
+        onPress={fetchScheduleData}>
         <Text style={dynamicStyles.retryButtonText}>🔄 重试</Text>
       </TouchableOpacity>
     </View>
@@ -268,7 +289,7 @@ export default function Schedules() {
           data={currentWeekdayData}
           spacing={8} // 卡片间距
           renderItem={renderAnimeCard}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           maxItemsPerRow={6} // 最大列数限制
           staticDimension={undefined} // 让网格自适应容器宽度

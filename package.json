@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.4",
+    "@react-buddy/ide-toolbox": "^2.4.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-navigation/bottom-tabs": "^7.4.2",
@@ -27,6 +28,7 @@
     "react-native-gesture-handler": "^2.26.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-nitro-modules": "^0.26.3",
+    "react-native-orientation-locker": "^1.7.0",
     "react-native-pager-view": "^6.8.1",
     "react-native-paper": "^5.14.5",
     "react-native-reanimated": "^3.18.0",

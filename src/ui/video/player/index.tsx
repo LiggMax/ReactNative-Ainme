@@ -5,12 +5,13 @@
  * 播放器
  */
 import Video, {VideoRef, OnLoadData, OnProgressData} from 'react-native-video';
-import {useRef, useState} from 'react';
+import {useRef, useState, useEffect} from 'react';
 import {playerStyles} from './style';
 import {DEFAULT_VIDEO_CONFIG} from './Config';
-import {View} from 'react-native';
+import {View, StatusBar, Dimensions} from 'react-native';
 import VideoControls from './controls/VideoControls';
 import {useAppNavigation} from '../../../navigation';
+import Orientation from 'react-native-orientation-locker';
 
 const VideoPlayer = () => {
   const videoRef = useRef<VideoRef>(null);
@@ -20,6 +21,17 @@ const VideoPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const {goBack, canGoBack} = useAppNavigation();
+
+  // 组件挂载时设置初始方向
+  useEffect(() => {
+    // 初始化为竖屏模式
+    Orientation.lockToPortrait();
+    
+    // 组件卸载时解锁所有方向
+    return () => {
+      Orientation.unlockAllOrientations();
+    };
+  }, []);
 
   /**
    * 动态样式
@@ -43,8 +55,12 @@ const VideoPlayer = () => {
     if (videoRef.current) {
       if (isFullscreen) {
         videoRef.current.dismissFullscreenPlayer();
+        // 退出全屏时恢复竖屏
+        Orientation.lockToPortrait();
       } else {
         videoRef.current.presentFullscreenPlayer();
+        // 进入全屏时切换到横屏
+        Orientation.lockToLandscape();
       }
     }
   };
@@ -52,11 +68,19 @@ const VideoPlayer = () => {
   // 全屏状态变化回调
   const onFullscreenPlayerWillPresent = () => {
     setIsFullscreen(true);
+    // 隐藏状态栏以获得更好的全屏体验
+    StatusBar.setHidden(true, 'fade');
+    // 确保进入全屏时为横屏
+    Orientation.lockToLandscape();
   };
 
   // 全屏状态变化回调
   const onFullscreenPlayerWillDismiss = () => {
     setIsFullscreen(false);
+    // 恢复状态栏显示
+    StatusBar.setHidden(false, 'fade');
+    // 确保退出全屏时恢复竖屏
+    Orientation.lockToPortrait();
   };
   // 进度条拖拽回调
   const onSeek = (time: number) => {
