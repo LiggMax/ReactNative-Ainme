@@ -35,7 +35,6 @@ interface VideoControlsProps {
 }
 
 const {width: screenWidth} = Dimensions.get('window');
-const PROGRESS_BAR_WIDTH = screenWidth - 88; // 减去左右边距和IconButton宽度
 
 // 格式化时间函数
 const formatTime = (seconds: number): string => {
@@ -86,7 +85,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     })
     .onUpdate(event => {
       'worklet';
-      progress.value = Math.max(0, Math.min(1, event.x / PROGRESS_BAR_WIDTH));
+      progress.value = Math.max(0, Math.min(1, event.x / screenWidth));
     })
     .onEnd(() => {
       'worklet';
@@ -104,7 +103,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     if (isDragging) return;
 
     const touchX = event.nativeEvent.locationX;
-    const newProgress = Math.max(0, Math.min(1, touchX / PROGRESS_BAR_WIDTH));
+    const newProgress = Math.max(0, Math.min(1, touchX / screenWidth));
     const seekTime = newProgress * duration;
 
     progress.value = newProgress;
