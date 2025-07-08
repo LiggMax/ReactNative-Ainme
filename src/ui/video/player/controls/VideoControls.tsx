@@ -6,7 +6,8 @@
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
-import {IconButton, Text,} from 'react-native-paper';
+import {IconButton, Text} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
 
 import Animated, {
   runOnJS,
@@ -128,37 +129,42 @@ const VideoControls: React.FC<VideoControlsProps> = ({
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* 顶部返回按钮 */}
-      {onBack && (
-        <View style={styles.topControls}>
+      {/* 顶部控件 */}
+      <View style={styles.topControls}>
+        <LinearGradient
+          colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.1)', 'transparent']}
+          style={styles.topGradient}
+        />
+        {onBack && (
           <IconButton
             icon="arrow-left"
             size={28}
-            iconColor={styles.progressFill.backgroundColor}
+            iconColor={styles.iconColor.color}
             onPress={onBack}
             style={styles.backButton}
           />
-          <Text >{title}</Text>
-        </View>
-      )}
+        )}
+        <Text style={styles.iconColor}>{title}</Text>
+      </View>
 
-      {/* 底部控制栏 */}
-      <View>
+      {/* 底部控件 */}
+      <View style={styles.bottomControls}>
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.3)']}
+          style={styles.bottomGradient}
+        />
         {/* 时间信息 */}
         <Text style={styles.timeText}>
           {formatTime(currentTime)} / {formatTime(duration)}
         </Text>
         <View style={styles.controlsRow}>
-          {/* 左侧区域：播放按钮和时间信息 */}
-          <View style={styles.leftControls}>
-            {/* 暂停/播放按钮 */}
-            <IconButton
-              icon={isPlaying ? 'pause' : 'play'}
-              size={30}
-              iconColor={styles.progressFill.backgroundColor}
-              onPress={onPlayPause}
-            />
-          </View>
+          {/* 暂停/播放按钮 */}
+          <IconButton
+            icon={isPlaying ? 'pause' : 'play'}
+            size={30}
+            iconColor={styles.iconColor.color}
+            onPress={onPlayPause}
+          />
           {/* 进度条 */}
           <View style={styles.progressContainer}>
             <GestureDetector gesture={gesture}>
@@ -187,7 +193,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           <IconButton
             icon={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
             size={30}
-            iconColor={styles.progressFill.backgroundColor}
+            iconColor={styles.iconColor.color}
             onPress={onFullscreen}
           />
         </View>

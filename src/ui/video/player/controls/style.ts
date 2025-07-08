@@ -18,15 +18,41 @@ const controlsStyle = () => {
       justifyContent: 'flex-end',
       paddingBottom: 0, // 底部控件区域距离播放器底部的间距
     },
+    iconColor: {
+      color: '#ffffff'
+    },
     topControls: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
+      height: 40,
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
       zIndex: 1,
+    },
+    topGradient: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 100,
+    },
+    bottomControls:{
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 80,
+    },
+    bottomGradient: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: "100%",
+      zIndex: 0,
     },
     backButton: {
       borderRadius: 20,
@@ -34,8 +60,6 @@ const controlsStyle = () => {
     controlsRow: {
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    leftControls: {
     },
     timeText: {
       color: 'white',
