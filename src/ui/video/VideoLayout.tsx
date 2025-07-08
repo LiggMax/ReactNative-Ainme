@@ -1,40 +1,47 @@
-/**
- * @Author Ligg
- * @Time 2025/7/4
- **/
-import React from 'react';
-import {View} from 'react-native';
-import {VideoScreenProps} from '../../types/navigation';
-import {videoStyles} from './style.ts';
-import VideoPlayer from './player/index';
-import {Text} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
+// Load the module
+import Video, { VideoRef } from 'react-native-video';
+import {useRef} from 'react';
+import {StyleSheet} from 'react-native';
 
-const VideoLayout = ({route}: VideoScreenProps) => {
-  /**
-   * 动态样式
-   */
-  const styles = videoStyles();
+// Inside your render function, assuming you have a file called
+// "background.mp4" in your project. You can include multiple videos
+// on a single screen if needed.
 
-  /**
-   * 路由参数
-   */
-  const {id, title} = route.params;
+const VideoPlayer = () => {
+  const videoRef = useRef<VideoRef>(null);
+  const background = require('./assets/video_test/123.mp4');
+
+  function onBuffer() {
+
+  }
+
+  function onError() {
+
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* 视频播放器容器*/}
-      <View style={[styles.videoContainer]}>
-        <VideoPlayer title={title}
-        />
-      </View>
-
-      {/* 信息栏 */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.info}>视频标题: {title}</Text>
-      </View>
-    </SafeAreaView>
+    <Video
+      // Can be a URL or a local file.
+      source={background}
+      // Store reference
+      ref={videoRef}
+      // Callback when remote video is buffering
+      onBuffer={onBuffer}
+      // Callback when the video cannot be loaded
+      onError={onError}
+      style={styles.backgroundVideo}
+    />
   );
 };
 
-export default VideoLayout;
+export default VideoPlayer;
+// Later in your styles...
+const styles = StyleSheet.create({
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
+});
