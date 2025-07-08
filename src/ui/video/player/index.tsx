@@ -40,7 +40,7 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
   /**
    * 动态样式
    */
-  const styles = playerStyles();
+  const styles = playerStyles(isFullscreen);
 
   // 视频加载完成回调
   const onLoad = (data: OnLoadData) => {
@@ -56,36 +56,22 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
   };
   // 全屏切换函数
   const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (isFullscreen) {
-        videoRef.current.dismissFullscreenPlayer();
-        // 退出全屏时恢复竖屏
-        Orientation.lockToPortrait();
-      } else {
-        videoRef.current.presentFullscreenPlayer();
-        // 进入全屏时切换到横屏
-        Orientation.lockToLandscape();
-      }
+    if (isFullscreen) {
+      // 退出全屏时恢复竖屏
+      Orientation.lockToPortrait();
+      // 恢复状态栏显示
+      StatusBar.setHidden(false, 'fade');
+      setIsFullscreen(false);
+    } else {
+      // 进入全屏时切换到横屏
+      Orientation.lockToLandscape();
+      // 隐藏状态栏以获得更好的全屏体验
+      StatusBar.setHidden(true, 'fade');
+      setIsFullscreen(true);
     }
   };
 
-  // 全屏状态变化回调
-  const onFullscreenPlayerWillPresent = () => {
-    setIsFullscreen(true);
-    // 隐藏状态栏以获得更好的全屏体验
-    StatusBar.setHidden(true, 'fade');
-    // 确保进入全屏时为横屏
-    Orientation.lockToLandscape();
-  };
-
-  // 全屏状态变化回调
-  const onFullscreenPlayerWillDismiss = () => {
-    setIsFullscreen(false);
-    // 恢复状态栏显示
-    StatusBar.setHidden(false, 'fade');
-    // 确保退出全屏时恢复竖屏
-    Orientation.lockToPortrait();
-  };
+  // 移除原生全屏回调，改用自定义全屏
   // 进度条拖拽回调
   const onSeek = (time: number) => {
     if (videoRef.current) {
@@ -123,7 +109,7 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
 
   let url = 'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
   return (
-    <View>
+    <View style={isFullscreen ? styles.fullscreenContainer : styles.container}>
       <Video
         // 视频源配置
         source={{
@@ -136,9 +122,6 @@ const VideoPlayer = ({ title}: VideoPlayerProps) => {
         onProgress={onProgress}
         // 播放状态变化回调
         onPlaybackStateChanged={onPlaybackStateChanged}
-        //全屏状态变化回调
-        onFullscreenPlayerWillPresent={onFullscreenPlayerWillPresent}
-        onFullscreenPlayerWillDismiss={onFullscreenPlayerWillDismiss}
         // 远端视频缓冲回调
         onBuffer={onBuffer}
         // 视频无法加载回调
