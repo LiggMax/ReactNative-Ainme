@@ -15,44 +15,35 @@ const controlsStyle = () => {
       right: 0,
       bottom: 0,
       backgroundColor: 'transparent',
-      justifyContent: 'flex-end',
-      paddingBottom: 0, // 底部控件区域距离播放器底部的间距
+      justifyContent: 'space-between',
     },
     iconColor: {
       color: '#ffffff'
     },
     topControls: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 40,
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
-      zIndex: 1,
+      position: 'relative',
     },
     topGradient: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
-      height: 100,
-    },
-    bottomControls:{
-      position: 'absolute',
       bottom: 0,
-      left: 0,
-      right: 0,
-      height: 80,
+      zIndex: -1,
+    },
+    bottomControls: {
+      position: 'relative',
     },
     bottomGradient: {
       position: 'absolute',
-      bottom: 0,
+      top: 0,
       left: 0,
       right: 0,
-      height: "100%",
-      zIndex: 0,
+      bottom: 0,
+      zIndex: -1,
     },
     backButton: {
       borderRadius: 20,
