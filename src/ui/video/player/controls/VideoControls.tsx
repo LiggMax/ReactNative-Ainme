@@ -2,11 +2,12 @@
  * @Author Ligg
  * @Time 2025/7/5
  *
- * 播放器控件 - 极简版本
+ * 播放器控
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
-import {IconButton, Text,} from 'react-native-paper';
+import {IconButton, Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Animated, {
   runOnJS,
@@ -22,16 +23,19 @@ import {
 import controlsStyle from './style';
 
 interface VideoControlsProps {
-  title?: string;
-  currentTime?: number;
-  duration?: number;
-  bufferedTime?: number;
-  isPlaying?: boolean;
-  onSeek?: (time: number) => void;
-  onPlayPause?: () => void;
-  isFullscreen?: boolean;
-  onFullscreen?: () => void;
-  onBack?: () => void;
+  visible: boolean;
+  paused: boolean;
+  currentTime: number;
+  duration: number;
+  bufferedTime: number;
+  title: string;
+  muted: boolean;
+  onSeek: (time: number) => void;
+  onPlayPause: () => void;
+  isFullscreen: boolean;
+  onFullscreen: () => void;
+  onBack: () => void;
+  onMute: () => void;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -47,21 +51,26 @@ const formatTime = (seconds: number): string => {
 };
 
 const VideoControls: React.FC<VideoControlsProps> = ({
-  title = '',
-  currentTime = 0,
-  duration = 0,
-  bufferedTime = 0,
-  isPlaying = false,
+  visible,
+  paused,
+  currentTime,
+  duration,
+  bufferedTime,
+  title,
+  muted,
   onSeek,
   onPlayPause,
-  isFullscreen = false, //全屏状态
-  onFullscreen, //全屏回调
-  onBack, //返回回调
+  isFullscreen,
+  onFullscreen,
+  onBack,
+  onMute,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const progress = useSharedValue(0);
   const bufferedProgress = useSharedValue(0);
   const thumbScale = useSharedValue(1);
+
+  const styles = controlsStyle();
 
   // 更新进度
   useEffect(() => {
@@ -125,43 +134,50 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     transform: [{scale: thumbScale.value}],
   }));
 
-  const styles = controlsStyle();
-
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* 顶部返回按钮 */}
-      {onBack && (
-        <View style={styles.topControls}>
-          <IconButton
-            icon="arrow-left"
-            size={28}
-            iconColor={styles.progressFill.backgroundColor}
-            onPress={onBack}
-            style={styles.backButton}
-          />
-          <Text >{title}</Text>
-        </View>
-      )}
+      {/* 顶部控制栏 */}
+      <View style={styles.topControls}>
+        {onBack && (
+          <TouchableOpacity style={styles.backButton} onPress={onBack}>
+            <Icon name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.title} numberOfLines={1}>
+          {title}
+        </Text>
+        <TouchableOpacity style={styles.moreButton}>
+          <Icon name="more-vert" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
 
       {/* 底部控制栏 */}
-      <View>
-        {/* 时间信息 */}
-        <Text style={styles.timeText}>
-          {formatTime(currentTime)} / {formatTime(duration)}
-        </Text>
-        <View style={styles.controlsRow}>
-          {/* 左侧区域：播放按钮和时间信息 */}
-          <View style={styles.leftControls}>
-            {/* 暂停/播放按钮 */}
-            <IconButton
-              icon={isPlaying ? 'pause' : 'play'}
-              size={30}
-              iconColor={styles.progressFill.backgroundColor}
-              onPress={onPlayPause}
+      <View style={styles.bottomControls}>
+
+        {/* 时间标签 */}
+        <View style={styles.playControls}>
+          <Text style={styles.timeText}>{formatTime(currentTime)} / {formatTime(duration)}</Text>
+        </View>
+        <View style={styles.progressContainer}>
+          {/*播放、暂停按钮*/}
+          <TouchableOpacity onPress={onPlayPause}>
+            <Icon
+              name={paused ? 'play-arrow' : 'pause'}
+              size={28}
+              color="#fff"
             />
-          </View>
-          {/* 进度条 */}
-          <View style={styles.progressContainer}>
+          </TouchableOpacity>
+
+          {/*音量按钮*/}
+          <TouchableOpacity onPress={onMute}>
+            <Icon
+              name={muted ? 'volume-off' : 'volume-up'}
+              size={24}
+              color="#fff"
+            />
+          </TouchableOpacity>
+
+          <View style={styles.progressBarContainer}>
             <GestureDetector gesture={gesture}>
               <TouchableOpacity
                 style={styles.progressBar}
@@ -184,13 +200,15 @@ const VideoControls: React.FC<VideoControlsProps> = ({
               </TouchableOpacity>
             </GestureDetector>
           </View>
-          {/*全屏按钮*/}
-          <IconButton
-            icon={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
-            size={30}
-            iconColor={styles.progressFill.backgroundColor}
-            onPress={onFullscreen}
-          />
+
+          {/* 全屏按钮 */}
+          <TouchableOpacity onPress={onFullscreen}>
+            <Icon
+              name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
+              size={24}
+              color="#fff"
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </GestureHandlerRootView>
