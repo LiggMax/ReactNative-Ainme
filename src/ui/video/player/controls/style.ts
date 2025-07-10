@@ -18,15 +18,16 @@ const controlsStyle = () => {
       bottom: 0,
       justifyContent: 'space-between',
     },
-    topControls: {
+    topGradient: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
+    },
+    topControls: {
       flexDirection: 'row',
       alignItems: 'center',
       paddingHorizontal: 5,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     backButton: {
       padding: 8,
@@ -41,13 +42,14 @@ const controlsStyle = () => {
     moreButton: {
       padding: 8,
     },
-    bottomControls: {
+    bottomGradient: {
       position: 'absolute',
       bottom: 0,
       left: 0,
       right: 0,
+    },
+    bottomControls: {
       paddingHorizontal: 16,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     playControls: {
       flexDirection: 'row',

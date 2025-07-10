@@ -7,6 +7,7 @@
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Animated, {
@@ -139,22 +140,29 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   return (
     <GestureHandlerRootView style={styles.container}>
       {/* 顶部控制栏 */}
-      <View style={styles.topControls}>
-        {onBack && (
-          <TouchableOpacity style={styles.backButton} onPress={onBack}>
-            <Icon name="arrow-back" size={24} color="#fff" />
+      <LinearGradient
+        colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.3)', 'transparent']}
+        style={styles.topGradient}>
+        <View style={styles.topControls}>
+          {onBack && (
+            <TouchableOpacity style={styles.backButton} onPress={onBack}>
+              <Icon name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+          )}
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
+          <TouchableOpacity style={styles.moreButton}>
+            <Icon name="more-vert" size={24} color="#fff" />
           </TouchableOpacity>
-        )}
-        <Text style={styles.title} numberOfLines={1}>
-          {title}
-        </Text>
-        <TouchableOpacity style={styles.moreButton}>
-          <Icon name="more-vert" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
+        </View>
+      </LinearGradient>
 
       {/* 底部控制栏 */}
-      <View style={styles.bottomControls}>
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
+        style={styles.bottomGradient}>
+        <View style={styles.bottomControls}>
         {/* 时间标签 */}
         <View style={styles.playControls}>
           <Text style={styles.timeText}>
@@ -213,7 +221,8 @@ const VideoControls: React.FC<VideoControlsProps> = ({
             />
           </TouchableOpacity>
         </View>
-      </View>
+        </View>
+      </LinearGradient>
     </GestureHandlerRootView>
   );
 };
