@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Orientation from 'react-native-orientation-locker';
 import { VideoScreenProps } from '../../types/navigation';
 import { useAppNavigation } from '../../navigation';
 import VideoPlayer from './player/Player';
@@ -20,8 +21,24 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
   // 根据id获取视频源，这里暂时使用默认视频
   const videoSource = null; // 可以根据id从API获取视频源
 
+  // 组件卸载时解锁屏幕方向
+  useEffect(() => {
+    return () => {
+      Orientation.unlockAllOrientations();
+    };
+  }, []);
+
   const toggleFullscreen = () => {
-    setFullscreen(!fullscreen);
+    const newFullscreenState = !fullscreen;
+    setFullscreen(newFullscreenState);
+    
+    if (newFullscreenState) {
+      // 进入全屏时锁定为横屏
+      Orientation.lockToLandscape();
+    } else {
+      // 退出全屏时锁定为竖屏
+      Orientation.lockToPortrait();
+    }
   };
 
   if (fullscreen) {

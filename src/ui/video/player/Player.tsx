@@ -45,7 +45,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   const background = videoSource || require('../assets/video_test/123.mp4');
   //网络视频
-  const url = 'https://vod.cdn.bilibili.com/bfs/album/f0c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5.mp4';
+  const url = 'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
   const styles = playerStyles();
 
   // 自动隐藏控制栏
@@ -110,7 +110,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         <Video
           ref={videoRef}
-          source={background}
+          source={{uri: url}}
           style={styles.video}
           paused={paused}
           volume={volume}

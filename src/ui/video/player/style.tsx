@@ -1,24 +1,25 @@
 import {StyleSheet, Dimensions} from 'react-native';
 import {useTheme} from 'react-native-paper';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
-
 export const playerStyles = () => {
   const theme = useTheme();
+  const { width: screenWidth } = Dimensions.get('window');
+  
   return StyleSheet.create({
     videoContainer: {
-      width: screenWidth,
+      width: '100%',
       height: screenWidth * (9 / 16), // 16:9 比例
       backgroundColor: '#000',
       position: 'relative',
     },
     fullscreenContainer: {
-      width: screenHeight,
-      height: screenWidth,
-      transform: [{ rotate: '90deg' }],
+      width: '100%',
+      height: '100%',
       position: 'absolute',
-      top: (screenHeight - screenWidth) / 2,
-      left: (screenWidth - screenHeight) / 2,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
     },
     videoTouchable: {
       flex: 1,

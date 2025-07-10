@@ -27,7 +27,7 @@ const controlsStyle = () => {
     topControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 5,
+      paddingHorizontal: 10,
     },
     backButton: {
       padding: 8,
@@ -91,7 +91,7 @@ const controlsStyle = () => {
     progressFill: {
       position: 'absolute',
       height: '100%',
-      backgroundColor: theme.colors.primary || '#ff6b6b',
+      backgroundColor: theme.colors.primary,
       borderRadius: 2,
     },
     progressThumb: {
@@ -99,7 +99,7 @@ const controlsStyle = () => {
       top: -6,
       width: 16,
       height: 16,
-      backgroundColor: theme.colors.primary || '#ff6b6b',
+      backgroundColor: theme.colors.primary ,
       borderRadius: 8,
       transform: [{ translateX: -8 }],
     },
