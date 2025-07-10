@@ -1,6 +1,7 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import {BottomNavigation, useTheme} from 'react-native-paper';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Home from './home/HomeLayout.tsx';
 import Profile from './profile/ProfileLayout.tsx';
@@ -78,19 +79,24 @@ export default function BottomTabLayout() {
 
   // 底部导航布局
   return (
-    <BottomNavigation
-      navigationState={{index, routes}}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-      renderIcon={renderBottomNavIcon}
-      barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
-      activeColor={theme.colors.primary}
-      inactiveColor={theme.colors.onSurfaceVariant}
-    />
+    <SafeAreaView style={styles.safeContainer} edges={['top']}>
+      <BottomNavigation
+        navigationState={{index, routes}}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+        renderIcon={renderBottomNavIcon}
+        barStyle={[styles.bottomNavigation, { backgroundColor: theme.colors.surface }]}
+        activeColor={theme.colors.primary}
+        inactiveColor={theme.colors.onSurfaceVariant}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    flex: 1,
+  },
   screenContainer: {
     flex: 1,
     justifyContent: 'center',

@@ -23,10 +23,9 @@ const controlsStyle = () => {
       top: 0,
       left: 0,
       right: 0,
-      height: 60,
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 16,
+      paddingHorizontal: 5,
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     backButton: {
@@ -48,7 +47,6 @@ const controlsStyle = () => {
       left: 0,
       right: 0,
       paddingHorizontal: 16,
-      paddingVertical: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     playControls: {

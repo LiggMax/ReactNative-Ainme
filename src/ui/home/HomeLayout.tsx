@@ -61,7 +61,7 @@ export default function HomeLayout() {
   const layout = useWindowDimensions();
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]} edges={['bottom']}>
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
@@ -81,7 +81,6 @@ export default function HomeLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 0,
   },
   tabView: {
     flex: 1,

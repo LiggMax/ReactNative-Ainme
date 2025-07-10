@@ -3,17 +3,19 @@ import {
   View,
   Text,
   StyleSheet,
-  StatusBar,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { VideoScreenProps } from '../../types/navigation';
 import { useAppNavigation } from '../../navigation';
 import VideoPlayer from './player/Player';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBarManager } from '../../components/StatusBarManager';
 
 const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
   const { id, title = '视频播放' } = route.params;
   const { goBack } = useAppNavigation();
   const [fullscreen, setFullscreen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   // 根据id获取视频源，这里暂时使用默认视频
   const videoSource = null; // 可以根据id从API获取视频源
@@ -22,9 +24,30 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
     setFullscreen(!fullscreen);
   };
 
+  if (fullscreen) {
+    return (
+      <View style={styles.fullscreenWrapper}>
+        <StatusBarManager hidden={true} />
+        <VideoPlayer
+          id={id}
+          title={title}
+          videoSource={videoSource}
+          fullscreen={fullscreen}
+          onToggleFullscreen={toggleFullscreen}
+          onBack={goBack}
+        />
+      </View>
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar hidden={fullscreen} />
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <StatusBarManager 
+        barStyle="light-content" 
+        backgroundColor="#000" 
+        translucent={false} 
+        hidden={false}
+      />
       <VideoPlayer
         id={id}
         title={title}
@@ -35,20 +58,22 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
       />
 
       {/* 视频信息区域 */}
-      {!fullscreen && (
-        <View style={styles.infoContainer}>
-          <Text style={styles.videoTitle}>{title}</Text>
-          <Text style={styles.videoDescription}>
-            这里可以显示视频的详细描述信息
-          </Text>
-        </View>
-      )}
+      <View style={styles.infoContainer}>
+        <Text style={styles.videoTitle}>{title}</Text>
+        <Text style={styles.videoDescription}>
+          这里可以显示视频的详细描述信息
+        </Text>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  fullscreenWrapper: {
     flex: 1,
     backgroundColor: '#000',
   },

@@ -6,7 +6,7 @@
  **/
 import React, {useEffect, useState} from 'react';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
-import {IconButton, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Animated, {
@@ -20,6 +20,7 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import controlsStyle from './style';
 
 interface VideoControlsProps {
@@ -69,6 +70,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   const progress = useSharedValue(0);
   const bufferedProgress = useSharedValue(0);
   const thumbScale = useSharedValue(1);
+  const insets = useSafeAreaInsets();
 
   const styles = controlsStyle();
 
@@ -155,7 +157,9 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       <View style={styles.bottomControls}>
         {/* 时间标签 */}
         <View style={styles.playControls}>
-          <Text style={styles.timeText}>{formatTime(currentTime)} / {formatTime(duration)}</Text>
+          <Text style={styles.timeText}>
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </Text>
         </View>
         <View style={styles.progressContainer}>
           {/*播放、暂停按钮*/}
