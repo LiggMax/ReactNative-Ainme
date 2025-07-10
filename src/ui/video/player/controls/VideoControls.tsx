@@ -42,13 +42,13 @@ interface VideoControlsProps {
 
 // 动态获取进度条宽度，适配横竖屏切换
 const getProgressBarWidth = (screenWidth: number, isFullscreen: boolean) => {
+  'worklet';
   if (isFullscreen) {
     // 全屏模式使用当前屏幕宽度
     return screenWidth - 88;
   } else {
-    // 非全屏模式使用容器宽度（通常是屏幕宽度）
-    const {width} = Dimensions.get('window');
-    return width - 88;
+    // 非全屏模式使用容器宽度
+    return screenWidth - 88;
   }
 };
 
@@ -81,6 +81,8 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   const progress = useSharedValue(0);
   const bufferedProgress = useSharedValue(0);
   const thumbScale = useSharedValue(1);
+  const screenWidth = useSharedValue(screenData.width);
+  const isFullscreenShared = useSharedValue(isFullscreen);
   const insets = useSafeAreaInsets();
 
   const styles = controlsStyle();
@@ -89,9 +91,15 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({window}) => {
       setScreenData(window);
+      screenWidth.value = window.width;
     });
     return () => subscription?.remove();
   }, []);
+
+  // 更新全屏状态的shared value
+  useEffect(() => {
+    isFullscreenShared.value = isFullscreen;
+  }, [isFullscreen]);
 
   // 更新进度
   useEffect(() => {
@@ -116,7 +124,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
     })
     .onUpdate(event => {
       'worklet';
-      const progressBarWidth = getProgressBarWidth(screenData.width, isFullscreen);
+      const progressBarWidth = getProgressBarWidth(screenWidth.value, isFullscreenShared.value);
       progress.value = Math.max(0, Math.min(1, event.x / progressBarWidth));
     })
     .onEnd(() => {

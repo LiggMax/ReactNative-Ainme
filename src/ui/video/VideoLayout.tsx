@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Orientation from 'react-native-orientation-locker';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { VideoScreenProps } from '../../types/navigation';
 import { useAppNavigation } from '../../navigation';
 import VideoPlayer from './player/Player';
@@ -21,10 +22,11 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
   // 根据id获取视频源，这里暂时使用默认视频
   const videoSource = null; // 可以根据id从API获取视频源
 
-  // 组件卸载时解锁屏幕方向
+  // 组件卸载时解锁屏幕方向并恢复导航栏
   useEffect(() => {
     return () => {
       Orientation.unlockAllOrientations();
+      SystemNavigationBar.navigationShow();
     };
   }, []);
 
@@ -33,11 +35,13 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
     setFullscreen(newFullscreenState);
     
     if (newFullscreenState) {
-      // 进入全屏时锁定为横屏
+      // 进入全屏时锁定为横屏并隐藏导航栏
       Orientation.lockToLandscape();
+      SystemNavigationBar.navigationHide();
     } else {
-      // 退出全屏时锁定为竖屏
+      // 退出全屏时锁定为竖屏并显示导航栏
       Orientation.lockToPortrait();
+      SystemNavigationBar.navigationShow();
     }
   };
 
