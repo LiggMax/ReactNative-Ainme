@@ -8,7 +8,7 @@ import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { VideoScreenProps } from '../../types/navigation';
 import { useAppNavigation } from '../../navigation';
-import VideoPlayer from './player/Player';
+import VideoPlayer from './player';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBarManager } from '../../components/StatusBarManager';
 

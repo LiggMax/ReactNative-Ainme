@@ -61,7 +61,7 @@ const formatTime = (seconds: number): string => {
     .padStart(2, '0')}`;
 };
 
-const VideoControls: React.FC<VideoControlsProps> = ({
+const Controls: React.FC<VideoControlsProps> = ({
   visible,
   paused,
   currentTime,
@@ -166,7 +166,10 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   }));
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View 
+      style={styles.container}
+      pointerEvents={visible ? 'box-none' : 'none'}
+    >
       {/* 顶部控制栏 - 根据visible状态显示/隐藏 */}
       {visible && (
         <LinearGradient
@@ -174,7 +177,16 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           style={styles.topGradient}>
           <View style={styles.topControls}>
             {onBack && (
-              <TouchableOpacity style={styles.backButton} onPress={onBack}>
+              <TouchableOpacity 
+                style={styles.backButton} 
+                onPress={() => {
+                  if (isFullscreen) {
+                    onFullscreen(); // 退出全屏
+                  } else {
+                    onBack(); // 返回上一页
+                  }
+                }}
+              >
                 <Icon name="arrow-back" size={24} color="#fff" />
               </TouchableOpacity>
             )}
@@ -220,27 +232,29 @@ const VideoControls: React.FC<VideoControlsProps> = ({
               </TouchableOpacity>
 
               <View style={styles.progressBarContainer}>
-                <GestureDetector gesture={gesture}>
-                  <TouchableOpacity
-                    style={styles.progressBar}
-                    onPress={handlePress}
-                    activeOpacity={1}>
-                    <View style={styles.progressTrack}>
-                      {/* 缓存进度条 */}
-                      <Animated.View
-                        style={[styles.bufferedFill, bufferedFillStyle]}
-                      />
-                      {/* 播放进度条 */}
-                      <Animated.View
-                        style={[styles.progressFill, progressFillStyle]}
-                      />
-                      {/* 拖动按钮 */}
-                      <Animated.View
-                        style={[styles.progressThumb, progressThumbStyle]}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                </GestureDetector>
+                <GestureHandlerRootView>
+                  <GestureDetector gesture={gesture}>
+                    <TouchableOpacity
+                      style={styles.progressBar}
+                      onPress={handlePress}
+                      activeOpacity={1}>
+                      <View style={styles.progressTrack}>
+                        {/* 缓存进度条 */}
+                        <Animated.View
+                          style={[styles.bufferedFill, bufferedFillStyle]}
+                        />
+                        {/* 播放进度条 */}
+                        <Animated.View
+                          style={[styles.progressFill, progressFillStyle]}
+                        />
+                        {/* 拖动按钮 */}
+                        <Animated.View
+                          style={[styles.progressThumb, progressThumbStyle]}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </GestureDetector>
+                </GestureHandlerRootView>
               </View>
             </View>
           </View>
@@ -257,8 +271,8 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           />
         </TouchableOpacity>
       </View>
-      </GestureHandlerRootView>
+    </View>
   );
 };
 
-export default VideoControls;
+export default Controls;

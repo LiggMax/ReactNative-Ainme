@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Video, { VideoRef } from 'react-native-video';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import VideoControls from './controls/VideoControls';
+import Controls from './controls/Controls.tsx';
 import { playerStyles } from './style';
 import { DEFAULT_VIDEO_CONFIG } from './Config';
 
@@ -28,7 +28,6 @@ interface VideoPlayerProps {
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   title = '视频播放',
-  videoSource,
   fullscreen,
   onToggleFullscreen,
   onBack,
@@ -136,7 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       </TouchableOpacity>
 
       {/* 视频控制组件 */}
-      <VideoControls
+      <Controls
         visible={showControls}
         paused={paused}
         currentTime={currentTime}
