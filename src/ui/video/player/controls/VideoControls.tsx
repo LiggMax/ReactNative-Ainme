@@ -153,7 +153,6 @@ const VideoControls: React.FC<VideoControlsProps> = ({
 
       {/* 底部控制栏 */}
       <View style={styles.bottomControls}>
-
         {/* 时间标签 */}
         <View style={styles.playControls}>
           <Text style={styles.timeText}>{formatTime(currentTime)} / {formatTime(duration)}</Text>
@@ -205,7 +204,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           <TouchableOpacity onPress={onFullscreen}>
             <Icon
               name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
-              size={24}
+              size={28}
               color="#fff"
             />
           </TouchableOpacity>

@@ -48,13 +48,13 @@ const controlsStyle = () => {
       left: 0,
       right: 0,
       paddingHorizontal: 16,
-      paddingVertical: 5,
+      paddingVertical: 0,
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     playControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 12,
+      marginBottom: 5,
     },
     progressContainer: {
       flexDirection: 'row',

@@ -44,6 +44,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [bufferedTime, setBufferedTime] = useState(0);
 
   const background = videoSource || require('../assets/video_test/123.mp4');
+  //网络视频
+  const url = 'https://vod.cdn.bilibili.com/bfs/album/f0c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5.mp4';
   const styles = playerStyles();
 
   // 自动隐藏控制栏
