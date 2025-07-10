@@ -167,91 +167,97 @@ const VideoControls: React.FC<VideoControlsProps> = ({
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      {/* 顶部控制栏 */}
-      <LinearGradient
-        colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.3)', 'transparent']}
-        style={styles.topGradient}>
-        <View style={styles.topControls}>
-          {onBack && (
-            <TouchableOpacity style={styles.backButton} onPress={onBack}>
-              <Icon name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-          )}
-          <Text style={styles.title} numberOfLines={1}>
-            {title}
-          </Text>
-          <TouchableOpacity style={styles.moreButton}>
-            <Icon name="more-vert" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-
-      {/* 底部控制栏 */}
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
-        style={styles.bottomGradient}>
-        <View style={styles.bottomControls}>
-          {/* 时间标签 */}
-          <View style={styles.playControls}>
-            <Text style={styles.timeText}>
-              {formatTime(currentTime)} / {formatTime(duration)}
+      {/* 顶部控制栏 - 根据visible状态显示/隐藏 */}
+      {visible && (
+        <LinearGradient
+          colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.2)', 'transparent']}
+          style={styles.topGradient}>
+          <View style={styles.topControls}>
+            {onBack && (
+              <TouchableOpacity style={styles.backButton} onPress={onBack}>
+                <Icon name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+            <Text style={styles.title} numberOfLines={1}>
+              {title}
             </Text>
+            <TouchableOpacity style={styles.moreButton}>
+              <Icon name="more-vert" size={24} color="#fff" />
+            </TouchableOpacity>
           </View>
-          <View style={styles.progressContainer}>
-            {/*播放、暂停按钮*/}
-            <TouchableOpacity onPress={onPlayPause}>
-              <Icon
-                name={paused ? 'play-arrow' : 'pause'}
-                size={28}
-                color="#fff"
-              />
-            </TouchableOpacity>
+        </LinearGradient>
+      )}
 
-            {/*音量按钮*/}
-            <TouchableOpacity onPress={onMute}>
-              <Icon
-                name={muted ? 'volume-off' : 'volume-up'}
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
-
-            <View style={styles.progressBarContainer}>
-              <GestureDetector gesture={gesture}>
-                <TouchableOpacity
-                  style={styles.progressBar}
-                  onPress={handlePress}
-                  activeOpacity={1}>
-                  <View style={styles.progressTrack}>
-                    {/* 缓存进度条 */}
-                    <Animated.View
-                      style={[styles.bufferedFill, bufferedFillStyle]}
-                    />
-                    {/* 播放进度条 */}
-                    <Animated.View
-                      style={[styles.progressFill, progressFillStyle]}
-                    />
-                    {/* 拖动按钮 */}
-                    <Animated.View
-                      style={[styles.progressThumb, progressThumbStyle]}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </GestureDetector>
+      {/* 底部控制栏 - 根据visible状态显示/隐藏 */}
+      {visible && (
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)']}
+          style={styles.bottomGradient}>
+          <View style={styles.bottomControls}>
+            {/* 时间标签 */}
+            <View style={styles.playControls}>
+              <Text style={styles.timeText}>
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </Text>
             </View>
+            <View style={styles.progressContainer}>
+              {/*播放、暂停按钮*/}
+              <TouchableOpacity onPress={onPlayPause}>
+                <Icon
+                  name={paused ? 'play-arrow' : 'pause'}
+                  size={28}
+                  color="#fff"
+                />
+              </TouchableOpacity>
 
-            {/* 全屏按钮 */}
-            <TouchableOpacity onPress={onFullscreen}>
-              <Icon
-                name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
-                size={28}
-                color="#fff"
-              />
-            </TouchableOpacity>
+              {/*音量按钮*/}
+              <TouchableOpacity onPress={onMute}>
+                <Icon
+                  name={muted ? 'volume-off' : 'volume-up'}
+                  size={24}
+                  color="#fff"
+                />
+              </TouchableOpacity>
+
+              <View style={styles.progressBarContainer}>
+                <GestureDetector gesture={gesture}>
+                  <TouchableOpacity
+                    style={styles.progressBar}
+                    onPress={handlePress}
+                    activeOpacity={1}>
+                    <View style={styles.progressTrack}>
+                      {/* 缓存进度条 */}
+                      <Animated.View
+                        style={[styles.bufferedFill, bufferedFillStyle]}
+                      />
+                      {/* 播放进度条 */}
+                      <Animated.View
+                        style={[styles.progressFill, progressFillStyle]}
+                      />
+                      {/* 拖动按钮 */}
+                      <Animated.View
+                        style={[styles.progressThumb, progressThumbStyle]}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </GestureDetector>
+              </View>
+            </View>
           </View>
-        </View>
-      </LinearGradient>
-    </GestureHandlerRootView>
+        </LinearGradient>
+      )}
+
+      {/* 全屏按钮 - 始终显示 */}
+      <View style={styles.fullscreenButtonContainer} pointerEvents="auto">
+        <TouchableOpacity style={styles.fullscreenButton} onPress={onFullscreen}>
+          <Icon
+            name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
+            size={30}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </View>
+      </GestureHandlerRootView>
   );
 };
 

@@ -50,6 +50,7 @@ const controlsStyle = () => {
     },
     bottomControls: {
       paddingHorizontal: 16,
+      paddingRight: 55,
     },
     playControls: {
       flexDirection: 'row',
@@ -102,6 +103,17 @@ const controlsStyle = () => {
       backgroundColor: theme.colors.primary ,
       borderRadius: 8,
       transform: [{ translateX: -8 }],
+    },
+    fullscreenButtonContainer: {
+      position: 'absolute',
+      bottom: 0,
+      right: 16,
+      zIndex: 999,
+    },
+    fullscreenButton: {
+      padding: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 }

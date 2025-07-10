@@ -53,7 +53,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (showControls && !paused) {
       const timer = setTimeout(() => {
         setShowControls(false);
-      }, 3000);
+      }, 300000);
       return () => clearTimeout(timer);
     }
   }, [showControls, paused]);
@@ -133,19 +133,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           </View>
         )}
 
-        {/* 播放/暂停按钮 (中央) */}
-        {showControls && (
-          <TouchableOpacity
-            style={styles.centerPlayButton}
-            onPress={togglePlayPause}
-          >
-            <Icon
-              name={paused ? 'play-arrow' : 'pause'}
-              size={60}
-              color="rgba(255, 255, 255, 0.9)"
-            />
-          </TouchableOpacity>
-        )}
+
       </TouchableOpacity>
 
       {/* 视频控制组件 */}
