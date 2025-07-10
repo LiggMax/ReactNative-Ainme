@@ -47,6 +47,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
         backgroundColor="#000" 
         translucent={false} 
         hidden={false}
+        useGlobalTheme={false}
       />
       <VideoPlayer
         id={id}
