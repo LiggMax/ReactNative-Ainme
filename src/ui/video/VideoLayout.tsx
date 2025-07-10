@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { VideoScreenProps } from '../../types/navigation';
@@ -33,7 +32,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
   const toggleFullscreen = () => {
     const newFullscreenState = !fullscreen;
     setFullscreen(newFullscreenState);
-    
+
     if (newFullscreenState) {
       // 进入全屏时锁定为横屏并隐藏导航栏
       Orientation.lockToLandscape();
@@ -45,31 +44,20 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
     }
   };
 
-  if (fullscreen) {
-    return (
-      <View style={styles.fullscreenWrapper}>
-        <StatusBarManager hidden={true} />
-        <VideoPlayer
-          id={id}
-          title={title}
-          videoSource={videoSource}
-          fullscreen={fullscreen}
-          onToggleFullscreen={toggleFullscreen}
-          onBack={goBack}
-        />
-      </View>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      <StatusBarManager 
-        barStyle="light-content" 
-        backgroundColor="#000" 
-        translucent={false} 
-        hidden={false}
+    <View style={fullscreen ? styles.fullscreenWrapper : styles.container}>
+      <StatusBarManager
+        barStyle="light-content"
+        backgroundColor="#000"
+        translucent={fullscreen}
+        hidden={fullscreen}
         useGlobalTheme={false}
       />
+
+      {/* 非全屏时的安全区域包装 */}
+      {!fullscreen && <View style={{ paddingTop: insets.top }} />}
+
+      {/* 视频播放器  */}
       <VideoPlayer
         id={id}
         title={title}
@@ -79,14 +67,16 @@ const VideoLayout: React.FC<VideoScreenProps> = ({ route }) => {
         onBack={goBack}
       />
 
-      {/* 视频信息区域 */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.videoTitle}>{title}</Text>
-        <Text style={styles.videoDescription}>
-          这里可以显示视频的详细描述信息
-        </Text>
-      </View>
-    </SafeAreaView>
+      {/* 视频信息区域 - 只在非全屏时显示 */}
+      {!fullscreen && (
+        <View style={[styles.infoContainer, { paddingBottom: insets.bottom }]}>
+          <Text style={styles.videoTitle}>{title}</Text>
+          <Text style={styles.videoDescription}>
+            这里可以显示视频的详细描述信息
+          </Text>
+        </View>
+      )}
+    </View>
   );
 };
 
