@@ -42,7 +42,6 @@ yarn macos
 
 ### 实现细节
 
-在 `src/ui/video/player/index.tsx` 中，我们使用 `Platform.OS` 检测来区分平台：
 
 ```typescript
 // 仅在非 macOS 平台执行方向控制

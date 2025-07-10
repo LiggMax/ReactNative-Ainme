@@ -43,7 +43,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [muted, setMuted] = useState(false);
   const [bufferedTime, setBufferedTime] = useState(0);
 
-  const background = videoSource || require('../assets/video_test/123.mp4');
   //网络视频
   const url = 'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
   const styles = playerStyles();

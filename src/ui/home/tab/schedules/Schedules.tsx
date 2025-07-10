@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -313,8 +312,8 @@ export default function Schedules() {
   };
 
   return (
-    <SafeAreaView style={dynamicStyles.container}>
+    <View style={dynamicStyles.container}>
       {renderContent()}
-    </SafeAreaView>
+    </View>
   );
 }

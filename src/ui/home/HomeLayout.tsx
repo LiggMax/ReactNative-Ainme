@@ -61,7 +61,7 @@ export default function HomeLayout() {
   const layout = useWindowDimensions();
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]} edges={['bottom']}>
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.colors.background}]} edges={['top', 'bottom']}>
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene}
