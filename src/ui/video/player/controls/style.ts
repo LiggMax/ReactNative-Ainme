@@ -1,6 +1,8 @@
 /**
  * @Author Ligg
  * @Time 2025/7/5
+ *
+ * 视频控制组件样式
  **/
 import {StyleSheet} from 'react-native';
 import {useTheme} from 'react-native-paper';
@@ -14,40 +16,65 @@ const controlsStyle = () => {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'transparent',
-      justifyContent: 'flex-end',
-      paddingBottom: 0, // 底部控件区域距离播放器底部的间距
+      justifyContent: 'space-between',
     },
-    topControls: {
+    topGradient: {
       position: 'absolute',
       top: 0,
       left: 0,
       right: 0,
+    },
+    topControls: {
       flexDirection: 'row',
-      justifyContent: 'flex-start',
       alignItems: 'center',
-      zIndex: 1,
+      paddingHorizontal: 10,
     },
     backButton: {
-      borderRadius: 20,
+      padding: 8,
     },
-    controlsRow: {
+    title: {
+      flex: 1,
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: '500',
+      marginHorizontal: 16,
+    },
+    moreButton: {
+      padding: 8,
+    },
+    bottomGradient: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+    },
+    bottomControls: {
+      paddingHorizontal: 16,
+      paddingRight: 55,
+    },
+    playControls: {
       flexDirection: 'row',
       alignItems: 'center',
-    },
-    leftControls: {
-    },
-    timeText: {
-      color: 'white',
-      fontSize: 12,
-      marginLeft: 12,
-      fontWeight: '500',
+      marginBottom: 5,
     },
     progressContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    timeText: {
+      color: '#fff',
+      fontSize: 12,
+      fontWeight: 'bold',
+      minWidth: 40,
+      textAlign: 'center',
+    },
+    progressBarContainer: {
       flex: 1,
+      marginHorizontal: 12,
     },
     progressBar: {
-      height: 40,
+      height: 20,
       justifyContent: 'center',
     },
     progressTrack: {
@@ -58,36 +85,35 @@ const controlsStyle = () => {
     },
     bufferedFill: {
       position: 'absolute',
-      height: 4,
+      height: '100%',
       backgroundColor: 'rgba(255, 255, 255, 0.5)',
       borderRadius: 2,
-      left: 0,
-      top: 0,
     },
     progressFill: {
       position: 'absolute',
-      height: 4,
+      height: '100%',
       backgroundColor: theme.colors.primary,
       borderRadius: 2,
-      left: 0,
-      top: 0,
     },
     progressThumb: {
       position: 'absolute',
       top: -6,
       width: 16,
       height: 16,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary ,
       borderRadius: 8,
-      marginLeft: -8,
-      shadowColor: theme.colors.shadow,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
+      transform: [{ translateX: -8 }],
+    },
+    fullscreenButtonContainer: {
+      position: 'absolute',
+      bottom: 0,
+      right: 16,
+      zIndex: 999,
+    },
+    fullscreenButton: {
+      padding: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 }

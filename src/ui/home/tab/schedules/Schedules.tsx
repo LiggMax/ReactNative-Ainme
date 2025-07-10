@@ -188,7 +188,7 @@ export default function Schedules() {
           onPress={() => handleCardPress(item)}
           activeOpacity={0.8}>
           <View style={dynamicStyles.imageContainer}>
-            {/* 图片加载时显示Shimmer - 放在图片后面，通过条件渲染控制 */}
+            {/* 图片加载时显示Shimmer*/}
             {isLoading && (
               <ShimmerPlaceholder
                 style={dynamicStyles.shimmerPlaceholder}
@@ -198,6 +198,7 @@ export default function Schedules() {
                   theme.colors.surfaceVariant,
                 ]}
               />
+
             )}
             {/* 图片 */}
             <FastImage
