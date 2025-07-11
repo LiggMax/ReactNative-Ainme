@@ -1,7 +1,7 @@
 /**
  * 动漫详情api
  */
-import request, {Request} from '../../../util/request.ts';
+import request from '../../../util/request.ts';
 import {AnimeItem} from './anime.ts';
 
 // 创建不同基础URL的请求实例
@@ -27,7 +27,14 @@ class AnimeDate{
    * 番剧相关条目
    */
   async getRelatedService(id: number) {
-    return apiRequest.get(`/v0/subjects/${id}/subjects`)
+    return apiRequest.get(`/v0/subjects/${id}/subjects`);
+  }
+
+  /**
+   * 剧集列表
+   */
+  async getEpisodesService(id: number) {
+    return apiRequest.get(`/v0/episodes?subject_id=${id}&limit=100&offset=0`);
   }
 }
 

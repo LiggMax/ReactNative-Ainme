@@ -12,7 +12,6 @@ import {
   Text,
 } from 'react-native';
 import Video, { VideoRef } from 'react-native-video';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Controls from './controls/Controls.tsx';
 import { playerStyles } from './style';
 import { DEFAULT_VIDEO_CONFIG } from './Config';

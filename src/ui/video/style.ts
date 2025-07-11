@@ -4,32 +4,34 @@ import {useTheme} from 'react-native-paper';
 export const videoStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
+    videoInfoHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',//两侧对齐
+    },
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
-    },
-    videoContainer: {
-      width: '100%',
-      aspectRatio: 16 / 9,
       backgroundColor: '#000',
     },
-    headerContainer: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#fff',
-      textAlign: 'center',
+    fullscreenWrapper: {
+      flex: 1,
+      backgroundColor: '#000',
     },
     infoContainer: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      flex: 1,
+      padding: 16,
+      backgroundColor: '#fff',
     },
-    info: {
+    videoTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      color: '#333',
+    },
+    videoDescription: {
       fontSize: 14,
-      textAlign: 'center',
+      color: '#666',
+      lineHeight: 20,
     },
   });
 };

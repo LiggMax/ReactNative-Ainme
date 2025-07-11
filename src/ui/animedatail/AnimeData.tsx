@@ -25,7 +25,7 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
   const {goBack, canGoBack, navigateToVideo} = useAppNavigation();
   const {id, title} = route.params;
 
-  const [animeDetail, setAnimeDetail] = useState<any>(null);
+  const [animeDetail, setAnimeDetail] = useState<any>(null);// 动画详情数据
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [screenData, setScreenData] = useState(() => Dimensions.get('window'));
@@ -58,17 +58,17 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
       coverImageWidth: isTablet
         ? 200
         : isLargePhone
-        ? 170
-        : isSmallPhone
-        ? 130
-        : 150,
+          ? 170
+          : isSmallPhone
+            ? 130
+            : 150,
       coverImageHeight: isTablet
         ? 267
         : isLargePhone
-        ? 227
-        : isSmallPhone
-        ? 173
-        : 200,
+          ? 227
+          : isSmallPhone
+            ? 173
+            : 200,
       headerPadding: isTablet ? 24 : isSmallPhone ? 12 : 16,
       titleFontSize: isTablet ? 24 : isLargePhone ? 22 : isSmallPhone ? 18 : 20,
       infoFontSize: isTablet ? 16 : isSmallPhone ? 13 : 14,
@@ -93,8 +93,10 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
     }
   };
 
+
+
   useEffect(() => {
-    getAnimeDetail();
+     getAnimeDetail();
   }, [id]);
 
   // 动态样式
@@ -157,7 +159,8 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
         Math.abs(gestureState.dx) > 10
       );
     },
-    onPanResponderMove: () => {},
+    onPanResponderMove: () => {
+    },
     onPanResponderRelease: (_evt, gestureState) => {
       if (gestureState.dx > 50 && currentPage > 0) {
         scrollToPage(currentPage - 1);
@@ -185,7 +188,10 @@ export default function AnimeDetail({route}: AnimeDetailScreenProps) {
           size={45}
           style={dynamicStyles.iconButton}
         />
-        <Button mode={'contained'} style={dynamicStyles.button} onPress={handleContinueWatch}>
+        <Button
+          mode={'contained'}
+          style={dynamicStyles.button}
+          onPress={handleContinueWatch}>
           继续观看
         </Button>
       </View>

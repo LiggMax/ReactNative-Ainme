@@ -33,7 +33,7 @@ export default function Index({
         </Text>
       </Card>
     ),
-    [dynamicStyles],
+    [dynamicStyles.infoCard, dynamicStyles.infoKeyText, dynamicStyles.infoValueText],
   );
 
   return (
