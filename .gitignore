@@ -33,7 +33,8 @@ local.properties
 *.keystore
 !debug.keystore
 .kotlin/
-android/**/*log
+android/**/*.log
+/android/app/release
 # node.js
 #
 node_modules/
@@ -72,5 +73,4 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-/android/app/release
 /src/ui/video/assets/video_test/123.mp4
