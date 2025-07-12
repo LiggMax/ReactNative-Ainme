@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {VideoScreenProps} from '../../types/navigation';
@@ -10,7 +17,9 @@ import {StatusBarManager} from '../../components/StatusBarManager';
 import animeDateService from '../../api/bangumi/anime/animeDate';
 import {videoStyles} from './style';
 import {Icon, MD3Colors} from 'react-native-paper';
-import BottomDrawer, {BottomDrawerMethods} from 'react-native-animated-bottom-drawer';
+import BottomDrawer, {
+  BottomDrawerMethods,
+} from 'react-native-animated-bottom-drawer';
 
 const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const {id, title = '视频播放'} = route.params;
@@ -118,47 +127,68 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
       {/* 底部抽屉弹窗 */}
       <BottomDrawer
         ref={bottomDrawerRef}
-        initialHeight={400}
-        gestureMode="content"
-        backdropOpacity={0.5}
+        gestureMode="handle"
+        backdropOpacity={0.3}
         backdropColor="black"
-      >
+        initialHeight={Dimensions.get('window').height * 0.5}
+        snapPoints={[
+          Dimensions.get('window').height * 0.5,
+          Dimensions.get('window').height,
+        ]}
+        enableSnapping={true}>
         <View style={styles.drawerContainer}>
           {/* 抽屉头部 */}
           <View style={styles.drawerHeader}>
             <Text style={styles.drawerTitle}>剧集列表</Text>
-            <TouchableOpacity onPress={() => bottomDrawerRef.current?.close()}>
-              <Icon
-                source="close"
-                color="#666"
-                size={24}
-              />
-            </TouchableOpacity>
           </View>
 
           {/* 剧集列表内容 */}
-          <ScrollView style={styles.drawerScrollView}>
-            {episodes && episodes.length > 0 ? (
-              episodes.map((episode: any, index: number) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.episodeItem}
-                  onPress={() => {
-                    // 这里可以添加切换剧集的逻辑
-                    console.log('选择剧集:', episode);
-                    bottomDrawerRef.current?.close();
-                  }}
-                >
-                  <Text style={styles.episodeNumber}>第 {index + 1} 集</Text>
-                  <Text style={styles.episodeTitle}>{episode.title || `剧集 ${index + 1}`}</Text>
-                </TouchableOpacity>
-              ))
+          <View style={styles.drawerScrollView}>
+            {episodes && episodes.data && episodes.data.length > 0 ? (
+              <FlatList
+                data={episodes.data}
+                keyExtractor={item => item.id.toString()}
+                showsVerticalScrollIndicator={false}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={10}
+                windowSize={10}
+                initialNumToRender={8}
+                getItemLayout={(data, index) => ({
+                  length: 80, // 估算每个item的高度
+                  offset: 80 * index,
+                  index,
+                })}
+                renderItem={({item: episode}) => (
+                  <View style={styles.episodeItem}>
+                    <View style={styles.episodeHeader}>
+                      <Text style={styles.episodeNumber}>
+                        第 {episode.ep} 集
+                      </Text>
+                      <Text style={styles.episodeDate}>{episode.airdate}</Text>
+                    </View>
+                    <View style={styles.episodeBody}>
+                      {episode.name_cn != '' || episode.name != '' ? (
+                        <Text style={styles.episodeTitle}>
+                          {episode.name_cn || episode.name}
+                        </Text>
+                      ) : (
+                        <Text style={styles.episodeTitle}>未更新</Text>
+                      )}
+                      {episode.comment > 0 && (
+                        <Text style={styles.episodeComment}>
+                          {episode.comment} 条评论
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                )}
+              />
             ) : (
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyText}>暂无剧集数据</Text>
               </View>
             )}
-          </ScrollView>
+          </View>
         </View>
       </BottomDrawer>
     </View>

@@ -57,7 +57,7 @@ export default function Characters({animeId}: CharactersProps) {
   // 根据角色数量动态计算抽屉高度
   const drawerHeight = useMemo(() => {
     const baseHeight = screenHeight * 0.5;
-    const maxHeight = screenHeight * 0.85;
+    const maxHeight = screenHeight;
 
     // 每行显示2个角色，每个角色高度约80px，加上header和padding
     const estimatedHeight = Math.ceil(characters.length / 2) * 80 + 100;
@@ -185,7 +185,7 @@ export default function Characters({animeId}: CharactersProps) {
         ref={bottomDrawerRef}
         initialHeight={drawerHeight}
         gestureMode="content"
-        snapPoints={[screenHeight * 0.3, screenHeight * 0.5, screenHeight * 0.85]}
+        snapPoints={[screenHeight * 0.3, screenHeight * 0.5, screenHeight]}
         enableSnapping={true}
         customStyles={{
           container: styles.modalContent,

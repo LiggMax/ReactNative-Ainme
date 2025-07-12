@@ -57,14 +57,34 @@ export const videoStyles = () => {
       borderBottomWidth: 1,
       borderBottomColor: '#f0f0f0',
     },
+    episodeHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    episodeBody: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
     episodeNumber: {
       fontSize: 16,
+      fontWeight: 'bold',
       color: '#333',
-      marginBottom: 5,
+    },
+    episodeDate: {
+      fontSize: 12,
+      color: '#999',
     },
     episodeTitle: {
       fontSize: 14,
       color: '#666',
+      marginBottom: 4,
+    },
+    episodeComment: {
+      fontSize: 12,
+      color: '#666'
     },
     emptyContainer: {
       flex: 1,
