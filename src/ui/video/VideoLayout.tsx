@@ -16,7 +16,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager} from '../../components/StatusBarManager';
 import animeDateService from '../../api/bangumi/anime/animeDate';
 import {videoStyles} from './style';
-import {Icon, MD3Colors} from 'react-native-paper';
+import {Card,Icon, MD3Colors} from 'react-native-paper';
 import BottomDrawer, {
   BottomDrawerMethods,
 } from 'react-native-animated-bottom-drawer';
@@ -129,7 +129,9 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
         ref={bottomDrawerRef}
         gestureMode="handle"
         backdropOpacity={0.3}
-        backdropColor="black"
+        customStyles={{
+          container: styles.modalContent,
+        }}
         initialHeight={Dimensions.get('window').height * 0.5}
         snapPoints={[
           Dimensions.get('window').height * 0.5,
@@ -159,7 +161,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
                   index,
                 })}
                 renderItem={({item: episode}) => (
-                  <View style={styles.episodeItem}>
+                  <Card mode="contained" style={styles.episodeItem}>
                     <View style={styles.episodeHeader}>
                       <Text style={styles.episodeNumber}>
                         第 {episode.ep} 集
@@ -180,7 +182,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
                         </Text>
                       )}
                     </View>
-                  </View>
+                  </Card>
                 )}
               />
             ) : (
