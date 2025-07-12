@@ -116,7 +116,7 @@ src/
 │           ├── controls/          # 控制组件
 │           │   ├── Controls.tsx   # 控制界面
 │           │   └── style.ts       # 控制样式
-│           ├── style.tsx          # 播放器样式
+│           ├── style.ts          # 播放器样式
 │           └── Config.ts          # 播放器配置
 ├── components/                    # 通用组件
 ├── navigation/                    # 导航配置

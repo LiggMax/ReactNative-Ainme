@@ -11,6 +11,9 @@ import FastImage from 'react-native-fast-image';
 import {useCharacterStyles} from './style.ts';
 import BottomDrawer, {BottomDrawerMethods} from 'react-native-animated-bottom-drawer';
 
+/**
+ * 角色页面
+ */
 interface CharactersProps {
   animeId: number;
 }
@@ -42,9 +45,7 @@ interface Character {
   type: number;
 }
 
-/**
- * 角色页面
- */
+
 export default function Characters({animeId}: CharactersProps) {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(false);
@@ -183,6 +184,7 @@ export default function Characters({animeId}: CharactersProps) {
       <BottomDrawer
         ref={bottomDrawerRef}
         initialHeight={drawerHeight}
+        gestureMode="content"
         snapPoints={[screenHeight * 0.3, screenHeight * 0.5, screenHeight * 0.85]}
         enableSnapping={true}
         customStyles={{
