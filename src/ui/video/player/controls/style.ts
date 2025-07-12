@@ -44,6 +44,7 @@ const controlsStyle = () => {
     },
     bottomGradient: {
       position: 'absolute',
+      //垂直居中
       bottom: 0,
       left: 0,
       right: 0,
@@ -72,6 +73,7 @@ const controlsStyle = () => {
     progressBarContainer: {
       flex: 1,
       marginHorizontal: 12,
+      //垂直居中
     },
     progressBar: {
       height: 20,
@@ -81,6 +83,7 @@ const controlsStyle = () => {
       height: 4,
       backgroundColor: 'rgba(255, 255, 255, 0.3)',
       borderRadius: 2,
+      marginHorizontal: 4, //水平间隔
       position: 'relative',
     },
     bufferedFill: {
@@ -100,9 +103,9 @@ const controlsStyle = () => {
       top: -6,
       width: 16,
       height: 16,
-      backgroundColor: theme.colors.primary ,
+      backgroundColor: theme.colors.primary,
       borderRadius: 8,
-      transform: [{ translateX: -8 }],
+      transform: [{translateX: -8}],
     },
     fullscreenButtonContainer: {
       position: 'absolute',
@@ -116,6 +119,6 @@ const controlsStyle = () => {
       alignItems: 'center',
     },
   });
-}
+};
 
 export default controlsStyle;

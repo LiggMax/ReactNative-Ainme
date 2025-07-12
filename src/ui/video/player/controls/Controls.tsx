@@ -124,7 +124,10 @@ const Controls: React.FC<VideoControlsProps> = ({
     })
     .onUpdate(event => {
       'worklet';
-      const progressBarWidth = getProgressBarWidth(screenWidth.value, isFullscreenShared.value);
+      const progressBarWidth = getProgressBarWidth(
+        screenWidth.value,
+        isFullscreenShared.value,
+      );
       progress.value = Math.max(0, Math.min(1, event.x / progressBarWidth));
     })
     .onEnd(() => {
@@ -143,7 +146,10 @@ const Controls: React.FC<VideoControlsProps> = ({
     if (isDragging) return;
 
     const touchX = event.nativeEvent.locationX;
-    const progressBarWidth = getProgressBarWidth(screenData.width, isFullscreen);
+    const progressBarWidth = getProgressBarWidth(
+      screenData.width,
+      isFullscreen,
+    );
     const newProgress = Math.max(0, Math.min(1, touchX / progressBarWidth));
     const seekTime = newProgress * duration;
 
@@ -166,10 +172,9 @@ const Controls: React.FC<VideoControlsProps> = ({
   }));
 
   return (
-    <View 
+    <View
       style={styles.container}
-      pointerEvents={visible ? 'box-none' : 'none'}
-    >
+      pointerEvents={visible ? 'box-none' : 'none'}>
       {/* 顶部控制栏 - 根据visible状态显示/隐藏 */}
       {visible && (
         <LinearGradient
@@ -177,16 +182,15 @@ const Controls: React.FC<VideoControlsProps> = ({
           style={styles.topGradient}>
           <View style={styles.topControls}>
             {onBack && (
-              <TouchableOpacity 
-                style={styles.backButton} 
+              <TouchableOpacity
+                style={styles.backButton}
                 onPress={() => {
                   if (isFullscreen) {
                     onFullscreen(); // 退出全屏
                   } else {
                     onBack(); // 返回上一页
                   }
-                }}
-              >
+                }}>
                 <Icon name="arrow-back" size={24} color="#fff" />
               </TouchableOpacity>
             )}
@@ -231,31 +235,29 @@ const Controls: React.FC<VideoControlsProps> = ({
                 />
               </TouchableOpacity>
 
-              <View style={styles.progressBarContainer}>
-                <GestureHandlerRootView>
-                  <GestureDetector gesture={gesture}>
-                    <TouchableOpacity
-                      style={styles.progressBar}
-                      onPress={handlePress}
-                      activeOpacity={1}>
-                      <View style={styles.progressTrack}>
-                        {/* 缓存进度条 */}
-                        <Animated.View
-                          style={[styles.bufferedFill, bufferedFillStyle]}
-                        />
-                        {/* 播放进度条 */}
-                        <Animated.View
-                          style={[styles.progressFill, progressFillStyle]}
-                        />
-                        {/* 拖动按钮 */}
-                        <Animated.View
-                          style={[styles.progressThumb, progressThumbStyle]}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </GestureDetector>
-                </GestureHandlerRootView>
-              </View>
+              <GestureHandlerRootView>
+                <GestureDetector gesture={gesture}>
+                  <TouchableOpacity
+                    style={styles.progressBar}
+                    onPress={handlePress}
+                    activeOpacity={1}>
+                    <View style={styles.progressTrack}>
+                      {/* 缓存进度条 */}
+                      <Animated.View
+                        style={[styles.bufferedFill, bufferedFillStyle]}
+                      />
+                      {/* 播放进度条 */}
+                      <Animated.View
+                        style={[styles.progressFill, progressFillStyle]}
+                      />
+                      {/* 拖动按钮 */}
+                      <Animated.View
+                        style={[styles.progressThumb, progressThumbStyle]}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </GestureDetector>
+              </GestureHandlerRootView>
             </View>
           </View>
         </LinearGradient>
@@ -263,7 +265,9 @@ const Controls: React.FC<VideoControlsProps> = ({
 
       {/* 全屏按钮 - 始终显示 */}
       <View style={styles.fullscreenButtonContainer} pointerEvents="auto">
-        <TouchableOpacity style={styles.fullscreenButton} onPress={onFullscreen}>
+        <TouchableOpacity
+          style={styles.fullscreenButton}
+          onPress={onFullscreen}>
           <Icon
             name={isFullscreen ? 'fullscreen-exit' : 'fullscreen'}
             size={30}
