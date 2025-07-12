@@ -59,6 +59,20 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
     bottomDrawerRef.current?.open();
   };
 
+  /**
+   * 关闭抽屉
+   */
+  const closeDrawer = () => {
+    bottomDrawerRef.current?.close();
+  }
+
+  /**
+   * 获取剧集播放数据
+   */
+  const getEpisodeData = async (episodeId: number) => {
+    console.log('点击剧集', episodeId);
+    closeDrawer()
+  }
   // 组件卸载时解锁屏幕方向并恢复导航栏
   useEffect(() => {
     getEpisodes();
@@ -161,7 +175,9 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
                   index,
                 })}
                 renderItem={({item: episode}) => (
-                  <Card mode="contained" style={styles.episodeItem}>
+                  <Card mode="contained" style={styles.episodeItem} onPress={() => {
+                    getEpisodeData(episode.id)
+                  }}>
                     <View style={styles.episodeHeader}>
                       <Text style={styles.episodeNumber}>
                         第 {episode.ep} 集
