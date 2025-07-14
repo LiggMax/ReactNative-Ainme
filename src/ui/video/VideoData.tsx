@@ -4,9 +4,9 @@
  *
  * 视频资源
  **/
-import React, {useEffect, useRef} from 'react';
-import {View} from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import React, {useEffect, useRef, useState} from 'react';
+import {FlatList, View} from 'react-native';
+import {Button, Card, Text} from 'react-native-paper';
 import {videoStyles} from './assets/style';
 import BottomDrawer, {
   BottomDrawerMethods,
@@ -21,6 +21,11 @@ const VideoData = ({AnimeTitle,ep}: Data) => {
   // BottomDrawer ref
   const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
   const styles = videoStyles();
+
+  /**
+   * 剧集列表
+   */
+  const  [episodeList,setEpisodeList] = useState<any> (null);
 
   /**
    * 搜索视频
@@ -46,6 +51,7 @@ const VideoData = ({AnimeTitle,ep}: Data) => {
 
       //资源列表
       const Episodes = await getEpisodesService(firstResult.link, ep);
+      setEpisodeList(Episodes);
       console.log('剧集数据',Episodes);
     } catch (error) {
       console.error('获取视频数据失败:', error);
@@ -80,6 +86,13 @@ const VideoData = ({AnimeTitle,ep}: Data) => {
         <View style={styles.drawerContainer}>
           <Text>数据源</Text>
         </View>
+        <FlatList data={episodeList}
+                  renderItem={({item: episode}) => (
+                    <Card mode={"contained"}>
+                      <Card.Title title={episode.ep} />
+                    </Card>
+        )}/>
+
       </BottomDrawer>
     </View>
   );

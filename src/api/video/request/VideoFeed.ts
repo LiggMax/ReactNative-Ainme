@@ -13,7 +13,7 @@ import {parseEpisodes, parseSearch} from '../parse/parse.ts';
 export const getSearchOnePieceService = async (keyword: string): Promise<any> => {
   try {
     // 请求url
-    const url = `https://www.ciyuancheng.net/search.html?wd=${keyword}`;
+    const url = `https://dm1.xfdm.pro/search.html?wd=${keyword}`;
     const response = await axios.get(url, {
       headers: {
         'User-Agent':
@@ -33,7 +33,7 @@ export const getSearchOnePieceService = async (keyword: string): Promise<any> =>
  */
 export const getEpisodesService = async (url: string,ep:number): Promise<any> => {
   //网站url
-  const baseURL = 'https://www.ciyuancheng.net';
+  const baseURL = 'https://dm1.xfdm.pro';
   const response = await axios.get(baseURL+url, {
     headers: {
       'User-Agent':
