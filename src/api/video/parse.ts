@@ -12,11 +12,9 @@ import { ParsedItem } from './types';
  * @param htmlData HTML字符串
  * @returns 解析后的条目列表
  */
-export function parse(htmlData: string): ParsedItem[] {
+export function parseSearch(htmlData: string): ParsedItem[] {
   try {
     const items: ParsedItem[] = [];
-    // console.log('开始解析HTML数据...',htmlData);
-    // 使用 node-html-parser 解析HTML
     const root = parseHtml(htmlData);
 
     // 解析条目名称列表
@@ -48,4 +46,11 @@ export function parse(htmlData: string): ParsedItem[] {
     console.error('HTML解析失败:', error);
     return [];
   }
+}
+
+/**
+ * 解析剧集列表
+ */
+export function parseEpisodes(htmlData: string) {
+
 }

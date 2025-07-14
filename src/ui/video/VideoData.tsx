@@ -11,7 +11,7 @@ import {videoStyles} from './assets/style';
 import BottomDrawer, {
   BottomDrawerMethods,
 } from 'react-native-animated-bottom-drawer';
-import {searchOnePiece} from '../../api/video/request/VideoFeed.ts'
+import {getEpisodesService, getSearchOnePieceService} from '../../api/video/request/VideoFeed.ts';
 
 interface Data{
   AnimeTitle: string;
@@ -24,11 +24,15 @@ const VideoData = ({AnimeTitle}: Data) => {
   /**
    * 搜索视频
    */
-  const searchVideo = async () => {
-    const result = await searchOnePiece(AnimeTitle);
+  const getVideo = async () => {
+    //搜索列表
+    const searchList = await getSearchOnePieceService(AnimeTitle);
+    console.log('搜索结果',searchList);
+    //资源列表
+    const Episodes = await getEpisodesService(searchList.link);
   }
   useEffect(() => {
-    searchVideo();
+    getVideo();
   }, []);
   return (
     <View style={styles.layout}>
