@@ -4,7 +4,6 @@
  *
  * 视频源
  */
-import request from '../../../util/request.ts';
 import axios from 'axios';
 import {parse} from '../parse.ts';
 
@@ -15,7 +14,9 @@ import {parse} from '../parse.ts';
  */
 export const searchOnePiece = async (keyword: string): Promise<any> => {
   try {
-    // 发送HTTP请求获取HTML数据
+    //网站url
+    const baseURL = 'https://www.ciyuancheng.net';
+    // 请求url
     const url = `https://www.ciyuancheng.net/search.html?wd=${keyword}`;
     const response = await axios.get(url, {
       headers: {
@@ -25,12 +26,13 @@ export const searchOnePiece = async (keyword: string): Promise<any> => {
     });
     console.log('搜索地址',url);
     // 使用parse函数解析HTML数据
-    return parse(response.data);
+    const request = parse(response.data);
+    console.log('搜索结果',request);
+    return request;
+
   } catch (error) {
     console.error('搜索失败:', error);
     throw error;
   }
 };
 
-// 导出默认请求实例
-export default request;

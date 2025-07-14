@@ -26,7 +26,6 @@ const VideoData = ({AnimeTitle}: Data) => {
    */
   const searchVideo = async () => {
     const result = await searchOnePiece(AnimeTitle);
-    console.log('视频数据',result);
   }
   useEffect(() => {
     searchVideo();

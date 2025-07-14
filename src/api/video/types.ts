@@ -6,6 +6,4 @@
 export interface ParsedItem {
   title: string;
   link: string;
-  image: string;
-  description: string;
 }

@@ -25,18 +25,23 @@ export function parse(htmlData: string): ParsedItem[] {
     // 解析条目链接列表
     const thumbMenuLinks = root.querySelectorAll('.search-box .thumb-menu > a');
 
-    // 遍历每个条目名称
-    thumbTxtElements.forEach((element, index) => {
-      console.log('条目名称:', element.text);
-    });
+    // 构建条目数据
+    const maxLength = Math.max(thumbTxtElements.length, thumbMenuLinks.length);
+    for (let i = 0; i < maxLength; i++) {
+      const titleElement = thumbTxtElements[i];
+      const linkElement = thumbMenuLinks[i];
 
-    // 遍历每个条目链接
-     thumbMenuLinks.forEach((link, index) => {
-       console.log(`\n=== 链接 ${index + 1} ===`);
-       console.log('链接地址:', link.getAttribute('href'));
-       console.log('链接文本:', link.text);
-     });
+      const item: ParsedItem = {
+        title: titleElement ? titleElement.text.trim() : '',
+        link: linkElement ? linkElement.getAttribute('href') || '' : '',
+      };
 
+      if (item.title || item.link) {
+        items.push(item);
+        console.log(`条目 ${items.length}: ${item.title} - ${item.link}`);
+      }
+    }
+    console.log(`成功解析 ${items.length} 个有效条目`);
     return items;
 
   } catch (error) {
