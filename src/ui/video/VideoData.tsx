@@ -30,23 +30,23 @@ const VideoData = ({AnimeTitle,ep}: Data) => {
       //搜索列表
       const searchList = await getSearchOnePieceService(AnimeTitle);
       console.log('搜索结果',searchList);
-      
+
       // 检查搜索结果是否为空
       if (!searchList || searchList.length === 0) {
         console.log('没有找到搜索结果');
         return;
       }
-      
+
       // 取第一个搜索结果
       const firstResult = searchList[0];
       if (!firstResult.link) {
         console.log('搜索结果中没有有效链接');
         return;
       }
-      
+
       //资源列表
       const Episodes = await getEpisodesService(firstResult.link, ep);
-      console.log('资源列表',Episodes);
+      console.log('剧集数据',Episodes);
     } catch (error) {
       console.error('获取视频数据失败:', error);
     }
