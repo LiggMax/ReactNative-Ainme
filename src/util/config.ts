@@ -8,6 +8,8 @@ export const BASE_URLS = {
   API: 'https://api.bgm.tv',
   // BGM 主站接口
   BGM: 'https://bgm.tv',
+  //没有任何前缀的接口
+  NONE: '',
 } as const;
 
 // 请求超时配置

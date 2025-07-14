@@ -1,12 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-} from 'react-native';
+import {View, TouchableOpacity, Dimensions, FlatList} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {VideoScreenProps} from '../../types/navigation';
@@ -15,11 +8,12 @@ import VideoPlayer from './player';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager} from '../../components/StatusBarManager';
 import animeDateService from '../../api/bangumi/anime/animeDate';
-import {videoStyles} from './style';
-import {Card,Icon, MD3Colors} from 'react-native-paper';
+import {videoStyles} from './assets/style.ts';
+import {Text, Card, Icon} from 'react-native-paper';
 import BottomDrawer, {
   BottomDrawerMethods,
 } from 'react-native-animated-bottom-drawer';
+import VideoData from './VideoData.tsx';
 
 const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const {id, title = '视频播放'} = route.params;
@@ -64,15 +58,15 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
    */
   const closeDrawer = () => {
     bottomDrawerRef.current?.close();
-  }
+  };
 
   /**
    * 获取剧集播放数据
    */
   const getEpisodeData = async (episodeId: number) => {
     console.log('点击剧集', episodeId);
-    closeDrawer()
-  }
+    closeDrawer();
+  };
   // 组件卸载时解锁屏幕方向并恢复导航栏
   useEffect(() => {
     getEpisodes();
@@ -122,19 +116,16 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
 
       {/* 视频信息区域 - 只在非全屏时显示 */}
       {!fullscreen && (
-        <View style={[styles.infoContainer, {paddingBottom: insets.bottom}]}>
-          <ScrollView>
-            <View style={styles.videoInfoHeader}>
-              <Text style={styles.videoTitle}>{title}</Text>
-              <TouchableOpacity onPress={openDrawer}>
-                <Icon
-                  source="apps"
-                  color={MD3Colors.neutralVariant0}
-                  size={25}
-                />
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+        <View style={[styles.infoContainer]}>
+          <View style={styles.videoInfoHeader}>
+            <Text style={styles.videoTitle}>{title}</Text>
+            <TouchableOpacity onPress={openDrawer}>
+              <Icon source="apps" size={25} />
+            </TouchableOpacity>
+          </View>
+          <Card style={styles.data}>
+            <VideoData AnimeTitle={title} />
+          </Card>
         </View>
       )}
 
@@ -175,9 +166,12 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
                   index,
                 })}
                 renderItem={({item: episode}) => (
-                  <Card mode="contained" style={styles.episodeItem} onPress={() => {
-                    getEpisodeData(episode.id)
-                  }}>
+                  <Card
+                    mode="contained"
+                    style={styles.episodeItem}
+                    onPress={() => {
+                      getEpisodeData(episode.id);
+                    }}>
                     <View style={styles.episodeHeader}>
                       <Text style={styles.episodeNumber}>
                         第 {episode.ep} 集

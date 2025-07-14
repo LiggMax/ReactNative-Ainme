@@ -1,4 +1,7 @@
 /**
+ * @Author Ligg
+ * @Time 2025/6/30
+ *
  * 动漫详情api
  */
 import request from '../../../util/request.ts';

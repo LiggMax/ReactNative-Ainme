@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import Video, { VideoRef } from 'react-native-video';
 import Controls from './controls/Controls.tsx';
-import { playerStyles } from './style';
-import { DEFAULT_VIDEO_CONFIG } from './Config';
+import { playerStyles } from './style.ts';
+import { DEFAULT_VIDEO_CONFIG } from './Config.ts';
 
 interface VideoPlayerProps {
   id: number;

@@ -26,12 +26,15 @@ export const videoStyles = () => {
       fontSize: 18,
       fontWeight: 'bold',
       marginBottom: 8,
-      color: '#333',
     },
     videoDescription: {
       fontSize: 14,
       color: '#666',
       lineHeight: 20,
+    },
+    data:{
+      //内边距
+      padding:16,
     },
     // 底部抽屉样式
     drawerContainer: {
@@ -97,6 +100,10 @@ export const videoStyles = () => {
     emptyText: {
       fontSize: 16,
       color: '#999',
+    },
+    layout:{
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
   });
 };
