@@ -5,7 +5,7 @@
  * 视频源
  */
 import axios from 'axios';
-import {parseEpisodes, parseSearch} from '../parse.ts';
+import {parseEpisodes, parseSearch} from '../parse/parse.ts';
 
 /**
  * 获取搜索列表

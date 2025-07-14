@@ -5,7 +5,7 @@
  * 数据解析
  **/
 import {parse as parseHtml} from 'node-html-parser';
-import {EpisodeItem, ParsedItem} from './types';
+import {EpisodeItem, ParsedItem} from './types.ts';
 
 /**
  * 解析HTML数据并提取条目列表
@@ -58,39 +58,39 @@ export function parseEpisodes(htmlData: string, ep: number): EpisodeItem[] {
   //提取线路名称列表
   const lineElements = root.querySelectorAll('.anthology-tab > .swiper-wrapper a');
   console.log(`找到 ${lineElements.length} 个线路`);
-  
+
   //提取剧集列表容器
   const episodeElements = root.querySelectorAll('.anthology-list-box');
   console.log(`找到 ${episodeElements.length} 个剧集列表容器`);
-  
+
   // 遍历每个剧集列表容器
   episodeElements.forEach((episodeElement, containerIndex) => {
     // 获取对应的线路名称
     const lineName = lineElements[containerIndex] ? lineElements[containerIndex].text.trim() : `线路${containerIndex + 1}`;
-    
+
     // 在当前容器中查找所有剧集链接
     const episodeLinks = episodeElement.querySelectorAll('a');
     console.log(`线路 "${lineName}" 找到 ${episodeLinks.length} 个剧集`);
-    
+
     episodeLinks.forEach((link, linkIndex) => {
       const episodeText = link.text.trim();
       const episodeUrl = link.getAttribute('href') || '';
-      
+
       // 尝试从文本中提取集数
       const episodeMatch = episodeText.match(/第?(\d+)[集话]?/);
       const episodeNumber = episodeMatch ? parseInt(episodeMatch[1]) : linkIndex + 1;
-      
+
       const episodeItem: EpisodeItem = {
         ep: episodeNumber,
         line: lineName,
         url: episodeUrl
       };
-      
+
       items.push(episodeItem);
       console.log(`剧集 ${episodeNumber}: ${episodeText} - ${episodeUrl} (${lineName})`);
     });
   });
-  
+
   console.log(`成功解析 ${items.length} 个剧集`);
   return items;
 }
