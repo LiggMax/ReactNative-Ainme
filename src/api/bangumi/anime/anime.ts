@@ -1,10 +1,9 @@
 /**
  * 动漫相关API服务
  */
-import request, {Request} from '../../../util/request.ts';
+import request from '../../../util/request.ts';
 
 // 创建不同基础URL的请求实例
-const apiRequest = request;
 
 // 动漫数据类型定义 - BGM格式
 export interface AnimeItem {
@@ -64,14 +63,14 @@ class Anime {
    * 获取排行榜
    */
   async getRankingService(): Promise<RankingResponse> {
-    return apiRequest.get('/search/subject/anime');
+    return request.get('/search/subject/anime');
   }
 
   /**
    * 获取新番时间表
    */
   async getSchedule(): Promise<ScheduleItem[]> {
-    return apiRequest.get('/calendar');
+    return request.get('/calendar');
   }
 }
 
