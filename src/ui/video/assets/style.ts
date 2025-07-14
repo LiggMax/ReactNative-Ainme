@@ -11,11 +11,11 @@ export const videoStyles = () => {
     },
     container: {
       flex: 1,
-      backgroundColor: '#000',
+      backgroundColor: theme.colors.background,
     },
     fullscreenWrapper: {
       flex: 1,
-      backgroundColor: '#000',
+      backgroundColor: theme.colors.background,
     },
     infoContainer: {
       flex: 1,
@@ -29,7 +29,6 @@ export const videoStyles = () => {
     },
     videoDescription: {
       fontSize: 14,
-      color: '#666',
       lineHeight: 20,
     },
     data:{
@@ -53,7 +52,6 @@ export const videoStyles = () => {
     drawerTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: '#333',
     },
     drawerScrollView: {
       flex: 1,
@@ -76,20 +74,16 @@ export const videoStyles = () => {
     episodeNumber: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: '#333',
     },
     episodeDate: {
       fontSize: 12,
-      color: '#999',
     },
     episodeTitle: {
       fontSize: 14,
-      color: '#666',
       marginBottom: 4,
     },
     episodeComment: {
       fontSize: 12,
-      color: '#666'
     },
     emptyContainer: {
       flex: 1,
@@ -99,7 +93,6 @@ export const videoStyles = () => {
     },
     emptyText: {
       fontSize: 16,
-      color: '#999',
     },
     layout:{
       flexDirection: 'row',
