@@ -15,19 +15,27 @@ import { ParsedItem } from './types';
 export function parse(htmlData: string): ParsedItem[] {
   try {
     const items: ParsedItem[] = [];
-    console.log('开始解析HTML数据...',htmlData);
+    // console.log('开始解析HTML数据...',htmlData);
     // 使用 node-html-parser 解析HTML
     const root = parseHtml(htmlData);
 
-    // 使用CSS选择器查找 .search-box .thumb-content > .thumb-txt 元素
+    // 解析条目名称列表
     const thumbTxtElements = root.querySelectorAll('.search-box .thumb-content > .thumb-txt');
-    console.log(`找到 ${thumbTxtElements.length} 个条目`);
 
-    // 遍历每个条目并打印信息
+    // 解析条目链接列表
+    const thumbMenuLinks = root.querySelectorAll('.search-box .thumb-menu > a');
+
+    // 遍历每个条目名称
     thumbTxtElements.forEach((element, index) => {
-      console.log(`\n=== 条目 ${index + 1} ===`);
-      console.log('文本内容:', element.text);
+      console.log('条目名称:', element.text);
     });
+
+    // 遍历每个条目链接
+     thumbMenuLinks.forEach((link, index) => {
+       console.log(`\n=== 链接 ${index + 1} ===`);
+       console.log('链接地址:', link.getAttribute('href'));
+       console.log('链接文本:', link.text);
+     });
 
     return items;
 
