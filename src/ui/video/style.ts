@@ -20,7 +20,7 @@ export const videoStyles = () => {
     infoContainer: {
       flex: 1,
       padding: 16,
-      backgroundColor: '#fff',
+      backgroundColor: theme.colors.background,
     },
     videoTitle: {
       fontSize: 18,
@@ -38,6 +38,9 @@ export const videoStyles = () => {
       flex: 1,
       padding: 20,
     },
+    modalContent: {
+      backgroundColor: theme.colors.background,
+    },
     drawerHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -54,8 +57,7 @@ export const videoStyles = () => {
     },
     episodeItem: {
       padding: 15,
-      borderBottomWidth: 1,
-      borderBottomColor: '#f0f0f0',
+      marginVertical: 5,
     },
     episodeHeader: {
       flexDirection: 'row',
