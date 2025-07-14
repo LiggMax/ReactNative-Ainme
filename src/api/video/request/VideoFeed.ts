@@ -31,7 +31,7 @@ export const getSearchOnePieceService = async (keyword: string): Promise<any> =>
 /**
  * 获取资源列表
  */
-export const getEpisodesService = async (url: string): Promise<any> => {
+export const getEpisodesService = async (url: string,ep:number): Promise<any> => {
   //网站url
   const baseURL = 'https://www.ciyuancheng.net';
   const response = await axios.get(baseURL+url, {
@@ -40,6 +40,6 @@ export const getEpisodesService = async (url: string): Promise<any> => {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
     },
   });
-  return parseEpisodes(response.data);
+  return parseEpisodes(response.data, ep);
 }
 

@@ -4,8 +4,8 @@
  *
  * 数据解析
  **/
-import { parse as parseHtml } from 'node-html-parser';
-import { ParsedItem } from './types';
+import {parse as parseHtml} from 'node-html-parser';
+import {EpisodeItem, ParsedItem} from './types';
 
 /**
  * 解析HTML数据并提取条目列表
@@ -18,7 +18,9 @@ export function parseSearch(htmlData: string): ParsedItem[] {
     const root = parseHtml(htmlData);
 
     // 解析条目名称列表
-    const thumbTxtElements = root.querySelectorAll('.search-box .thumb-content > .thumb-txt');
+    const thumbTxtElements = root.querySelectorAll(
+      '.search-box .thumb-content > .thumb-txt',
+    );
 
     // 解析条目链接列表
     const thumbMenuLinks = root.querySelectorAll('.search-box .thumb-menu > a');
@@ -36,12 +38,10 @@ export function parseSearch(htmlData: string): ParsedItem[] {
 
       if (item.title || item.link) {
         items.push(item);
-        console.log(`条目 ${items.length}: ${item.title} - ${item.link}`);
       }
     }
     console.log(`成功解析 ${items.length} 个有效条目`);
     return items;
-
   } catch (error) {
     console.error('HTML解析失败:', error);
     return [];
@@ -51,6 +51,14 @@ export function parseSearch(htmlData: string): ParsedItem[] {
 /**
  * 解析剧集列表
  */
-export function parseEpisodes(htmlData: string) {
+export function parseEpisodes(htmlData: string, ep: number){
 
+  // const items: EpisodeItem[] = [];
+  const root = parseHtml(htmlData);
+
+  //提取线路名称列表
+  const lineElements = root.querySelectorAll('.anthology-tab > .swiper-wrapper a');
+  lineElements.forEach(lineElement => {
+    console.log('线路名称',lineElement.text);
+  });
 }

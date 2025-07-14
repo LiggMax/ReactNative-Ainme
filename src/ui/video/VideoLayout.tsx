@@ -124,7 +124,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
             </TouchableOpacity>
           </View>
           <Card style={styles.data}>
-            <VideoData AnimeTitle={title} />
+            <VideoData AnimeTitle={title} ep={1}/>
           </Card>
         </View>
       )}
