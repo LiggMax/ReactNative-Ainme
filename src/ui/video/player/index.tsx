@@ -31,14 +31,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onToggleFullscreen,
   onBack,
 }) => {
-  const videoRef = useRef<VideoRef>(null);
-  const [paused, setPaused] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [showControls, setShowControls] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [volume, setVolume] = useState(1.0);
-  const [muted, setMuted] = useState(false);
+  const videoRef = useRef<VideoRef>(null);//播放器
+  const [paused, setPaused] = useState(false);//播放暂停
+  const [currentTime, setCurrentTime] = useState(0);//播放进度
+  const [duration, setDuration] = useState(0);//播放时长
+  const [showControls, setShowControls] = useState(true);//控制栏
+  const [loading, setLoading] = useState(true);//加载中
+  const [volume, setVolume] = useState(1.0); // 音量
+  const [muted, setMuted] = useState(true); // 静音
   const [bufferedTime, setBufferedTime] = useState(0);
 
   //网络视频

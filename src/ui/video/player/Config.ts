@@ -7,7 +7,6 @@
 
 // 视频播放器默认配置
 export const DEFAULT_VIDEO_CONFIG = {
-
 };
 
 

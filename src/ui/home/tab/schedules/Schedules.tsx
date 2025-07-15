@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -137,33 +138,40 @@ export default function Schedules() {
   const renderWeekdaySelector = useMemo(() => {
     if (scheduleData.length === 0) return null;
 
+    const renderItem = ({item}: {item: ScheduleItem}) => (
+      <Chip
+        key={item.weekday.id}
+        selected={selectedWeekday === item.weekday.id}
+        onPress={() => setSelectedWeekday(item.weekday.id)}
+        style={[
+          dynamicStyles.weekdayChip,
+          selectedWeekday === item.weekday.id &&
+            dynamicStyles.weekdayChipSelected,
+        ]}
+        textStyle={[
+          dynamicStyles.weekdayChipText,
+          selectedWeekday === item.weekday.id &&
+            dynamicStyles.weekdayChipTextSelected,
+        ]}
+        compact
+        mode="outlined">
+        {item.weekday.cn} {item.items.length}部
+      </Chip>
+    );
+
     return (
       <View style={dynamicStyles.weekdayContainer}>
-        <ScrollView
+        <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={dynamicStyles.weekdayScrollContent}>
-          {scheduleData.map(item => (
-            <Chip
-              key={item.weekday.id}
-              selected={selectedWeekday === item.weekday.id}
-              onPress={() => setSelectedWeekday(item.weekday.id)}
-              style={[
-                dynamicStyles.weekdayChip,
-                selectedWeekday === item.weekday.id &&
-                  dynamicStyles.weekdayChipSelected,
-              ]}
-              textStyle={[
-                dynamicStyles.weekdayChipText,
-                selectedWeekday === item.weekday.id &&
-                  dynamicStyles.weekdayChipTextSelected,
-              ]}
-              compact
-              mode="outlined">
-              {item.weekday.cn} {item.items.length}部
-            </Chip>
-          ))}
-        </ScrollView>
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          initialNumToRender={8}
+          data={scheduleData}
+          renderItem={renderItem}
+          keyExtractor={item => item.weekday.id.toString()}
+          contentContainerStyle={dynamicStyles.weekdayScrollContent}
+        />
       </View>
     );
   }, [
@@ -197,7 +205,6 @@ export default function Schedules() {
                   theme.colors.surfaceVariant,
                 ]}
               />
-
             )}
             {/* 图片 */}
             <FastImage
@@ -311,9 +318,5 @@ export default function Schedules() {
     );
   };
 
-  return (
-    <View style={dynamicStyles.container}>
-      {renderContent()}
-    </View>
-  );
+  return <View style={dynamicStyles.container}>{renderContent()}</View>;
 }

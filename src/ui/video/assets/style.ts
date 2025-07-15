@@ -38,7 +38,7 @@ export const videoStyles = () => {
     // 底部抽屉样式
     drawerContainer: {
       flex: 1,
-      padding: 20,
+      marginHorizontal: 16,
     },
     modalContent: {
       backgroundColor: theme.colors.background,
