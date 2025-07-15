@@ -137,11 +137,6 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
         customStyles={{
           container: styles.modalContent,
         }}
-        initialHeight={Dimensions.get('window').height * 0.5}
-        snapPoints={[
-          Dimensions.get('window').height * 0.5,
-          Dimensions.get('window').height,
-        ]}
         enableSnapping={true}>
         <View style={styles.drawerContainer}>
           {/* 抽屉头部 */}
@@ -160,11 +155,6 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
                 maxToRenderPerBatch={10}
                 windowSize={10}
                 initialNumToRender={8}
-                getItemLayout={(data, index) => ({
-                  length: 80, // 估算每个item的高度
-                  offset: 80 * index,
-                  index,
-                })}
                 renderItem={({item: episode}) => (
                   <Card
                     mode="contained"

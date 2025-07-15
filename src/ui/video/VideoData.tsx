@@ -5,8 +5,8 @@
  * 视频资源
  **/
 import React, {useEffect, useRef, useState} from 'react';
-import {FlatList, View} from 'react-native';
-import {Button, Card, Text} from 'react-native-paper';
+import {FlatList, View, TouchableOpacity} from 'react-native';
+import {Button, Text, Chip} from 'react-native-paper';
 import {videoStyles} from './assets/style';
 import BottomDrawer, {
   BottomDrawerMethods,
@@ -15,6 +15,7 @@ import {
   getEpisodesService,
   getSearchOnePieceService,
 } from '../../api/video/request/VideoFeed.ts';
+import {EpisodeItem} from '../../api/video/parse/types.ts';
 
 interface Data {
   AnimeTitle: string;
@@ -29,7 +30,7 @@ const VideoData = ({AnimeTitle, ep}: Data) => {
   /**
    * 剧集列表
    */
-  const [episodeList, setEpisodeList] = useState<any>(null);
+  const [episodeList, setEpisodeList] = useState<EpisodeItem[]>([]);
 
   /**
    * 搜索视频
@@ -83,49 +84,57 @@ const VideoData = ({AnimeTitle, ep}: Data) => {
       {/*抽屉弹窗*/}
       <BottomDrawer
         ref={bottomDrawerRef}
+        initialHeight={400}
         customStyles={{
-          container: styles.modalContent,
-        }}
-        onClose={() => {}}>
-        <View style={styles.drawerContainer}>
-          <View style={styles.drawerHeader}>
-            <Text style={styles.drawerTitle}>视频资源列表</Text>
-          </View>
-          {episodeList && episodeList.length > 0 ? (
+          container: {
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          },
+        }}>
+        <View style={{padding: 16}}>
+          <Text variant="headlineSmall" style={{marginBottom: 16, textAlign: 'center'}}>
+            剧集列表
+          </Text>
+
+          {episodeList.length > 0 ? (
             <FlatList
               data={episodeList}
-              keyExtractor={(item, index) => `${item.ep}-${item.line}-${index}`}
-              showsVerticalScrollIndicator={true}
-              removeClippedSubviews={true}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              initialNumToRender={8}
-              contentContainerStyle={{paddingBottom: 20}}
-              renderItem={({item: episode}) => (
-                <Card
-                  mode={'contained'}
-                  style={{marginVertical: 4, marginHorizontal: 8}}>
-                  <Card.Title
-                    title={`第${episode.ep}集`}
-                    subtitle={episode.line}
-                    right={props => (
-                      <Button
-                        mode="outlined"
-                        compact
-                        onPress={() => {
-                          console.log('选择剧集:', episode);
-                          // 这里可以添加播放逻辑
-                        }}>
-                        播放
-                      </Button>
-                    )}
-                  />
-                </Card>
+              keyExtractor={(item, index) => `${item.line}-${item.ep}-${index}`}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={{
+                    marginBottom: 8,
+                    padding: 12,
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: 8,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => {
+                    console.log('选择剧集:', item);
+                    // 这里可以添加播放逻辑
+                    bottomDrawerRef.current?.close();
+                  }}>
+                  <View style={{flex: 1}}>
+                    <Text variant="bodyLarge">第 {item.ep} 集</Text>
+                    <Text variant="bodySmall" style={{opacity: 0.7}}>
+                      {item.url}
+                    </Text>
+                  </View>
+                  <Chip mode="outlined" compact>
+                    {item.line}
+                  </Chip>
+                </TouchableOpacity>
               )}
+              showsVerticalScrollIndicator={false}
+              style={{maxHeight: 400}}
             />
           ) : (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>暂无视频资源</Text>
+            <View style={{alignItems: 'center', padding: 20}}>
+              <Text variant="bodyMedium" style={{opacity: 0.7}}>
+                暂无剧集数据
+              </Text>
             </View>
           )}
         </View>
