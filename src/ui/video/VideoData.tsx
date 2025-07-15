@@ -14,6 +14,7 @@ import BottomDrawer, {
 import {
   getEpisodesService,
   getSearchOnePieceService,
+  getVideoUrlService,
 } from '../../api/video/request/VideoFeed.ts';
 import {EpisodeItem} from '../../api/video/parse/types.ts';
 
@@ -27,16 +28,15 @@ const VideoData = ({animeTitle, ep}: Data) => {
   const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
   const styles = videoStyles();
 
-
   /**
-   * 剧集列表
+   * 条目列表
    */
   const [episodeList, setEpisodeList] = useState<EpisodeItem[]>([]);
 
   /**
-   * 搜索视频
+   * 搜索条目
    */
-  const getVideo = async () => {
+  const getEntry = async () => {
     try {
       //搜索列表
       const searchList = await getSearchOnePieceService(animeTitle);
@@ -63,8 +63,20 @@ const VideoData = ({animeTitle, ep}: Data) => {
       console.error('获取视频数据失败:', error);
     }
   };
+
+  /**
+   * 搜索视频
+   * @param {string} url - 播放页地址
+   */
+  const getVideoUrl = async (url: string) => {
+    //先关闭抽屉弹窗
+    bottomDrawerRef.current?.close();
+    //搜索视频资源
+    const videoUrl = await getVideoUrlService(url);
+  };
+
   useEffect(() => {
-    getVideo();
+    getEntry();
   }, []);
   return (
     <View style={styles.layout}>
@@ -105,8 +117,7 @@ const VideoData = ({animeTitle, ep}: Data) => {
                 <Card
                   mode="outlined"
                   onPress={() => {
-                    bottomDrawerRef.current?.close();
-                    console.log(item.url);
+                    getVideoUrl(item.url);
                   }}
                   style={styles.chip}>
                   <View style={styles.cardContent}>

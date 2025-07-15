@@ -5,7 +5,7 @@
  * 数据解析
  **/
 import {parse as parseHtml} from 'node-html-parser';
-import {EpisodeItem, ParsedItem} from './types.ts';
+import {EpisodeItem, ParsedItem, VideoUrlSource} from './types.ts';
 
 /**
  * 解析HTML数据并提取条目列表
@@ -93,4 +93,64 @@ export function parseEpisodes(htmlData: string, ep: number): EpisodeItem[] {
 
   console.log(`成功解析 ${items.length} 个剧集`);
   return items;
+}
+
+/**
+ * 解析视频url
+ */
+export function parseVideoUrl(htmlData: string): VideoUrlSource[] {
+  try {
+    const items: VideoUrlSource[] = [];
+    const root = parseHtml(htmlData);
+
+    // 视频链接正则表达式 - 匹配 .mp4, .mkv, m3u8, akamaized 或 bilivideo.com
+    const videoUrlRegex = /^https?:\/\/(?!.*https?:\/\/).+?(?:(?:\.(mp4|mkv|m3u8))(?:\?.+)?$|(?:akamaized|bilivideo\.com))/i;
+
+    // 需要过滤的资源类型正则表达式（CSS、图片、字体等）
+    const excludeRegex = /\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|otf)(?:\?.*)?$/i;
+
+    // 查找所有包含链接的元素
+    const linkElements = root.querySelectorAll('a[href], source[src], video[src], iframe[src]');
+
+    linkElements.forEach((element, index) => {
+      const url = element.getAttribute('href') || element.getAttribute('src') || '';
+
+      if (url && !excludeRegex.test(url) && videoUrlRegex.test(url)) {
+        const videoSource: VideoUrlSource = {
+          url: url,
+        };
+
+        items.push(videoSource);
+        console.log(`找到视频链接 ${index + 1}: ${url}`);
+      }
+    });
+
+    // 同时在页面脚本中查找视频链接
+    const scriptElements = root.querySelectorAll('script');
+    scriptElements.forEach(script => {
+      const scriptContent = script.innerHTML;
+      const urlMatches = scriptContent.match(/https?:\/\/[^\s"']+/g);
+
+      if (urlMatches) {
+        urlMatches.forEach(url => {
+          if (!excludeRegex.test(url) && videoUrlRegex.test(url)) {
+            const videoSource: VideoUrlSource = {
+              url: url,
+            };
+
+            // 避免重复添加
+            if (!items.some(item => item.url === url)) {
+              items.push(videoSource);
+              console.log(`在脚本中找到视频链接: ${url}`);
+            }
+          }
+        });
+      }
+    });
+    console.log(`成功解析 ${items.length} 个视频链接`);
+    return items;
+  } catch (error) {
+    console.error('视频URL解析失败:', error);
+    return [];
+  }
 }
