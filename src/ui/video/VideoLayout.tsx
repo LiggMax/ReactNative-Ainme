@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, TouchableOpacity, Dimensions, FlatList} from 'react-native';
+import {View, TouchableOpacity, FlatList} from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {VideoScreenProps} from '../../types/navigation';
@@ -21,6 +21,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const [fullscreen, setFullscreen] = useState(false);
   const insets = useSafeAreaInsets();
   const [episodes, setEpisodes] = useState<any>(null); // 动画剧集数据
+  const [videoUrl, setVideoUrl] = useState<any>(null); // 视频URL数据
 
   // BottomDrawer ref
   const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
@@ -29,9 +30,6 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
    * 动态样式
    */
   const styles = videoStyles();
-
-  // 根据id获取视频源，这里暂时使用默认视频
-  const videoSource = null; // 可以根据id从API获取视频源
 
   /**
    * 获取剧集列表
@@ -66,6 +64,15 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const getEpisodeData = async (episodeId: number) => {
     console.log('点击剧集', episodeId);
     closeDrawer();
+  };
+
+  /**
+   * 处理从VideoData组件传递回来的视频URL数据
+   */
+  const handleVideoUrlReceived = (videoUrlData: any) => {
+    console.log('VideoLayout接收到视频URL数据:', videoUrlData);
+    setVideoUrl(videoUrlData);
+    // 这里可以进一步处理视频URL数据，比如更新播放器等
   };
   // 组件卸载时解锁屏幕方向并恢复导航栏
   useEffect(() => {
@@ -108,7 +115,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
       <VideoPlayer
         id={id}
         title={title}
-        videoSource={videoSource}
+        videoSource={videoUrl}
         fullscreen={fullscreen}
         onToggleFullscreen={toggleFullscreen}
         onBack={goBack}
@@ -125,7 +132,11 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
           </View>
 
           <Card style={styles.data}>
-            <VideoData animeTitle={title} ep={1}/>
+            <VideoData
+              animeTitle={title}
+              ep={1}
+              onVideoUrlReceived={handleVideoUrlReceived}
+            />
           </Card>
         </View>
       )}

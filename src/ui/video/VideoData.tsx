@@ -21,9 +21,10 @@ import {EpisodeItem} from '../../api/video/parse/types.ts';
 interface Data {
   animeTitle: string;
   ep: number;
+  onVideoUrlReceived?: (videoUrl: any) => void; // 回调函数，用于传递视频URL数据
 }
 
-const VideoData = ({animeTitle, ep}: Data) => {
+const VideoData = ({animeTitle, ep, onVideoUrlReceived}: Data) => {
   // BottomDrawer ref
   const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
   const styles = videoStyles();
@@ -69,10 +70,20 @@ const VideoData = ({animeTitle, ep}: Data) => {
    * @param {string} url - 播放页地址
    */
   const getVideoUrl = async (url: string) => {
-    //先关闭抽屉弹窗
-    bottomDrawerRef.current?.close();
-    //搜索视频资源
-    const videoUrl = await getVideoUrlService(url);
+    try {
+      //先关闭抽屉弹窗
+      bottomDrawerRef.current?.close();
+      //搜索视频资源
+      const videoUrl = await getVideoUrlService(url);
+      console.log('获取到视频URL:', videoUrl);
+      
+      // 通过回调函数将视频URL数据传递给父组件
+      if (onVideoUrlReceived && videoUrl) {
+        onVideoUrlReceived(videoUrl);
+      }
+    } catch (error) {
+      console.error('获取视频URL失败:', error);
+    }
   };
 
   useEffect(() => {

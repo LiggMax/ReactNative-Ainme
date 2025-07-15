@@ -28,6 +28,7 @@ interface VideoPlayerProps {
 const VideoPlayer: React.FC<VideoPlayerProps> = ({
   title = '视频播放',
   fullscreen,
+  videoSource,
   onToggleFullscreen,
   onBack,
 }) => {
@@ -42,7 +43,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [bufferedTime, setBufferedTime] = useState(0);
 
   //网络视频
-  const url = 'https://lf-cdn.trae.com.cn/obj/trae-com-cn/bannerIntro425.mp4';
+  const videoUrl = videoSource?.url || videoSource;
+  console.log('点击播放视频链接',videoUrl);
   const styles = playerStyles();
 
   // 自动隐藏控制栏
@@ -107,7 +109,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         <Video
           ref={videoRef}
-          source={{uri: url}}
+          source={{uri: videoUrl}}
           style={styles.video}
           paused={paused}
           volume={volume}

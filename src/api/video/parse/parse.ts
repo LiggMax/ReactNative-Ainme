@@ -98,13 +98,12 @@ export function parseEpisodes(htmlData: string, ep: number): EpisodeItem[] {
 /**
  * 解析视频url
  */
-export function parseVideoUrl(htmlData: string): VideoUrlSource[] {
+export function parseVideoUrl(htmlData: string): VideoUrlSource | null {
   try {
-    const items: VideoUrlSource[] = [];
     const root = parseHtml(htmlData);
 
     // 视频链接正则表达式 - 匹配 .mp4, .mkv, m3u8, akamaized 或 bilivideo.com
-    const videoUrlRegex = /^https?:\/\/(?!.*https?:\/\/).+?(?:(?:\.(mp4|mkv|m3u8))(?:\?.+)?$|(?:akamaized|bilivideo\.com))/i;
+    const videoUrlRegex = /^https?:\/\/(?!.*https?:\/\/).+?(?:\.(mp4|mkv|m3u8)(?:\?.+)?$|(?:akamaized|bilivideo\.com))/i;
 
     // 需要过滤的资源类型正则表达式（CSS、图片、字体等）
     const excludeRegex = /\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|otf)(?:\?.*)?$/i;
@@ -112,45 +111,38 @@ export function parseVideoUrl(htmlData: string): VideoUrlSource[] {
     // 查找所有包含链接的元素
     const linkElements = root.querySelectorAll('a[href], source[src], video[src], iframe[src]');
 
-    linkElements.forEach((element, index) => {
+    // 优先从DOM元素中查找视频链接
+    for (let i = 0; i < linkElements.length; i++) {
+      const element = linkElements[i];
       const url = element.getAttribute('href') || element.getAttribute('src') || '';
 
       if (url && !excludeRegex.test(url) && videoUrlRegex.test(url)) {
-        const videoSource: VideoUrlSource = {
-          url: url,
-        };
-
-        items.push(videoSource);
-        console.log(`找到视频链接 ${index + 1}: ${url}`);
+        console.log(`找到视频链接: ${url}`);
+        return { url: url };
       }
-    });
+    }
 
-    // 同时在页面脚本中查找视频链接
+    // 如果DOM元素中没找到，再在页面脚本中查找
     const scriptElements = root.querySelectorAll('script');
-    scriptElements.forEach(script => {
+    for (let i = 0; i < scriptElements.length; i++) {
+      const script = scriptElements[i];
       const scriptContent = script.innerHTML;
       const urlMatches = scriptContent.match(/https?:\/\/[^\s"']+/g);
 
       if (urlMatches) {
-        urlMatches.forEach(url => {
+        for (const url of urlMatches) {
           if (!excludeRegex.test(url) && videoUrlRegex.test(url)) {
-            const videoSource: VideoUrlSource = {
-              url: url,
-            };
-
-            // 避免重复添加
-            if (!items.some(item => item.url === url)) {
-              items.push(videoSource);
-              console.log(`在脚本中找到视频链接: ${url}`);
-            }
+            console.log(`在脚本中找到视频链接: ${url}`);
+            return { url: url };
           }
-        });
+        }
       }
-    });
-    console.log(`成功解析 ${items.length} 个视频链接`);
-    return items;
+    }
+
+    console.log('未找到有效的视频链接');
+    return null;
   } catch (error) {
     console.error('视频URL解析失败:', error);
-    return [];
+    return null;
   }
 }
