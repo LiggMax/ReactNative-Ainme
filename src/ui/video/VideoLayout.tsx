@@ -123,8 +123,9 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
               <Icon source="apps" size={25} />
             </TouchableOpacity>
           </View>
+
           <Card style={styles.data}>
-            <VideoData AnimeTitle={title} ep={1}/>
+            <VideoData animeTitle={title} ep={1}/>
           </Card>
         </View>
       )}

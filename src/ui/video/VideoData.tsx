@@ -5,8 +5,8 @@
  * 视频资源
  **/
 import React, {useEffect, useRef, useState} from 'react';
-import {FlatList, View, TouchableOpacity} from 'react-native';
-import {Button, Text, Chip} from 'react-native-paper';
+import {FlatList, View} from 'react-native';
+import {Button, Text, Card} from 'react-native-paper';
 import {videoStyles} from './assets/style';
 import BottomDrawer, {
   BottomDrawerMethods,
@@ -18,14 +18,15 @@ import {
 import {EpisodeItem} from '../../api/video/parse/types.ts';
 
 interface Data {
-  AnimeTitle: string;
+  animeTitle: string;
   ep: number;
 }
 
-const VideoData = ({AnimeTitle, ep}: Data) => {
+const VideoData = ({animeTitle, ep}: Data) => {
   // BottomDrawer ref
   const bottomDrawerRef = useRef<BottomDrawerMethods>(null);
   const styles = videoStyles();
+
 
   /**
    * 剧集列表
@@ -38,7 +39,7 @@ const VideoData = ({AnimeTitle, ep}: Data) => {
   const getVideo = async () => {
     try {
       //搜索列表
-      const searchList = await getSearchOnePieceService(AnimeTitle);
+      const searchList = await getSearchOnePieceService(animeTitle);
       console.log('搜索结果', searchList);
 
       // 检查搜索结果是否为空
@@ -92,8 +93,8 @@ const VideoData = ({AnimeTitle, ep}: Data) => {
           },
         }}>
         <View style={{padding: 16}}>
-          <Text variant="headlineSmall" style={{marginBottom: 16, textAlign: 'center'}}>
-            剧集列表
+          <Text style={{fontWeight: 'bold', fontSize: 20, marginBottom: 10}}>
+            视频资源
           </Text>
 
           {episodeList.length > 0 ? (
@@ -101,31 +102,28 @@ const VideoData = ({AnimeTitle, ep}: Data) => {
               data={episodeList}
               keyExtractor={(item, index) => `${item.line}-${item.ep}-${index}`}
               renderItem={({item}) => (
-                <TouchableOpacity
-                  style={{
-                    marginBottom: 8,
-                    padding: 12,
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: 8,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
+                <Card
+                  mode="outlined"
                   onPress={() => {
-                    console.log('选择剧集:', item);
-                    // 这里可以添加播放逻辑
                     bottomDrawerRef.current?.close();
-                  }}>
-                  <View style={{flex: 1}}>
-                    <Text variant="bodyLarge">第 {item.ep} 集</Text>
-                    <Text variant="bodySmall" style={{opacity: 0.7}}>
-                      {item.url}
-                    </Text>
+                    console.log(item.url);
+                  }}
+                  style={styles.chip}>
+                  <View style={styles.cardContent}>
+                    <View style={styles.chipContent}>
+                      <Text style={styles.chipText}>{item.line}</Text>
+                      <Text> 第{item.ep}集</Text>
+                    </View>
+                    <View style={styles.chipActions}>
+                      <View>
+                        <Text>123</Text>
+                      </View>
+                      <View>
+                        <Button mode="outlined">播放</Button>
+                      </View>
+                    </View>
                   </View>
-                  <Chip mode="outlined" compact>
-                    {item.line}
-                  </Chip>
-                </TouchableOpacity>
+                </Card>
               )}
               showsVerticalScrollIndicator={false}
               style={{maxHeight: 400}}

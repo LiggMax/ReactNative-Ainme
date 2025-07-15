@@ -9,9 +9,27 @@ export const videoStyles = () => {
       alignItems: 'center',
       justifyContent: 'space-between',//两侧对齐
     },
+    chip: {
+      marginBottom: 8,
+    },
+    chipContent:{
+      flexDirection: 'row',
+    },
+    cardContent:{
+      margin: 10,
+    },
     container: {
       flex: 1,
       backgroundColor: theme.colors.background,
+    },
+    chipText:{
+      marginRight: 8,
+    },
+    chipActions:{
+      flexDirection: 'row',
+      // 水平两侧对齐
+      justifyContent: 'space-between',
+
     },
     fullscreenWrapper: {
       flex: 1,
