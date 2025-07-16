@@ -4,7 +4,7 @@ import Orientation from 'react-native-orientation-locker';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {VideoScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
-import VideoPlayer from './player';
+import VideoPlayer from './player/VideoPlayer.tsx';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager} from '../../components/StatusBarManager';
 import animeDateService from '../../api/bangumi/anime/animeDate';
@@ -112,14 +112,7 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
       {!fullscreen && <View style={{paddingTop: insets.top}} />}
 
       {/* 视频播放器  */}
-      <VideoPlayer
-        id={id}
-        title={title}
-        videoSource={videoUrl}
-        fullscreen={fullscreen}
-        onToggleFullscreen={toggleFullscreen}
-        onBack={goBack}
-      />
+      <VideoPlayer/>
 
       {/* 视频信息区域 - 只在非全屏时显示 */}
       {!fullscreen && (

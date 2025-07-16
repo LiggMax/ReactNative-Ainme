@@ -112,7 +112,7 @@ src/
 ├── ui/
 │   └── video/
 │       └── player/
-│           ├── index.tsx          # 主播放器组件
+│           ├── VideoPlayer.tsx          # 主播放器组件
 │           ├── controls/          # 控制组件
 │           │   ├── Controls.tsx   # 控制界面
 │           │   └── style.ts       # 控制样式
