@@ -1,10 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, TouchableOpacity, FlatList} from 'react-native';
-import Orientation from 'react-native-orientation-locker';
-import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {VideoScreenProps} from '../../types/navigation';
 import {useAppNavigation} from '../../navigation';
-import VideoPlayer from './player/VideoPlayer.tsx';
+import Player from './player/VideoPlayer';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBarManager} from '../../components/StatusBarManager';
 import animeDateService from '../../api/bangumi/anime/animeDate';
@@ -18,7 +16,7 @@ import VideoData from './VideoData.tsx';
 const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const {id, title = '视频播放'} = route.params;
   const {goBack} = useAppNavigation();
-  const [fullscreen, setFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const [episodes, setEpisodes] = useState<any>(null); // 动画剧集数据
   const [videoUrl, setVideoUrl] = useState<any>(null); // 视频URL数据
@@ -72,67 +70,85 @@ const VideoLayout: React.FC<VideoScreenProps> = ({route}) => {
   const handleVideoUrlReceived = (videoUrlData: any) => {
     console.log('VideoLayout接收到视频URL数据:', videoUrlData);
     setVideoUrl(videoUrlData);
-    // 这里可以进一步处理视频URL数据，比如更新播放器等
+    setIsLoading(false);
   };
-  // 组件卸载时解锁屏幕方向并恢复导航栏
+
+  /**
+   * 视频播放器事件处理
+   */
+  const handleVideoLoad = () => {
+    console.log('视频加载完成');
+    setIsLoading(false);
+  };
+
+  const handleVideoError = (error: any) => {
+    console.error('视频播放错误:', error);
+    setIsLoading(false);
+  };
+
+  const handleVideoEnd = () => {
+    console.log('视频播放结束');
+  };
+
+  const handleVideoProgress = (data: any) => {
+    // console.log('视频播放进度:', data);
+  };
   useEffect(() => {
     getEpisodes();
-    return () => {
-      Orientation.unlockAllOrientations();
-      SystemNavigationBar.navigationShow();
-    };
+    setIsLoading(true);
   }, []);
 
-  const toggleFullscreen = () => {
-    const newFullscreenState = !fullscreen;
-    setFullscreen(newFullscreenState);
 
-    if (newFullscreenState) {
-      // 进入全屏时锁定为横屏并隐藏导航栏
-      Orientation.lockToLandscape();
-      SystemNavigationBar.navigationHide();
-    } else {
-      // 退出全屏时锁定为竖屏并显示导航栏
-      Orientation.lockToPortrait();
-      SystemNavigationBar.navigationShow();
-    }
-  };
 
   return (
-    <View style={fullscreen ? styles.fullscreenWrapper : styles.container}>
+    <View style={styles.container}>
       <StatusBarManager
         barStyle="light-content"
         backgroundColor="#000"
-        translucent={fullscreen}
-        hidden={fullscreen}
+        translucent={false}
+        hidden={false}
         useGlobalTheme={false}
       />
 
-      {/* 非全屏时的安全区域包装 */}
-      {!fullscreen && <View style={{paddingTop: insets.top}} />}
+      {/* 安全区域包装 */}
+      <View style={{paddingTop: insets.top}} />
 
       {/* 视频播放器  */}
-      <VideoPlayer/>
+      <View style={styles.videoPlayerWrapper}>
+        <Player
+          videoUrl={videoUrl?.url || videoUrl}
+          autoplay={false}
+          muted={false}
+          repeat={false}
+          showDuration={true}
+          disableFullscreen={false}
+          pauseOnPress={true}
+          endWithThumbnail={true}
+          thumbnail={{uri: 'https://via.placeholder.com/1600x900/1a1a1a/ffffff?text=Loading...'}}
+          onLoad={handleVideoLoad}
+          onError={handleVideoError}
+          onEnd={handleVideoEnd}
+          onProgress={handleVideoProgress}
+        />
+      </View>
 
-      {/* 视频信息区域 - 只在非全屏时显示 */}
-      {!fullscreen && (
-        <View style={[styles.infoContainer]}>
-          <View style={styles.videoInfoHeader}>
-            <Text style={styles.videoTitle}>{title}</Text>
-            <TouchableOpacity onPress={openDrawer}>
-              <Icon source="apps" size={25} />
-            </TouchableOpacity>
-          </View>
-
-          <Card style={styles.data}>
-            <VideoData
-              animeTitle={title}
-              ep={1}
-              onVideoUrlReceived={handleVideoUrlReceived}
-            />
-          </Card>
+      {/* 视频信息区域 */}
+      <View style={[styles.infoContainer]}>
+        <View style={styles.videoInfoHeader}>
+          <Text style={styles.videoTitle}>{title}</Text>
+          <TouchableOpacity onPress={openDrawer}>
+            <Icon source="apps" size={25} />
+          </TouchableOpacity>
         </View>
-      )}
+
+        <Card style={styles.data}>
+          <VideoData
+            animeTitle={title}
+            ep={1}
+            onVideoUrlReceived={handleVideoUrlReceived}
+          />
+        </Card>
+      </View>
 
       {/* 底部抽屉弹窗 */}
       <BottomDrawer

@@ -4,32 +4,12 @@ import {useTheme} from 'react-native-paper';
 export const playerStyles = () => {
   const theme = useTheme();
   const { width: screenWidth } = Dimensions.get('window');
-  
+
   return StyleSheet.create({
     videoContainer: {
       width: '100%',
       height: screenWidth * (9 / 16), // 16:9 比例
-      backgroundColor: '#000',
-      position: 'relative',
-    },
-    fullscreenContainer: {
-      width: '100%',
-      height: '100%',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-    },
-    videoTouchable: {
-      flex: 1,
-    },
-    video: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
+      overflow: 'hidden',
     },
     loadingContainer: {
       position: 'absolute',
@@ -39,24 +19,35 @@ export const playerStyles = () => {
       bottom: 0,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: theme.colors.surface,
+      borderRadius: 8,
     },
     loadingText: {
-      color: '#fff',
-      marginTop: 10,
+      color: theme.colors.onSurface,
       fontSize: 16,
+      fontWeight: '500',
     },
-    centerPlayButton: {
+    errorContainer: {
       position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: [{ translateX: -30 }, { translateY: -30 }],
-      width: 60,
-      height: 60,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      borderRadius: 30,
+      backgroundColor: theme.colors.errorContainer,
+      borderRadius: 8,
+    },
+    errorText: {
+      color: theme.colors.onErrorContainer,
+      fontSize: 16,
+      fontWeight: '500',
+      textAlign: 'center',
+      paddingHorizontal: 20,
+    },
+    playerWrapper: {
+      borderRadius: 8,
+      overflow: 'hidden',
     },
   });
 };

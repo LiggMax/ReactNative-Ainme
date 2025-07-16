@@ -31,9 +31,10 @@ export const videoStyles = () => {
       justifyContent: 'space-between',
 
     },
-    fullscreenWrapper: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
+    videoPlayerWrapper: {
+      borderRadius: 8,
+      overflow: 'hidden',
+      elevation: 3,
     },
     infoContainer: {
       flex: 1,
